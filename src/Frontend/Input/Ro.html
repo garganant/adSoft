@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+    <link type="text/css" href="../../../node_modules/material-icons/iconfont/material-icons.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="../../../node_modules/materialize-css/dist/css/materialize.min.css" media="screen,projection" />
+    <link rel="stylesheet" href="../../../assets/css/Input/Ro.css">
+    <title>AdSoft</title>
+</head>
+<body>
+    <div class="completePage">
+        <h3 align="center">RO</h3>
+        <div class="row">
+            <label id="compulsory" class="col l3 push-l9">Fields marked with (*) are compulsory</label>
+        </div>
+        <form>
+            <div class="row">
+                <div class="input-field col push-l1 push-xl1">
+                    <input id="input1" type="number" placeholder="" />
+                    <label for="input1">RO NUMBER *</label>
+                </div>
+                <div class="input-field col push-l1 push-xl1">
+                    <input id="roDate" type="date" placeholder="" />
+                    <label for="roDate">RO DATE *</label>
+                </div>
+                <div class="input-field col l3 xl4 push-xl1">
+                    <input id="input2" list="customers" placeholder="CUSTOMER *" />
+                    <datalist id="customers"></datalist>
+                </div>
+                <div class="input-field col l3 xl2 push-xl1">
+                    <select id="input3" required>
+                        <option value="" disabled selected>Group name</option>
+                    </select>
+                    <label>GROUP *</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col l3 xl4 push-xl1">
+                    <select id="input4" required>
+                        <option value="" disabled selected>Subject detail</option>
+                    </select>
+                    <label>SUBJECT *</label>
+                </div>
+                <div class="input-field col push-xl1">
+                    <input id="input5" type="number" step=".01" placeholder="" />
+                    <label for="input5">TRADE DIS *</label>
+                </div>
+                <div class="input-field col l1 push-xl1">
+                    <input id="input6" type="number" step=".01" value=0 />
+                    <label for="input6">SPL DIS *</label>
+                </div>
+                <div class="input-field col l3 push-xl1">
+                    <input id="input7" type="text" placeholder="Ad position" maxlength="30" />
+                    <label for="input7">POSITION *</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col l8 push-xl1">
+                    <input id="input8" type="text" placeholder="Spl instruction 1" maxlength="100" />
+                    <label for="input8">SPECIAL INSTRUCTION 1</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col l8 push-xl1">
+                    <input id="input9" type="text" placeholder="Spl instruction 2" maxlength="100" />
+                    <label for="input9">SPECIAL INSTRUCTION 2</label>
+                </div>
+            </div>
+            <div class="row tableDiv">
+                <div style="padding-right: 1%;">
+                    <a onclick="addNewRow()" class="btn-floating btn-medium waves-effect waves-light green tooltipped" data-position="top" data-tooltip="Add new row"><i class="material-icons">add</i></a>
+                </div>
+                <div>
+                    <table id="dataTable" class="centered">
+                        <thead>
+                            <tr>
+                                <th style="width:70px">NEWSPAPER</th>
+                                <th style="width:220px">EDITION</th>
+                                <th style="width:260px">CAPTION</th>
+                                <th style="width:50px">PUBLICATION DATE</th>
+                                <th style="width:85px">CR</th>
+                                <th style="width:85px">PR</th>
+                                <th style="width:70px">WIDTH</th>
+                                <th style="width:70px">HEIGHT</th>
+                                <th style="width:85px">CR AMT</th>
+                                <th style="width:85px">PR AMT</th>
+                                <th>REMOVE</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </form>
+        <div class="row buttons">
+            <a id="prevBtn" onclick="prev()" class="btn">Previous</a>
+            <a id="nxtBtn" onclick="nxt()" class="btn">Next</a>
+            <a id="fstBtn" onclick="fst()" class="btn">First</a>
+            <a id="lstBtn" onclick="lst()" class="btn">Last</a>
+            <a id="showBtn" onclick="show()" class="btn">Search</a>
+            <a id="addBtn" onclick="submit()" class="btn">Create/Edit RO</a>
+            <a id="prtBtn" onclick="prt()" class="btn">Print</a>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../../node_modules/materialize-css/dist/js/materialize.min.js"></script>
+<script src="../../Backend/connector/Input/connectRo.js"></script>
+</html>

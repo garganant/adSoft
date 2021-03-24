@@ -1,0 +1,103 @@
+.completePage {
+    padding-left: 1%;
+    padding-right: 1%;
+}
+
+.row {
+  margin: 0%;
+}
+
+h3 {
+  font-family: 'Constantia';
+  color: #722620;
+  margin: 0%;
+}
+
+#compulsory {
+  color: black;
+  font-family: Georgia;
+  font-size: 17px;
+}
+
+.input-field label {
+  color: #30110D;
+  font-weight: bolder;
+  font-family: 'Constantia';
+  font-size: 20px;
+}
+
+::-webkit-input-placeholder {
+  color: #686868;
+}
+
+.input-field input:empty {
+  border-bottom: 1px solid #000;
+  box-shadow: 0 1px 0 0 #000;
+}
+
+.input-field input:read-write {
+  border-bottom: 1px solid #000 !important;
+  box-shadow: 0 1px 0 0 #000 !important;
+}
+
+.input-field input:focus + label {
+  color: red !important;
+}
+
+.input-field input:focus {
+  border-bottom: 1px solid red !important;
+  box-shadow: 0 1px 0 0 red !important
+}
+
+.select-dropdown{
+  max-height: 20vw;
+}
+
+.tableDiv {
+    position: absolute;
+    max-width: 95%;
+    width: auto;
+    max-height: 40%;
+    height: auto;
+    overflow-x: auto;
+    display: flex;
+    padding-left: 5%;
+  }
+
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+th, td {
+    padding-top: 0%;
+    padding-bottom: 0%;
+}
+
+.btnTable a {
+  top: 5vh;
+  left: 1%;
+}
+
+.buttons {
+    position: absolute;
+    top: 93%;
+    left: 10%;
+    width: 90%;
+}
+
+.buttons a {
+    margin-right: 5%;
+    font-family: 'Constantia';
+    background-color: #722620;
+}
+
+.btn:hover {
+  background-color: #491910;
+}
+
+@media screen and (max-width: 1367px){
+  #rowSpacing {
+    display: none;
+  }
+}

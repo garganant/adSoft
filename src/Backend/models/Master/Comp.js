@@ -1,0 +1,66 @@
+const Sequelize = require('sequelize');
+
+module.exports = sequelize.define('Comp', {
+    //attributes
+    Code: {
+        type: Sequelize.STRING(10),
+        primaryKey: true
+    },
+    Name: {
+        type: Sequelize.STRING
+    },
+    Address: {
+        type: Sequelize.STRING
+    },
+    Phone: {
+        type: Sequelize.STRING
+    },
+    Fax: {
+        type: Sequelize.STRING
+    },
+    Mobile: {
+        type: Sequelize.STRING
+    },
+    Email: {
+        type: Sequelize.STRING
+    },
+    Website: {
+        type: Sequelize.STRING
+    },
+    Pan: {
+        type: Sequelize.STRING(10)
+    },
+    Gstin: {
+        type: Sequelize.STRING(15)
+    },
+    Cin: {
+        type: Sequelize.STRING(25)
+    },
+    CGst: {
+        type: Sequelize.DECIMAL(5, 2)
+    },
+    SGst: {
+        type: Sequelize.DECIMAL(5, 2)
+    },
+    IGst: {
+        type: Sequelize.DECIMAL(5, 2)
+    },
+    TradeDis: {
+        type: Sequelize.DECIMAL(5, 2)
+    },
+    Spl1: {
+        type: Sequelize.STRING(100)
+    },
+    Spl2: {
+        type: Sequelize.STRING(100)
+    },
+    File_path: {
+        type: Sequelize.STRING
+    }
+}, {
+    //options
+    charset: 'utf8',
+    collate: 'utf8_unicode_ci',
+    timestamps: false,
+    freezeTableName: true
+});

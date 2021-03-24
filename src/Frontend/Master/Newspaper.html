@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+    <link type="text/css" href="../../../node_modules/material-icons/iconfont/material-icons.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="../../../node_modules/materialize-css/dist/css/materialize.min.css"
+        media="screen,projection" />
+    <link rel="stylesheet" href="../../../assets/css/Master/Vend.css">
+    <title>Madira</title>
+</head>
+
+<body>
+    <div class="container">
+        <h3 align="center">NEWSPAPER MASTER</h3>
+        <div class="row">
+            <label id="compulsory" class="col l4 push-l8">Fields marked with (*) are compulsory</label>
+        </div>
+        <form id="vend" style="margin-top: 10%;">
+            <div class="row">
+                <div class="input-field col l2 xl2 push-xl4">
+                    <input id="input1" type="text" placeholder="Short name" maxlength="5" />
+                    <label for="input1">SHORT NAME *</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col l5 xl4 push-xl4">
+                    <input id="input2" type="text" placeholder="Newspaper name" maxlength="25" />
+                    <label for="input2">NEWSPAPER NAME *</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col l3 xl3 push-xl4">
+                    <select id="input3" required>
+                        <option value="" disabled selected>Group name</option>
+                    </select>
+                    <label>GROUP *</label>
+                </div>
+            </div>
+        </form>
+        <div class="row">
+            <div class="file-field input-field col l3 xl2 offset-l7 offset-xl7" style="margin-top: 0;">
+                <div id="chooseFile" class="btn-floating">
+                    <i class="material-icons">add</i>
+                    <input id="input0" type="file" accept=".xlsx" accesskey="o" />
+                </div>
+                <input class="file-path validate" type="text" placeholder="Select input file(.xlsx format)" readonly />
+            </div>
+        </div>
+        <br><br><br>
+        <div class="row" style="margin-top: 8%;">
+            <div class="buttons">
+                <a id="prevBtn" onclick="prev()" class="btn col pull-l1 push-xl0">Previous</a>
+                <a id="nxtBtn" onclick="nxt()" class="btn col push-l0 push-xl0">Next</a>
+                <a id="fstBtn" onclick="fst()" class="btn col push-l1 push-xl1">First</a>
+                <a id="lstBtn" onclick="lst()" class="btn col push-l2 push-xl2">Last</a>
+                <a id="showBtn" onclick="show()" class="btn col push-l3 push-xl3">Search</a>
+                <a id="addBtn" onclick="submit()" class="btn col push-l4 push-xl4">Add/Edit data</a>
+                <a id="prtBtn" onclick="prt()" class="btn col push-l5 push-xl5">Print</a>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../../node_modules/materialize-css/dist/js/materialize.min.js"></script>
+<script src="../../Backend/connector/Master/connectNewspaper.js"></script>
+
+</html>

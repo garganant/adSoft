@@ -1,0 +1,48 @@
+{
+  "name": "adsoft",
+  "productName": "AdSoft",
+  "version": "1.0.0",
+  "description": "Billing software for advertising agency",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-packager . AdSoft --platform win32 --arch ia32 --asar --icon ./assets/images/Logo.ico --out dist/",
+    "setup": "electron-installer-windows --src dist/AdSoft-win32-ia32/ --dest dist/installers/"
+  },
+  "build": {
+    "appId": "AdSoft app",
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "uninstallDisplayName": "AdSoft",
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "./assets/images/Logo.ico",
+      "uninstallerIcon": "./assets/images/Logo.ico",
+      "createDesktopShortcut": "always",
+      "createStartMenuShortcut": true
+    }
+  },
+  "author": "Anant Garg",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^10.1.5",
+    "electron-installer-windows": "^3.0.0",
+    "electron-packager": "^15.2.0"
+  },
+  "dependencies": {
+    "custom-electron-titlebar": "^3.2.6",
+    "electron-pdf-window": "^1.0.12",
+    "electron-reload": "^1.5.0",
+    "electron-squirrel-startup": "^1.0.0",
+    "exceljs": "^4.2.1",
+    "material-icons": "^0.5.4",
+    "materialize-css": "^1.0.0-rc.2",
+    "mysql2": "^2.2.5",
+    "pdfkit": "^0.11.0",
+    "sequelize": "^6.5.1"
+  }
+}

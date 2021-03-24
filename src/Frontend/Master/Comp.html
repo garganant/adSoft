@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="../../../node_modules/materialize-css/dist/css/materialize.min.css"
+        media="screen,projection" />
+    <link rel="stylesheet" href="../../../assets/css/Master/Comp.css">
+    <title>Madira</title>
+</head>
+
+<body>
+    <div class="container">
+        <h3 align="center">COMPANY MASTER</h3>
+        <div class="row">
+            <label id="compulsory" class="col l5 push-l9">Fields marked with (*) are compulsory</label>
+        </div>
+        <form id="comp">
+            <div class="row">
+                <div class="input-field col l2">
+                    <input id="input1" type="text" placeholder="Company code" maxlength="10" />
+                    <label for="input1">CODE *</label>
+                </div>
+                <div class="input-field col l6 push-l1">
+                    <input id="input2" type="text" placeholder="Company name" />
+                    <label for="input2">NAME *</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col l7">
+                    <input id="input3" type="text" placeholder="Address" />
+                    <label for="input3">ADDRESS</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col l4">
+                    <input id="input4" type="text" placeholder="Phone no." />
+                    <label for="input4">PHONE NO</label>
+                </div>
+                <div class="input-field col l2 push-l1">
+                    <input id="input5" type="number" placeholder="Mobile no." />
+                    <label for="input5">MOBILE NO</label>
+                </div>
+                <div class="input-field col l3 push-l2">
+                    <input id="input6" type="text" placeholder="Fax no" />
+                    <label for="input6">FAX NO</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col l3">
+                    <input id="input7" type="text" placeholder="Email id" />
+                    <label for="input7">EMAIL ID</label>
+                </div>
+                <div class="input-field col l5">
+                    <input id="input8" type="text" placeholder="Website link" />
+                    <label for="input8">WEBSITE</label>
+                </div>
+                <div class="input-field col l3">
+                    <input id="input9" type="number" step=".01" placeholder="Discount percent" />
+                    <label for="input9">TRADE DISCOUNT *</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col l2">
+                    <input id="input10" type="text" placeholder="PAN" maxlength="10" />
+                    <label for="input10">PAN</label>
+                </div>
+                <div class="input-field col l2">
+                    <input id="input11" type="text" placeholder="GSTIN" maxlength="15" />
+                    <label for="input11">GSTIN</label>
+                </div>
+                <div class="input-field col l3">
+                    <input id="input12" type="text" placeholder="CIN" maxlength="25" />
+                    <label for="input12">CIN</label>
+                </div>
+                <div class="input-field col l1">
+                    <input id="input13" type="number" placeholder="CGST" />
+                    <label for="input13">CGST *</label>
+                </div>
+                <div class="input-field col l1">
+                    <input id="input14" type="number" placeholder="SGST" />
+                    <label for="input14">SGST *</label>
+                </div>
+                <div class="input-field col l1">
+                    <input id="input15" type="number" placeholder="IGST" />
+                    <label for="input15">IGST *</label>
+                </div>
+                <div class="row">
+                    <div class="input-field col l11">
+                        <input id="input16" type="text" placeholder="Spl instruction 1" maxlength="100" />
+                        <label for="input16">SPECIAL INSTRUCTION 1</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col l11">
+                        <input id="input17" type="text" placeholder="Spl instruction 2" maxlength="100" />
+                        <label for="input17">SPECIAL INSTRUCTION 2</label>
+                    </div>
+                </div>
+            <div class="row">
+                <div class="input-field col l6">
+                    <input id="input0" type="text" placeholder="File path" readonly />
+                    <label for="input0">FILE PATH *</label>
+                </div>
+                <div class="input-field col l2">
+                    <button class="btn-small" id="fileBtn" onclick="select()">Change</button>
+                </div>
+            </div>
+        </form>
+        <div class="buttons row">
+            <a id="prevBtn" class="disabled btn col pull-l1 push-xl0">Previous</a>
+            <a id="nxtBtn" class="disabled btn col push-l0 push-xl0">Next</a>
+            <a id="fstBtn" class="disabled btn col push-l1 push-xl1">First</a>
+            <a id="lstBtn" class="disabled btn col push-l2 push-xl2">Last</a>
+            <a id="showBtn" onclick="show()" class="btn col push-l3 push-xl3">Search</a>
+            <a id="addBtn" onclick="addData()" class="btn col push-l4 push-xl4">Add/Edit data</a>
+            <a id="prtBtn" class="disabled btn col push-l5 push-xl5">Print</a>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../../node_modules/materialize-css/dist/js/materialize.min.js"></script>
+<script src="../../Backend/connector/Master/connectComp.js"></script>
+
+</html>

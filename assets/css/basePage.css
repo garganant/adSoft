@@ -1,0 +1,46 @@
+html{
+  height: 100%;
+}
+
+body {
+  background-color: #f4e1d2;
+  background-repeat: no-repeat;
+  /* background-image: url("../images/Home.jpeg"); */
+  background-size: 100vw 100vh;
+}
+
+h1 {
+  color: yellow;
+  font-family: 'Constantia';
+}
+
+h5 {
+  color: #feb236;
+  font-family: cursive;
+  font-weight: bolder;
+}
+
+.marquee {
+  position: absolute;
+  top: 87vh;
+  left: 34vw;
+  font-size: 25px;
+  color: red;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.marquee span {
+  display: inline-block;
+  padding-left: 100%;
+  animation: marquee 8s linear infinite;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(-100%, 0);
+  }
+}

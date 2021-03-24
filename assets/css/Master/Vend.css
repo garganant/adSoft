@@ -1,0 +1,70 @@
+h3 {
+  font-family: 'Constantia';
+  color: #722620;
+}
+
+#compulsory {
+  position: absolute;
+  top: 10vh;
+  color: black;
+  font-family: Georgia;
+  font-size: 17px;
+}
+
+.input-field label {
+  color: #30110D;
+  font-weight: bolder;
+  font-family: 'Constantia';
+  font-size: 20px;
+}
+
+::-webkit-input-placeholder {
+  color: #686868;
+}
+
+.input-field input:empty {
+  border-bottom: 1px solid #000;
+  box-shadow: 0 1px 0 0 #000;
+}
+
+.input-field input:read-write {
+  border-bottom: 1px solid #000 !important;
+  box-shadow: 0 1px 0 0 #000 !important;
+}
+
+.input-field input:focus + label {
+  color: red !important;
+}
+
+.input-field input:focus {
+  border-bottom: 1px solid red !important;
+  box-shadow: 0 1px 0 0 red !important
+}
+
+.buttons a {
+  position: absolute;
+  font-family: 'Constantia';
+  background-color: #722620;
+}
+
+.btn:hover {
+  background-color: #491910;
+}
+
+.select-dropdown{
+  max-height: 20vw;
+}
+
+.file-field {
+  position: absolute;
+}
+
+#chooseFile {
+  background-color: #722620;
+}
+
+@media screen and (max-width: 1367px){
+  #rowSpacing {
+    display: none;
+  }
+}
