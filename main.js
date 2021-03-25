@@ -638,30 +638,31 @@ ipcMain.on('addEditRO', async (event, same, diff) => {
     win.webContents.send('roData:saved', await addEditRO(same, diff));
 });
 
-ipcMain.on('ro:prt', async (event, roNo) => {
+ipcMain.on('ro:prt', async (event, sameD, diffD) => {
     const Comp = require('./src/Backend/models/Master/Comp.js');
     const PaperGroups = require('./src/Backend/models/Master/PaperGroups.js');
     const Subject = require('./src/Backend/models/Master/Subject.js');
     const Newspaper = require('./src/Backend/models/Master/Newspaper.js');
     const Edition = require('./src/Backend/models/Master/Edition.js');
-    const { roData } = require('./src/Backend/helper/Input/RoFunc.js');
     const { createRo } = require('./src/Backend/helper/Input/createRo.js');
+    const { createRoExcel } = require('./src/Backend/helper/Input/createRoExcel.js');
     
     var cData = await Comp.findOne();
-    var arr = await roData(roNo);
+    var gData = await PaperGroups.findOne({ where: {Code: sameD.GroupCode} });
+    sameD['GroupName'] = gData.dataValues.GroupName;
+    sameD['HoLoc'] = gData.dataValues.HoLoc;
+    sameD['SubjectDetail'] = (await Subject.findOne({ attributes: ['SubjectDetail'], where: { Code: sameD.SubjectCode } })).dataValues.SubjectDetail;
 
-    var gData = await PaperGroups.findOne({ where: {Code: arr[0].GroupCode} });
-    arr[0]['GroupName'] = gData.dataValues.GroupName;
-    arr[0]['HoLoc'] = gData.dataValues.HoLoc;
-    arr[0]['SubjectDetail'] = (await Subject.findOne({ attributes: ['SubjectDetail'], where: { Code: arr[0].SubjectCode } })).dataValues.SubjectDetail;
-
-    var papers = await Newspaper.findAll({ attributes: ['ShortName', 'PaperName'], where: {GroupCode: arr[0].GroupCode} });
+    var papers = await Newspaper.findAll({ attributes: ['ShortName', 'PaperName'], where: {GroupCode: sameD.GroupCode} });
     var cities = await Edition.findAll();
     let paperMap = {}, cityMap = {};
     for (let ele of papers) paperMap[ele.dataValues['ShortName']] = ele.dataValues['PaperName'];
     for(let ele of cities) cityMap[ele.dataValues['Code']] = ele.dataValues['CityName'];
 
     let signStamp = path.join(__dirname, 'assets/images/signStamp.png');
-    await createRo(arr[0], arr[1], cData.dataValues, paperMap, cityMap, signStamp);
+    createRo(sameD, diffD, cData.dataValues, paperMap, cityMap, signStamp);
+    let pt = cData.dataValues.File_path + 'Print.xlsx';
+    createRoExcel(sameD, diffD, paperMap, cityMap, pt);
 
+    win.webContents.send('ro:prted', pt);
 });

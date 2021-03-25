@@ -1,6 +1,6 @@
 const electron = require('electron');
 const { ipcRenderer } = electron;
-const { dialog } = electron.remote
+const { shell, dialog } = electron.remote;
 const customTitlebar = require('custom-electron-titlebar');
 
 new customTitlebar.Titlebar({
@@ -8,7 +8,7 @@ new customTitlebar.Titlebar({
     icon: '../../../assets/images/Logo.ico'
 });
 
-var editionList = [], same = {}, diff = {}, btnNo;
+var editionList = [], same = {}, diff = {}, btnNo, same_d, diff_d;
 var messages = ['Reached start of file!', 'Reached end of file!', 'No data to fetch!'];
 let table = document.getElementById('dataTable');
 
@@ -110,13 +110,8 @@ ipcRenderer.on('roData:got', (event, arg, arg2) => {
 });
 
 function fillFields(arg, arg2) {
-    document.querySelector('#input1').value = arg.RoNo;
-    document.querySelector('#input2').value = arg.VendName;
-    document.querySelector('#input5').value = arg.TradeDis;
-    document.querySelector('#input6').value = arg.SplDis;
-    document.querySelector('#input7').value = arg.Position;
-    document.querySelector('#input8').value = arg.Spl1;
-    document.querySelector('#input9').value = arg.Spl2;
+    let arr = ['RoNo', 'VendName', '', '', 'TradeDis', 'SplDis', 'Position', 'Spl1', 'Spl2'];
+    for (let i = 1; i<=arr.length; i++) if (arr[i-1] !== '') document.querySelector(`#input${i}`).value = arg[arr[i-1]];
     document.querySelector('#roDate').value = arg.RoDate;
     selectDropdown(document.querySelector('#input3'), arg.GroupCode);
     selectDropdown(document.querySelector('#input4'), arg.SubjectCode);
@@ -144,18 +139,14 @@ function selectDropdown(select, val) {
 }
 
 function submit() {
+    let arr = ['RoNo', 'VendName', '', '', 'TradeDis', 'SplDis', 'Position', 'Spl1', 'Spl2'];
     var same = {}, diffD = [], roNum = document.querySelector('#input1').value;
-    same['RoNo'] = roNum;
-    same['VendName'] = document.querySelector('#input2').value;
+    for (let i = 1; i <= arr.length; i++) if (arr[i-1] !== '') same[arr[i - 1]] = document.querySelector(`#input${i}`).value;
+    same['RoDate'] = document.querySelector('#roDate').value;
     let e = document.querySelector('#input3');
     same['GroupCode'] = e.options[e.selectedIndex].value;
     e = document.querySelector('#input4');
     same['SubjectCode'] = e.options[e.selectedIndex].value;
-    same['TradeDis'] = document.querySelector('#input5').value;
-    same['SplDis'] = document.querySelector('#input6').value;
-    same['Position'] = document.querySelector('#input7').value;
-    same['Spl1'] = document.querySelector('#input8').value;
-    same['Spl2'] = document.querySelector('#input9').value;
 
     var table = document.getElementById("dataTable");
     for(let i=1; i<table.rows.length; i++) {
@@ -180,7 +171,7 @@ function submit() {
     for(let obj of diffD) {
         for ([key, val] of Object.entries(obj)) if (val == "") empty = true;
     }
-    
+    same_d = same, diff_d = diffD;
     if (!diffD.length) dialog.showMessageBox({ type: "error", message: 'Empty RO cannot be created!' });
     else if (empty) dialog.showMessageBox({ type: "error", message: 'Required fields cannot be empty!' });
     else ipcRenderer.send('addEditRO', same, diffD);
@@ -285,10 +276,13 @@ function cRpR() {
 }
 
 function prt() {
-    var No = document.querySelector('#input1').value;
-    if (No == "" || !Object.keys(same).length) dialog.showMessageBox({ type: "error", message: 'First search a RO to print!' });
-    else ipcRenderer.send('ro:prt', No);
+    submit();
+    if (diff_d.length) ipcRenderer.send('ro:prt', same_d, diff_d);
 }
+
+ipcRenderer.on('ro:prted', async (event, path) => {
+    if (path != null) shell.openPath(path);
+});
 
 function reload(e) {
     if (e.ctrlKey && e.keyCode == 82) window.location.reload()

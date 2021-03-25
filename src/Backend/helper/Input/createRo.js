@@ -92,7 +92,7 @@ function generateRoTable(doc, diffD, paperMap, cityMap, sameD, IGst) {
     let trade = (gross - addl) * sameD.TradeDis * 0.01;
     let net = gross - addl - trade;
     let gst = net * IGst * 0.01;
-    generateTableRow(doc, y, "Trade Discount / AC  : 15 %", gross, addl, trade, net, "", gst, (net + gst).toFixed(2));
+    generateTableRow(doc, y, "Trade Discount / AC  : 15 %", gross, addl, trade, net, "", gst, Math.round(net + gst));
     y+= 10;
     generateHr(doc, y - 2, "black");
     generateVr(doc, y-1);
