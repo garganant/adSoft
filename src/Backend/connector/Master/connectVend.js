@@ -2,6 +2,7 @@ const electron = require('electron');
 const { ipcRenderer } = electron;
 const { dialog } = electron.remote
 const customTitlebar = require('custom-electron-titlebar');
+var States = require('../../Backend/helper/Master/States.json');
 
 new customTitlebar.Titlebar({
     backgroundColor: customTitlebar.Color.fromHex('#444'),
@@ -10,7 +11,18 @@ new customTitlebar.Titlebar({
 
 var display = ['Reached start of file!', 'Reached end of file!', 'No data to fetch!', 'No data to fetch!'], btnNo;
 
-M.FormSelect.init(document.querySelector('#input7'));
+M.FormSelect.init(document.querySelector('#input11'));
+
+fillDropdown();
+
+function fillDropdown() {
+    var group = document.getElementById('states');
+    for (obj of States) {
+        var opt = document.createElement("option");
+        opt.value = obj.State;
+        group.append(opt);
+    }
+}
 
 function prev() {
     btnNo = 0;
@@ -43,13 +55,12 @@ function show() {
 }
 
 ipcRenderer.on('vend:getData', (e, arg) => {
-    console.log(arg);
     if (arg != null) {
-        let arr = ['Name', 'Address', 'ContactPerson', 'ContactNo', 'Gstin', 'Pan'];
-        for(let i=1; i<=6; i++) document.querySelector(`#input${i}`).value = arg[arr[i-1]];
+        let arr = ['Name', 'Street1', 'Street2', 'City', 'Pincode', 'State', 'ContactPerson', 'ContactNo', 'Gstin', 'Pan'];
+        for(let i=1; i<=arr.length; i++) document.querySelector(`#input${i}`).value = arg[arr[i-1]];
 
         var elems = document.querySelectorAll('select');
-        var select = document.getElementById('input7');
+        var select = document.getElementById('input11');
         for (var i = 0; i < select.options.length; i++) {
             if (select[i].value == arg.Status) select.options[i].selected = "selected";
         }
@@ -68,18 +79,18 @@ function submit() {
         ipcRenderer.send('vend:submit', path);
     }
     else {
-        let arr = [], empty = false;
-        for (let i = 1; i <= 6; i++) arr.push(document.querySelector(`#input${i}`).value);
+        let arr = ['Name', 'Street1', 'Street2', 'City', 'Pincode', 'State', 'ContactPerson', 'ContactNo', 'Gstin', 'Pan'];
+        let obj = {}, empty = false;
+        for (let i = 1; i <= 10; i++) obj[arr[i - 1]] = document.querySelector(`#input${i}`).value;
 
-        var e = document.getElementById("input7");
+        var e = document.getElementById("input11");
         var Status = e.options[e.selectedIndex].value;
-        arr.push(Status);
-        
-        for(let i of arr) if(i == "") empty = true;
+        obj['Status'] = Status;
+        for ([key, val] of Object.entries(obj)) if(val == "") empty = true;
         if (empty) dialog.showMessageBox({ type: "error", message: 'Required fields cannot be empty!' })
         else {
             btnSet();
-            ipcRenderer.send('vend:submit', arr);
+            ipcRenderer.send('vend:submit', obj);
         }
     }
 }

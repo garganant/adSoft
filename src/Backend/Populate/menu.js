@@ -55,6 +55,14 @@ function menuTemplate() {
                     }
                 },
                 { type: 'separator' },
+                {
+                    label: 'Settings',
+                    accelerator: 'Ctrl+,',
+                    click() {
+                        win.loadURL(path.join(__dirname, path.relative('Backend/Populate', 'Frontend/Master/Settings.html')));
+                    }
+                },
+                { type: 'separator' },
                 { label: 'Exit', click() { app.quit() } }
             ]
         },

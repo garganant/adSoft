@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+    <link type="text/css" href="../../../node_modules/material-icons/iconfont/material-icons.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="../../../node_modules/materialize-css/dist/css/materialize.min.css" media="screen,projection" />
+    <link rel="stylesheet" href="../../../assets/css/Input/Bill.css">
+    <title>AdSoft</title>
+</head>
+<body>
+    <div class="container">
+        <h3 align="center">RO</h3>
+        <div class="row">
+            <label id="compulsory" class="col l4 push-l9">Fields marked with (*) are compulsory</label>
+        </div>
+        <div class="row">
+            <div class="input-field col l6 xl7">
+                <select id="input1" required multiple>
+                    <option value="" disabled>RO Number | RO date | Customer name</option>
+                </select>
+                <label>RO SELECTION *</label>
+            </div>
+        </div>
+        <div class="row buttons">
+            <a id="addBtn" onclick="submit()" class="btn">Create Bill</a>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../../node_modules/materialize-css/dist/js/materialize.min.js"></script>
+<script src="../../Backend/connector/Input/connectBill.js"></script>
+</html>

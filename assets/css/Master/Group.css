@@ -3,10 +3,6 @@ h3 {
   color: #722620;
 }
 
-.row {
-  margin: 0%;
-}
-
 #compulsory {
   position: absolute;
   top: 10vh;
@@ -65,4 +61,11 @@ h3 {
 
 #chooseFile {
   background-color: #722620;
+}
+
+#fileBtn{
+  top: 64.2%;
+  left: 73%;
+  background:#722620;
+  border-radius: 10px;
 }

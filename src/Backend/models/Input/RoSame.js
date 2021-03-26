@@ -41,6 +41,12 @@ const RoSame = sequelize.define('RoSame', {
     },
     Spl2: {
         type: Sequelize.STRING(100)
+    },
+    BillNo: {
+        type: Sequelize.INTEGER(10)
+    },
+    BillDate: {
+        type: Sequelize.DATEONLY
     }
 }, {
     //options

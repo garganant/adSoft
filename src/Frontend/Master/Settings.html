@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="../../../node_modules/materialize-css/dist/css/materialize.min.css"
+        media="screen,projection" />
+    <link rel="stylesheet" href="../../../assets/css/Master/Group.css">
+    <title>AdSoft</title>
+</head>
+<body>
+    <div class="container">
+        <h3 align="center">SETTINGS</h3>
+        <div class="row">
+            <label id="compulsory" class="col l5 push-l9">Fields marked with (*) are compulsory</label>
+        </div>
+        <div class="row">
+            <div class="input-field col l11">
+                <input id="input1" type="text" placeholder="Spl instruction 1" maxlength="100" />
+            <label for="input1">SPECIAL INSTRUCTION 1</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col l11">
+                <input id="input2" type="text" placeholder="Spl instruction 2" maxlength="100" />
+                <label for="input2">SPECIAL INSTRUCTION 2</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col l6">
+                <input id="input0" type="text" placeholder="File path" readonly />
+                <label for="input0">FILE PATH *</label>
+            </div>
+            <div class="input-field col l2">
+                <button class="btn-small" id="fileBtn" onclick="select()">Change</button>
+            </div>
+        </div>
+        <div class="row buttons">
+            <a id="addBtn" onclick="addData()" class="btn col push-l4 push-xl4">Add/Edit data</a>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../../node_modules/materialize-css/dist/js/materialize.min.js"></script>
+<script src="../../Backend/connector/Master/connectSettings.js"></script>
+</html>

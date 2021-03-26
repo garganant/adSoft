@@ -11,9 +11,9 @@ h3 {
   font-size: 17px;
 }
 
-.row {
+/* .row {
   margin: 0%;
-}
+} */
 
 .input-field label {
   color: #30110D;
@@ -46,19 +46,12 @@ h3 {
  }
 
 .buttons a {
-  position: absolute;
-  top: 90%;
+  /* position: absolute;
+  top: 90%; */
   font-family: 'Constantia';
   background-color: #722620;
 }
 
 .btn:hover {
   background-color: #491910;
-}
-
-#fileBtn{
-  top: 64.2%;
-  left: 73%;
-  background:#722620;
-  border-radius: 10px;
 }

@@ -92,7 +92,7 @@ function generateRoTable(doc, diffD, paperMap, cityMap, sameD, IGst) {
     let trade = (gross - addl) * sameD.TradeDis * 0.01;
     let net = gross - addl - trade;
     let gst = net * IGst * 0.01;
-    generateTableRow(doc, y, "Trade Discount / AC  : 15 %", gross, addl, trade, net, "", gst, Math.round(net + gst));
+    generateTableRow(doc, y, "Trade Discount / AC  : 15 %", commaSeparated(gross), commaSeparated(addl), commaSeparated(trade), commaSeparated(net), "", commaSeparated(gst), commaSeparated(net + gst));
     y+= 10;
     generateHr(doc, y - 2, "black");
     generateVr(doc, y-1);
@@ -199,6 +199,10 @@ function generateVr(doc, y) {
                 .lineTo(x[i], y)
                 .stroke();
     }
+}
+
+function commaSeparated(num) {
+    return num.toLocaleString('en-IN', { maximumFractionDigits: 0 })
 }
 
 function formatDate(date) {

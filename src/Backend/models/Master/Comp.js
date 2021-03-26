@@ -54,6 +54,21 @@ module.exports = sequelize.define('Comp', {
     Spl2: {
         type: Sequelize.STRING(100)
     },
+    MsmeRegn: {
+        type: Sequelize.STRING(20)
+    },
+    Udyam: {
+        type: Sequelize.STRING(20)
+    },
+    Tan: {
+        type: Sequelize.STRING(10)
+    },
+    HsnCode: {
+        type: Sequelize.STRING(6)
+    },
+    Fy: {
+        type: Sequelize.STRING(7)
+    },
     File_path: {
         type: Sequelize.STRING
     }

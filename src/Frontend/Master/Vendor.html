@@ -7,7 +7,7 @@
     <link type="text/css" rel="stylesheet" href="../../../node_modules/materialize-css/dist/css/materialize.min.css"
         media="screen,projection" />
     <link rel="stylesheet" href="../../../assets/css/Master/Vend.css">
-    <title>Madira</title>
+    <title>AdSoft</title>
 </head>
 
 <body>
@@ -25,49 +25,66 @@
                 </div>
             </div>
             <div class="row">
-                <div class="input-field col l7 xl6 push-xl2">
-                    <input id="input2" type="text" placeholder="Address" />
+                <div class="input-field col l6 xl5 push-xl2">
+                    <input id="input2" type="text" placeholder="Street line 1*" maxlength="40" />
                     <label for="input2">ADDRESS *</label>
                 </div>
             </div>
             <div class="row">
+                <div class="input-field col l6 xl5 push-xl2">
+                    <input id="input3" type="text" placeholder="Street line 2*" maxlength="40" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col l5 xl4 push-xl2">
+                    <input id="input4" type="text" placeholder="City*" maxlength="40" />
+                </div>
+                <div class="input-field col l2 xl2 push-xl2">
+                    <input id="input5" type="number" placeholder="Pincode" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col l3 xl4 push-xl2">
+                    <input id="input6" list="states" placeholder="STATE*" maxlength="40" />
+                    <datalist id="states"></datalist>
+                </div>
+            </div>
+            <div class="row">
                 <div class="input-field col l3 xl3 push-xl2">
-                    <input id="input3" type="text" placeholder="Contact person" />
-                    <label for="input3">CONTACT PERSON *</label>
+                    <input id="input7" type="text" placeholder="Contact person" />
+                    <label for="input7">CONTACT PERSON *</label>
                 </div>
                 <div class="input-field col l3 xl3  push-xl2">
-                    <input id="input4" type="text" placeholder="Contact no" />
-                    <label for="input4">CONTACT NUMBER *</label>
+                    <input id="input8" type="text" placeholder="Contact no" />
+                    <label for="input8">CONTACT NUMBER *</label>
+                </div>
+                <div class="file-field input-field col l3 xl2 offset-l7 offset-xl7" style="margin-top: 0;">
+                    <div id="chooseFile" class="btn-floating">
+                        <i class="material-icons">add</i>
+                        <input id="input0" type="file" accept=".xlsx" accesskey="o" />
+                    </div>
+                    <input class="file-path validate" type="text" placeholder="Select input file(.xlsx format)" readonly />
                 </div>
             </div>
             <div class="row" style="margin-bottom: 0;">
                 <div class="input-field col l3 xl2 push-xl2">
-                    <select id="input7" required>
+                    <select id="input11" required>
                         <option value="L">Local</option>
                         <option value="C">Central</option>
                     </select>
                     <label>STATUS *</label>
                 </div>
                 <div class="input-field col l3 xl2 push-xl2">
-                    <input id="input5" type="text" placeholder="Gstin" maxlength="15" />
-                    <label for="input5">GSTIN *</label>
+                    <input id="input9" type="text" placeholder="Gstin" maxlength="15" />
+                    <label for="input9">GSTIN *</label>
                 </div>
                 <div class="input-field col l3 xl2 push-xl2">
-                    <input id="input6" type="text" placeholder="Pan" maxlength="10" />
-                    <label for="input6">PAN *</label>
+                    <input id="input10" type="text" placeholder="Pan" maxlength="10" />
+                    <label for="input10">PAN *</label>
                 </div>
             </div>
         </form>
-        <div class="row">
-            <div class="file-field input-field col l3 xl2 offset-l7 offset-xl7"  style="margin-top: 0;">
-                <div id="chooseFile" class="btn-floating">
-                    <i class="material-icons">add</i>
-                    <input id="input0" type="file" accept=".xlsx" accesskey="o" />
-                </div>
-                <input class="file-path validate" type="text" placeholder="Select input file(.xlsx format)" readonly />
-            </div>
-        </div>
-        <br><br><br><br><br>
+        <br><br>
         <div class="row">
             <div class="buttons">
                 <a id="prevBtn" onclick="prev()" class="btn col pull-l1 push-xl0">Previous</a>

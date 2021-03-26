@@ -91,26 +91,23 @@ ipcMain.on('vend:submit', async (event, arg) => {
     try {
         if (typeof arg == 'object') {
             const [user, created] = await  Vend.findOrCreate({
-                where: { Name: arg[0] },
+                where: { Name: arg.Name },
                 defaults: {
-                    Address: arg[1],
-                    ContactPerson: arg[2],
-                    ContactNo: arg[3],
-                    Gstin: arg[4],
-                    Pan: arg[5],
-                    Status: arg[6]
+                    Street1: arg.Street1,
+                    Street2: arg.Street2,
+                    City: arg.City,
+                    Pincode: parseInt(arg.Pincode),
+                    State: arg.State,
+                    ContactPerson: arg.ContactPerson,
+                    ContactNo: arg.ContactNo,
+                    Gstin: arg.Gstin,
+                    Pan: arg.Pan,
+                    Status: arg.Status
                 }
             });
             if (created) win.webContents.send('vend:dataAdded', 'Data added to vend master!');
             else {
-                await Vend.update({
-                    Address: arg[1],
-                    ContactPerson: arg[2],
-                    ContactNo: arg[3],
-                    Gstin: arg[4],
-                    Pan: arg[5],
-                    Status: arg[6]
-                }, { where: { Name: arg[0] } });
+                await Vend.update(arg, { where: { Name: arg.Name } });
                 win.webContents.send('vend:dataAdded', 'Data updated!');
             }
         }
@@ -121,14 +118,15 @@ ipcMain.on('vend:submit', async (event, arg) => {
                 var worksheet = workbook.getWorksheet('Sheet1');
                 worksheet.eachRow({ includeEmpty: true }, function (currRow, rowNumber) {
                     let row = currRow.values;
-                    let empty = false, ok = true;
-                    for (let i = 1; i <= 7; i++) if (i != 6 && row[i] == null) empty = true;
-                    if (rowNumber == 1 || empty || row[5].length > 15 || (row[6] != null && row[6].length > 10) || row[7].length > 1) ok = false;
-                    var obj = { Name: row[1], Address: row[2], ContactPerson: row[3], ContactNo: row[4], Gstin: row[5], Pan: row[6], Status: row[7] };
-                    if(ok) arr.push(obj);
+                    let empty = false;
+                    for (let i = 1; i <= 12; i++) if (row[i] == null) empty = true;
+                    if (rowNumber != 1 || !empty) {
+                        var obj = { Name: row[1], Street1: row[2].substring(0, 40), Street2: row[3].substring(0, 40), City: row[4].substring(0, 40), Pincode: row[5], State: row[6].substring(0, 40), ContactPerson: row[7], ContactNo: row[8], Gstin: row[9], Pan: row[10], Status: row[11] };
+                        arr.push(obj);
+                    }
                 });
                 await Vend.bulkCreate(arr, {
-                    updateOnDuplicate: ["Address", "ContactPerson", "ContactNo", "Gstin", "Pan", "Status"]
+                    updateOnDuplicate: ["Street1", "Street2", "City", "Pincode", "State", "ContactPerson", "ContactNo", "Gstin", "Pan", "Status"]
                 });
             });
             win.webContents.send('vend:dataAdded', 'Data added to vend master!');
@@ -550,13 +548,6 @@ ipcMain.on('subject:report', async (event) => {
 
 // COMPANY ///////////////////////////////////////////
 
-ipcMain.on('filePath:show', async (event) => {
-    const Comp = require('./src/Backend/models/Master/Comp.js');
-    var c = await Comp.findOne({ attributes: ['File_path'] });
-    if (c != null) win.webContents.send('selected', c.dataValues.File_path);
-    else win.webContents.send('selected', "");
-});
-
 ipcMain.on('comp:data', async (event, arg) => {
     const Comp = require('./src/Backend/models/Master/Comp.js');
     var data = await Comp.findOne({ where: { Code: arg } });
@@ -575,6 +566,15 @@ ipcMain.on('comp:submit', async (event, arg) => {
     win.webContents.send('comp:submitted', message);
 });
 
+// SETTINGS //////////////////////////////////////////////////
+
+ipcMain.on('compPath:show', async (event) => {
+    const Comp = require('./src/Backend/models/Master/Comp.js');
+    var c = await Comp.findOne({ attributes: ['File_path', 'Spl1', 'Spl2'] });
+    if (c != null) win.webContents.send('selected', c.dataValues);
+    else win.webContents.send('selected', null);
+});
+
 ipcMain.on('select', async (event) => {
     const Comp = require('./src/Backend/models/Master/Comp.js');
     var path = await dialog.showOpenDialog({ properties: ['openDirectory'] });
@@ -583,8 +583,20 @@ ipcMain.on('select', async (event) => {
             await Comp.update({ File_path: path.filePaths + '\\' }, { where: { Code: { [Op.ne]: null } } });
         });
     }
-    var c = await Comp.findOne({ attributes: ['File_path'] });
-    win.webContents.send('selected', c.dataValues.File_path);
+    var c = await Comp.findOne({ attributes: ['File_path', 'Spl1', 'Spl2'] });
+    win.webContents.send('selected', c.dataValues);
+});
+
+ipcMain.on('settings:submit', async(event, arg) => {
+    try {
+        const Comp = require('./src/Backend/models/Master/Comp.js');
+        await Comp.update(arg, { where: { Code: {[Op.ne]: null} } });
+        win.webContents.send('settings:submitted');
+    }
+    catch (err) {
+        showError(err.stack)
+        win.webContents.send('settings:submitted');
+    }
 });
 
 // INPUT ///////////////////////////////////////////////////////////////
@@ -634,8 +646,14 @@ ipcMain.on('roData:get', async (event, arg) => {
 });
 
 ipcMain.on('addEditRO', async (event, same, diff) => {
-    const { addEditRO } = require('./src/Backend/helper/Input/RoFunc.js');
-    win.webContents.send('roData:saved', await addEditRO(same, diff));
+    try {
+        const { addEditRO } = require('./src/Backend/helper/Input/RoFunc.js');
+        win.webContents.send('roData:saved', await addEditRO(same, diff));
+    }
+    catch (err) {
+        showError(err.stack)
+        win.webContents.send('roData:saved', null);
+    }
 });
 
 ipcMain.on('ro:prt', async (event, sameD, diffD) => {
@@ -646,23 +664,37 @@ ipcMain.on('ro:prt', async (event, sameD, diffD) => {
     const Edition = require('./src/Backend/models/Master/Edition.js');
     const { createRo } = require('./src/Backend/helper/Input/createRo.js');
     const { createRoExcel } = require('./src/Backend/helper/Input/createRoExcel.js');
+
+    try {
+        var cData = await Comp.findOne();
+        var gData = await PaperGroups.findOne({ where: {Code: sameD.GroupCode} });
+        sameD['GroupName'] = gData.dataValues.GroupName;
+        sameD['HoLoc'] = gData.dataValues.HoLoc;
+        sameD['SubjectDetail'] = (await Subject.findOne({ attributes: ['SubjectDetail'], where: { Code: sameD.SubjectCode } })).dataValues.SubjectDetail;
     
-    var cData = await Comp.findOne();
-    var gData = await PaperGroups.findOne({ where: {Code: sameD.GroupCode} });
-    sameD['GroupName'] = gData.dataValues.GroupName;
-    sameD['HoLoc'] = gData.dataValues.HoLoc;
-    sameD['SubjectDetail'] = (await Subject.findOne({ attributes: ['SubjectDetail'], where: { Code: sameD.SubjectCode } })).dataValues.SubjectDetail;
+        var papers = await Newspaper.findAll({ attributes: ['ShortName', 'PaperName'], where: {GroupCode: sameD.GroupCode} });
+        var cities = await Edition.findAll();
+        let paperMap = {}, cityMap = {};
+        for (let ele of papers) paperMap[ele.dataValues['ShortName']] = ele.dataValues['PaperName'];
+        for(let ele of cities) cityMap[ele.dataValues['Code']] = ele.dataValues['CityName'];
+    
+        let signStamp = path.join(__dirname, 'assets/images/signStamp.png');
+        createRo(sameD, diffD, cData.dataValues, paperMap, cityMap, signStamp);
+        let pt = cData.dataValues.File_path + 'Print.xlsx';
+        createRoExcel(sameD, diffD, paperMap, cityMap, pt);
+    
+        win.webContents.send('ro:prted', pt);
+    }
+    catch (err) {
+        showError(err.stack)
+        win.webContents.send('ro:prted', null);
+    }
+});
 
-    var papers = await Newspaper.findAll({ attributes: ['ShortName', 'PaperName'], where: {GroupCode: sameD.GroupCode} });
-    var cities = await Edition.findAll();
-    let paperMap = {}, cityMap = {};
-    for (let ele of papers) paperMap[ele.dataValues['ShortName']] = ele.dataValues['PaperName'];
-    for(let ele of cities) cityMap[ele.dataValues['Code']] = ele.dataValues['CityName'];
+// BILL ////////////////////////////////////////
 
-    let signStamp = path.join(__dirname, 'assets/images/signStamp.png');
-    createRo(sameD, diffD, cData.dataValues, paperMap, cityMap, signStamp);
-    let pt = cData.dataValues.File_path + 'Print.xlsx';
-    createRoExcel(sameD, diffD, paperMap, cityMap, pt);
-
-    win.webContents.send('ro:prted', pt);
+ipcMain.on('roCust:get', async (event) => {
+    const RoSame = require('./src/Backend/models/Input/RoSame.js');
+    var data = await RoSame.findAll({ attributes: ['RoNo', 'RoDate', 'VendName'], where: {BillNo: {[Op.is]: null}} });
+    win.webContents.send('roCust:got', data);
 });

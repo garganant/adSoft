@@ -8,7 +8,7 @@ new customTitlebar.Titlebar({
     icon: '../../../assets/images/Logo.ico'
 });
 
-var editionList = [], same = {}, diff = {}, btnNo, same_d, diff_d;
+var editionList = [], btnNo, same_d, diff_d;
 var messages = ['Reached start of file!', 'Reached end of file!', 'No data to fetch!'];
 let table = document.getElementById('dataTable');
 
@@ -37,7 +37,7 @@ ipcRenderer.on('edition:got', (e, data) => editionList = data);
 function fillDropdown(fieldId, data, val, txt) {
     var group = document.getElementById(fieldId);
     group.length = 1;
-    for (i in data) {
+    for (let i in data) {
         var opt = document.createElement("option");
         opt.value = data[i][val];
         if (txt !== '') opt.text = data[i][txt];
@@ -178,7 +178,7 @@ function submit() {
 }
 
 ipcRenderer.on('roData:saved', (event, arg) => {
-    dialog.showMessageBox({ type: "info", message: arg });
+    if(arg != null) dialog.showMessageBox({ type: "info", message: arg });
     window.location.reload();
 });
 
@@ -280,12 +280,12 @@ function prt() {
     if (diff_d.length) ipcRenderer.send('ro:prt', same_d, diff_d);
 }
 
-ipcRenderer.on('ro:prted', async (event, path) => {
+ipcRenderer.on('ro:prted', (event, path) => {
     if (path != null) shell.openPath(path);
 });
 
 function reload(e) {
-    if (e.ctrlKey && e.keyCode == 82) window.location.reload()
+    if (e.ctrlKey && e.keyCode == 82) window.location.reload();
 }
 
 document.addEventListener('keyup', reload);

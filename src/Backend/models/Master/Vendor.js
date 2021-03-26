@@ -6,8 +6,20 @@ module.exports = sequelize.define('vend', {
         type: Sequelize.STRING,
         primaryKey: true
     },
-    Address: {
-        type: Sequelize.STRING
+    Street1: {
+        type: Sequelize.STRING(40)
+    },
+    Street2: {
+        type: Sequelize.STRING(40)
+    },
+    City: {
+        type: Sequelize.STRING(40)
+    },
+    Pincode: {
+        type: Sequelize.INTEGER(6)
+    },
+    State: {
+        type: Sequelize.STRING(40)
     },
     ContactPerson: {
         type: Sequelize.STRING

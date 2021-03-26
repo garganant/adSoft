@@ -8,16 +8,6 @@ new customTitlebar.Titlebar({
     icon: '../../../assets/images/Logo.ico'
 });
 
-ipcRenderer.send('filePath:show');
-
-function select() {
-    ipcRenderer.send('select');
-}
-
-ipcRenderer.on('selected', (e, arg) => {
-    document.querySelector('#input0').value = arg;
-})
-
 function show() {
     let Code = document.querySelector('#input1').value;
     if (Code == "") dialog.showMessageBox({ type: "error", message: 'Please enter a code first!' })
@@ -30,15 +20,15 @@ ipcRenderer.on('comp:get', (e, arg) => {
         dialog.showMessageBox({ type: "error", message: 'Incorrect company code!' })
     }
     else {
-        let arr = ['Code', 'Name', 'Address', 'Phone', 'Mobile', 'Fax', 'Email', 'Website', 'TradeDis', 'Pan', 'Gstin', 'Cin', 'CGst', 'SGst', 'IGst', 'Spl1', 'Spl2'];
-        for (let i = 1; i <= 17; i++) document.querySelector(`#input${i}`).value = arg[arr[i-1]];
+        let arr = ['Code', 'Name', 'Address', 'Phone', 'Mobile', 'Fax', 'Email', 'Website', 'TradeDis', 'Pan', 'Gstin', 'Cin', 'CGst', 'SGst', 'IGst', 'MsmeRegn', 'Udyam', 'Tan', 'HsnCode'];
+        for (let i = 1; i <= arr.length; i++) document.querySelector(`#input${i}`).value = arg[arr[i-1]];
     }
 });
 
 function addData() {
     let arr = {};
-    let obj = ['Code', 'Name', 'Address', 'Phone', 'Mobile', 'Fax', 'Email', 'Website', 'TradeDis', 'Pan', 'Gstin', 'Cin', 'CGst', 'SGst', 'IGst', 'Spl1', 'Spl2'];
-    for (let i = 1; i <= 17; i++) arr[obj[i-1]] = document.querySelector(`#input${i}`).value;
+    let obj = ['Code', 'Name', 'Address', 'Phone', 'Mobile', 'Fax', 'Email', 'Website', 'TradeDis', 'Pan', 'Gstin', 'Cin', 'CGst', 'SGst', 'IGst', 'MsmeRegn', 'Udyam', 'Tan', 'HsnCode'];
+    for (let i = 1; i <= obj.length; i++) arr[obj[i-1]] = document.querySelector(`#input${i}`).value;
     let a = ['Code', 'Name', 'TradeDis', 'CGst', 'SGst', 'IGst'], empty = false;
     for(let i of a) if(arr[i] == "") empty = true;
     if (empty) dialog.showMessageBox({ type: "error", message: 'Required fields cannot be empty' });

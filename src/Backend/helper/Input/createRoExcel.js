@@ -123,7 +123,7 @@ function mailSheet(sheet, sameD, diffD, paperMap, cityMap) {
         sheet.getRow(idx).getCell(7).value = formatDate(obj.DateP);
         let day = days[new Date(obj.DateP).getDay()];
         sheet.getRow(idx).getCell(8).value = day;
-        sheet.getRow(idx).getCell(9).value = obj.Position;
+        sheet.getRow(idx).getCell(9).value = sameD.Position;
         idx += 1;
     }
 
@@ -138,7 +138,7 @@ function mailSheet(sheet, sameD, diffD, paperMap, cityMap) {
 
 function styling2(sheet, hLen, tLen) {
     sheet.mergeCells(8, 4, 8, 6);
-    for(let i of [0, 1, 2]) sheet.mergeCells(tLen+i, 1, tLen+i, 9);
+    sheet.mergeCells(tLen+2, 1, tLen+2, 9);
 
     for(let i of [4, 5, 6]) {
         sheet.getRow(i).getCell(1).font = { bold: true };
@@ -171,7 +171,7 @@ function styling2(sheet, hLen, tLen) {
         }
     }
     for(let i of [0, 1]) {
-        for(let j of [1, 2]) {
+        for(let j=1; j<=9; j++) {
             sheet.getRow(tLen+i).getCell(j).fill = {
                 type: 'pattern',
                 pattern: 'solid',

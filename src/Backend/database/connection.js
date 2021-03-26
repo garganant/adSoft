@@ -24,7 +24,6 @@ async function basic() {
     require('../models/Master/PaperGroups.js');
     require('../models/Master/Newspaper.js');
     require('../models/Master/Subject.js');
-    require('../models/Input/BillInfo.js');
     require('../models/Input/RoPaper.js');
     require('../models/Input/RoSame.js');
     require('../models/Restore_info.js');
