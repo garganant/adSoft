@@ -24,14 +24,15 @@ ipcRenderer.on('roCust:got', (event, data) => {
 
 function submit() {
     var e = document.querySelector('#input1');
+    var adv = document.querySelector('#input2').value;
     let RoNo = [];
     for (let i = 0; i < e.length; i++) if (e.options[i].selected) RoNo.push(e.options[i].value);
     if (!RoNo.length) dialog.showMessageBox({ type: "error", message: 'No RO selected!' });
-    else ipcRenderer.send('bill:make');
+    else if (adv == "") dialog.showMessageBox({ type: "error", message: 'Required fields cannot be empty!' });
+    else ipcRenderer.send('bill:make', RoNo, adv);
 }
 
-ipcRenderer.on('bill:made', (event, path) => {
-    if (path != null) shell.openPath(path);
+ipcRenderer.on('bill:made', (event) => {
     window.location.reload();
 });
 

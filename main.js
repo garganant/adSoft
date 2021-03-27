@@ -41,6 +41,7 @@ app.on('activate', () => {
 // Code starts here ///////////////////////////////////////////////////////////
 
 const sequelize = require('./src/Backend/database/connection.js');
+const RoPaper = require('./src/Backend/models/Input/RoPaper.js');
 
 function showError(err) {
     const messageBoxOptions = { type: "error", title: "Process cancelled!", message: err };
@@ -697,4 +698,56 @@ ipcMain.on('roCust:get', async (event) => {
     const RoSame = require('./src/Backend/models/Input/RoSame.js');
     var data = await RoSame.findAll({ attributes: ['RoNo', 'RoDate', 'VendName'], where: {BillNo: {[Op.is]: null}} });
     win.webContents.send('roCust:got', data);
+});
+
+ipcMain.on('bill:make', async (event, roNo, adv) => {
+    try {
+        const Comp = require('./src/Backend/models/Master/Comp.js');
+        const Vend = require('./src/Backend/models/Master/Vendor.js');
+        const PaperGroups = require('./src/Backend/models/Master/PaperGroups.js');
+        const Subject = require('./src/Backend/models/Master/Subject.js');
+        const Newspaper = require('./src/Backend/models/Master/Newspaper.js');
+        const Edition = require('./src/Backend/models/Master/Edition.js');
+        const RoSame = require('./src/Backend/models/Input/RoSame.js');
+        const RoPaper = require('./src/Backend/models/Input/RoPaper.js');
+        const { createBill } = require('./src/Backend/helper/Input/createBill.js');
+
+        let grpMap = {}, paperMap = {}, cityMap = {};
+        var publications = await PaperGroups.findAll();
+        var papers = await Newspaper.findAll({ attributes: ['ShortName', 'PaperName'] });
+        var cities = await Edition.findAll();
+        for (let ele of publications) grpMap[ele.dataValues['Code']] = ele.dataValues['GroupName'];
+        for (let ele of papers) paperMap[ele.dataValues['ShortName']] = ele.dataValues['PaperName'];
+        for (let ele of cities) cityMap[ele.dataValues['Code']] = ele.dataValues['CityName'];
+
+        var cData = await Comp.findOne();
+        var billNo = ( await RoSame.findOne({ attributes: ['BillNo'], order: [['BillNo', 'DESC']] }) ).dataValues.BillNo;
+        billNo = billNo == null ? 1 : billNo+1;
+        var sData = ( await RoSame.findOne({ attributes: ['VendName', 'SubjectCode' ,'SplDis'], where: {RoNo: roNo[0]} }) );
+        var vend = await Vend.findOne({ where: {Name: sData.dataValues.VendName} });
+        var subject = (await Subject.findOne({ attributes: ['SubjectDetail'], where: { Code: sData.SubjectCode } })).dataValues.SubjectDetail;
+        var arr = [], bDate = (new Date()).toLocaleDateString('en-CA');
+        for(let num of roNo) {
+            let pData = await RoPaper.findAll({ where: {RoNo: num} });
+            for(let i in pData) {
+                let tmp = [];
+                tmp.push(paperMap[pData[i].dataValues.ShortName]);
+                tmp.push(num);
+                tmp.push(pData[i].dataValues.DateP);
+                tmp.push(pData[i].dataValues.Width);
+                tmp.push(pData[i].dataValues.Height);
+                tmp.push(parseFloat(pData[i].dataValues.RatePR));
+                tmp.push(pData[i].dataValues.EditionCode);
+                arr.push(tmp);
+            }
+        }
+        
+        let rupee = path.join(__dirname, 'assets/images/Rupee.png');
+        createBill(cData.dataValues, rupee, [[billNo, bDate, vend.dataValues, subject, arr, sData.dataValues.SplDis, adv]]);
+        win.webContents.send('bill:made');
+    }
+    catch (err) {
+        showError(err.stack);
+        win.webContents.send('bill:made');
+    }
 });

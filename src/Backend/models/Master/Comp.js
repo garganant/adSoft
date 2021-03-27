@@ -66,7 +66,7 @@ module.exports = sequelize.define('Comp', {
     HsnCode: {
         type: Sequelize.STRING(6)
     },
-    Fy: {
+    FY: {
         type: Sequelize.STRING(7)
     },
     File_path: {

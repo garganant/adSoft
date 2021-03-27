@@ -47,7 +47,10 @@ const RoSame = sequelize.define('RoSame', {
     },
     BillDate: {
         type: Sequelize.DATEONLY
-    }
+    },
+    Advance: {
+        type: Sequelize.DECIMAL(9,2)
+    },
 }, {
     //options
     charset: 'utf8',
