@@ -69,6 +69,21 @@ module.exports = sequelize.define('Comp', {
     FY: {
         type: Sequelize.STRING(7)
     },
+    BCName: {
+        type: Sequelize.STRING
+    },
+    Bank: {
+        type: Sequelize.STRING
+    },
+    AccNo: {
+        type: Sequelize.STRING(12)
+    },
+    Branch: {
+        type: Sequelize.STRING
+    },
+    Ifsc: {
+        type: Sequelize.STRING(11)
+    },
     File_path: {
         type: Sequelize.STRING
     }

@@ -26,6 +26,7 @@ async function basic() {
     require('../models/Master/Subject.js');
     require('../models/Input/RoPaper.js');
     require('../models/Input/RoSame.js');
+    require('../models/Input/Bill.js');
     require('../models/Restore_info.js');
     await sequelize.sync();
 }

@@ -19,8 +19,11 @@ const RoPaper = sequelize.define('RoPaper', {
     EditionCode: {
         type: Sequelize.STRING(5)
     },
-    Caption: {
+    SubE : {
         type: Sequelize.STRING(25)
+    },
+    Caption: {
+        type: Sequelize.STRING(15)
     },
     RatePR: {
         type: Sequelize.DECIMAL(7, 2)

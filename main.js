@@ -1,7 +1,7 @@
 const path = require('path');
 require('electron-reload')(process.cwd(), { electron: path.join(process.cwd(), 'node_modules', '.bin', 'electron.cmd') })
 const { app, BrowserWindow, Menu, ipcMain, dialog, screen } = require('electron')
-const { Sequelize } = require('sequelize')
+const { Sequelize } = require('sequelize');
 var fs = require('fs');
 const Op = Sequelize.Op;
 var Excel = require('exceljs');
@@ -15,13 +15,14 @@ function createWindow() {
     win = new BrowserWindow({
         webPreferences: { nodeIntegration: true, enableRemoteModule: true, webSecurity: true, contextIsolation: false },
         width, height, frame: false,
-        backgroundColor: '#F2BC94'
+        backgroundColor: '#00BFFF'
     });
 
     win.loadFile('./src/Frontend/basePage.html');
     const { menuTemplate } = require('./src/Backend/Populate/menu.js');
     menuTemplate();
 }
+
 
 // This method will be called when Electron has finished initialization and is ready to create browser windows. Some APIs can only be used after this event occurs.
 app.whenReady().then(createWindow)
@@ -37,7 +38,6 @@ app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) { createWindow() }
 })
 
-
 // Code starts here ///////////////////////////////////////////////////////////
 
 const sequelize = require('./src/Backend/database/connection.js');
@@ -47,6 +47,16 @@ function showError(err) {
     const messageBoxOptions = { type: "error", title: "Process cancelled!", message: err };
     dialog.showMessageBox(messageBoxOptions);
 }
+
+app.whenReady().then(() => {
+    let d = new Date(), last = new Date(2022, 02, 31);
+    if (d > last) {
+        showError('Validity over. Contact for renewal!');
+        setTimeout(() => {
+            app.quit();
+        }, 2000);
+    }
+});
 
 // MASTER /////////////////////////////////////////////////////////////////////
 
@@ -92,12 +102,14 @@ ipcMain.on('vend:submit', async (event, arg) => {
     try {
         if (typeof arg == 'object') {
             const [user, created] = await  Vend.findOrCreate({
-                where: { Name: arg.Name },
+                where: { id: arg.id },
                 defaults: {
+                    Name: arg.Name,
+                    Identify: arg.Identify,
                     Street1: arg.Street1,
                     Street2: arg.Street2,
                     City: arg.City,
-                    Pincode: parseInt(arg.Pincode),
+                    Pincode: arg.Pincode,
                     State: arg.State,
                     ContactPerson: arg.ContactPerson,
                     ContactNo: arg.ContactNo,
@@ -108,7 +120,7 @@ ipcMain.on('vend:submit', async (event, arg) => {
             });
             if (created) win.webContents.send('vend:dataAdded', 'Data added to vend master!');
             else {
-                await Vend.update(arg, { where: { Name: arg.Name } });
+                await Vend.update(arg, { where: { id: arg.id } });
                 win.webContents.send('vend:dataAdded', 'Data updated!');
             }
         }
@@ -119,15 +131,27 @@ ipcMain.on('vend:submit', async (event, arg) => {
                 var worksheet = workbook.getWorksheet('Sheet1');
                 worksheet.eachRow({ includeEmpty: true }, function (currRow, rowNumber) {
                     let row = currRow.values;
-                    let empty = false;
-                    for (let i = 1; i <= 12; i++) if (row[i] == null) empty = true;
-                    if (rowNumber != 1 || !empty) {
-                        var obj = { Name: row[1], Street1: row[2].substring(0, 40), Street2: row[3].substring(0, 40), City: row[4].substring(0, 40), Pincode: row[5], State: row[6].substring(0, 40), ContactPerson: row[7], ContactNo: row[8], Gstin: row[9], Pan: row[10], Status: row[11] };
+                    if (rowNumber != 1 && row[2] != null && row[13] != null) {
+                        var obj = {
+                            id: row[1],
+                            Name: row[2].toString().trim(),
+                            Identify: row[3] != null ? row[3].toString().trim().substring(0, 15) : '',
+                            Street1: row[4] != null ? row[4].toString().trim().substring(0, 40) : '',
+                            Street2: row[5] != null ? row[5].toString().trim().substring(0, 40) : '',
+                            City: row[6] != null ? row[6].toString().trim().substring(0, 40) : '',
+                            Pincode: row[7],
+                            State: row[8] != null ? row[8].toString().trim().substring(0, 40) : '',
+                            ContactPerson: row[9].toString().trim(),
+                            ContactNo: row[10].toString().trim(),
+                            Gstin: row[11].toString().trim(),
+                            Pan: row[12].toString().trim(),
+                            Status: row[13].toString().trim()
+                        };
                         arr.push(obj);
                     }
                 });
                 await Vend.bulkCreate(arr, {
-                    updateOnDuplicate: ["Street1", "Street2", "City", "Pincode", "State", "ContactPerson", "ContactNo", "Gstin", "Pan", "Status"]
+                    updateOnDuplicate: ["Name", "Identify", "Street1", "Street2", "City", "Pincode", "State", "ContactPerson", "ContactNo", "Gstin", "Pan", "Status"]
                 });
             });
             win.webContents.send('vend:dataAdded', 'Data added to vend master!');
@@ -569,9 +593,9 @@ ipcMain.on('comp:submit', async (event, arg) => {
 
 // SETTINGS //////////////////////////////////////////////////
 
-ipcMain.on('compPath:show', async (event) => {
+ipcMain.on('compDetail:show', async (event) => {
     const Comp = require('./src/Backend/models/Master/Comp.js');
-    var c = await Comp.findOne({ attributes: ['File_path', 'Spl1', 'Spl2'] });
+    var c = await Comp.findOne({ attributes: ['File_path', 'Spl1', 'Spl2', 'BCName', 'AccNo', 'Ifsc', 'Bank' , 'Branch'] });
     if (c != null) win.webContents.send('selected', c.dataValues);
     else win.webContents.send('selected', null);
 });
@@ -584,7 +608,7 @@ ipcMain.on('select', async (event) => {
             await Comp.update({ File_path: path.filePaths + '\\' }, { where: { Code: { [Op.ne]: null } } });
         });
     }
-    var c = await Comp.findOne({ attributes: ['File_path', 'Spl1', 'Spl2'] });
+    var c = await Comp.findOne({ attributes: ['File_path', 'Spl1', 'Spl2', 'BCName', 'AccNo', 'Ifsc', 'Bank', 'Branch'] });
     win.webContents.send('selected', c.dataValues);
 });
 
@@ -635,20 +659,20 @@ ipcMain.on('edition:get', async (event) => {
     win.webContents.send('edition:got', await editionList());
 });
 
-ipcMain.on('roData:get', async (event, arg) => {
+ipcMain.on('roData:get', async (event, arg, btn) => {
     const { roData } = require('./src/Backend/helper/Input/RoFunc.js');
     const RoSame = require('./src/Backend/models/Input/RoSame.js');
-    if(arg == '') {
-        let data = await RoSame.findOne({attributes: ['RoNo'], order: [['RoNo', 'DESC']]});
-        if(data != null) arg = data.dataValues.RoNo;
-    }
+    var data = null;
+    if (btn == 'f') data = await RoSame.findOne({ attributes: ['RoNo'], order: ['RoNo'] });
+    else if(btn == 'l') data = await RoSame.findOne({attributes: ['RoNo'], order: [['RoNo', 'DESC']]});
+    if(data != null) arg = data.dataValues.RoNo;
     var arr = await roData(arg);
     win.webContents.send('roData:got', arr[0], arr[1]);
 });
 
 ipcMain.on('addEditRO', async (event, same, diff) => {
+    const { addEditRO } = require('./src/Backend/helper/Input/RoFunc.js');
     try {
-        const { addEditRO } = require('./src/Backend/helper/Input/RoFunc.js');
         win.webContents.send('roData:saved', await addEditRO(same, diff));
     }
     catch (err) {
@@ -682,8 +706,8 @@ ipcMain.on('ro:prt', async (event, sameD, diffD) => {
         let signStamp = path.join(__dirname, 'assets/images/signStamp.png');
         createRo(sameD, diffD, cData.dataValues, paperMap, cityMap, signStamp);
         let pt = cData.dataValues.File_path + 'Print.xlsx';
-        createRoExcel(sameD, diffD, paperMap, cityMap, pt);
-    
+        createRoExcel(sameD, diffD, cData.dataValues, paperMap, cityMap, signStamp, pt);
+
         win.webContents.send('ro:prted', pt);
     }
     catch (err) {
@@ -692,15 +716,29 @@ ipcMain.on('ro:prt', async (event, sameD, diffD) => {
     }
 });
 
-// BILL ////////////////////////////////////////
+// NEW BILL ////////////////////////////////////////
 
 ipcMain.on('roCust:get', async (event) => {
     const RoSame = require('./src/Backend/models/Input/RoSame.js');
-    var data = await RoSame.findAll({ attributes: ['RoNo', 'RoDate', 'VendName'], where: {BillNo: {[Op.is]: null}} });
-    win.webContents.send('roCust:got', data);
+    const Vend = require('./src/Backend/models/Master/Vendor.js');
+    try {
+        var vObj = {};
+        var data = await RoSame.findAll({ attributes: ['RoNo', 'RoDate', 'VendCode'], where: {BillNo: {[Op.is]: null}} });
+        for(let i in data) {
+            if (data[i]['VendCode'] in vObj) data[i].dataValues['VendName'] = vObj[data[i]['VendCode']];
+            else {
+                data[i].dataValues['VendName'] = ( await Vend.findOne({ attributes: ['Name'], where: {id: data[i].dataValues.VendCode} }) ).dataValues.Name;
+                vObj[data[i]['VendCode']] = data[i].dataValues['VendName'];
+            }
+        }
+        win.webContents.send('roCust:got', data);
+    } catch (err) {
+        showError(err.stack);
+        win.webContents.send('roCust:got', null);
+    }
 });
 
-ipcMain.on('bill:make', async (event, roNo, adv) => {
+ipcMain.on('bill:make', async (event, roNo, obj, btype) => {
     try {
         const Comp = require('./src/Backend/models/Master/Comp.js');
         const Vend = require('./src/Backend/models/Master/Vendor.js');
@@ -711,6 +749,7 @@ ipcMain.on('bill:make', async (event, roNo, adv) => {
         const RoSame = require('./src/Backend/models/Input/RoSame.js');
         const RoPaper = require('./src/Backend/models/Input/RoPaper.js');
         const { createBill } = require('./src/Backend/helper/Input/createBill.js');
+        const { billAdd } = require('./src/Backend/helper/Input/BillFunc.js');
 
         let grpMap = {}, paperMap = {}, cityMap = {};
         var publications = await PaperGroups.findAll();
@@ -720,11 +759,13 @@ ipcMain.on('bill:make', async (event, roNo, adv) => {
         for (let ele of papers) paperMap[ele.dataValues['ShortName']] = ele.dataValues['PaperName'];
         for (let ele of cities) cityMap[ele.dataValues['Code']] = ele.dataValues['CityName'];
 
-        var cData = await Comp.findOne();
         var billNo = ( await RoSame.findOne({ attributes: ['BillNo'], order: [['BillNo', 'DESC']] }) ).dataValues.BillNo;
         billNo = billNo == null ? 1 : billNo+1;
-        var sData = ( await RoSame.findOne({ attributes: ['VendName', 'SubjectCode' ,'SplDis'], where: {RoNo: roNo[0]} }) );
-        var vend = await Vend.findOne({ where: {Name: sData.dataValues.VendName} });
+        billAdd(obj, roNo, billNo);
+
+        var cData = await Comp.findOne();
+        var sData = await RoSame.findOne({ attributes: ['VendCode', 'SubjectCode', 'CGst', 'SGst', 'IGst', 'SplDis', 'AdType'], where: {RoNo: roNo[0]} });
+        var vend = await Vend.findOne({ where: {id: sData.dataValues.VendCode} });
         var subject = (await Subject.findOne({ attributes: ['SubjectDetail'], where: { Code: sData.SubjectCode } })).dataValues.SubjectDetail;
         var arr = [], bDate = (new Date()).toLocaleDateString('en-CA');
         for(let num of roNo) {
@@ -743,11 +784,61 @@ ipcMain.on('bill:make', async (event, roNo, adv) => {
         }
         
         let rupee = path.join(__dirname, 'assets/images/Rupee.png');
-        createBill(cData.dataValues, rupee, [[billNo, bDate, vend.dataValues, subject, arr, sData.dataValues.SplDis, adv]]);
+        createBill(cData.dataValues, rupee, [[billNo, bDate, vend.dataValues, subject, arr, sData.dataValues, obj]], btype);
         win.webContents.send('bill:made');
     }
     catch (err) {
         showError(err.stack);
         win.webContents.send('bill:made');
+    }
+});
+
+// EDIT BILL ///////////////////////////////////////////////
+
+ipcMain.on('billData:get', async (event, bNo) => {
+    try {
+        const RoSame = require('./src/Backend/models/Input/RoSame.js');
+        const Bill = require('./src/Backend/models/Input/Bill.js');
+        let rData = await RoSame.findOne({ attributes: ['Advance'], where: { BillNo: bNo } });
+        if(rData != null) {
+            let bData = await Bill.findOne({ where: {BillNo: bNo} });
+            win.webContents.send('billData:got', rData.dataValues.Advance, bData.dataValues);
+        }
+        else win.webContents.send('billData:got', null, {});
+    } catch (err) {
+        showError(err.stack);
+        win.webContents.send('billData:got', null, null);
+    }
+});
+
+ipcMain.on('billData:add', async (event, adv, arg) => {
+    try {
+        const RoSame = require('./src/Backend/models/Input/RoSame.js');
+        const Bill = require('./src/Backend/models/Input/Bill.js');
+
+        let c = await RoSame.count({ where: { BillNo: arg['BillNo'] } });
+        if (c) {
+            await RoSame.update({ Advance: adv }, { where: { BillNo: arg['BillNo'] } });
+            await Bill.update(arg, { where: { BillNo: arg['BillNo'] } });
+            win.webContents.send('billData:added', 'Bill updated!');
+        }
+        else win.webContents.send('billData:added', 'Bill not found!');
+    } catch (err) {
+        showError(err.stack);
+        win.webContents.send('billData:added', null);
+    }
+});
+
+// REPORTS ////////////////////////////////////////////////////////
+
+// PRINT BILL ///////////////////////////////////////////
+
+ipcMain.on('bill:prt', async (event, s, e, btype) => {
+    try {
+        
+        win.webContents.send('bill:prted');
+    } catch (err) {
+        showError(err.stack);
+        win.webContents.send('bill:prted');
     }
 });

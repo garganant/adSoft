@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+    <link type="text/css" href="../../../node_modules/material-icons/iconfont/material-icons.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="../../../node_modules/materialize-css/dist/css/materialize.min.css"
+        media="screen,projection" />
+    <link rel="stylesheet" href="../../../assets/css/Input/Bill.css">
+    <title>AdSoft</title>
+</head>
+
+<body>
+    <div class="container">
+        <h3 align="center">EDIT BILL</h3>
+        <div class="row">
+            <label id="compulsory" class="col l4 push-l9">Fields marked with (*) are compulsory</label>
+        </div>
+        <div class="row">
+            <div class="input-field col l2">
+                <input id="BillNo" type="number" placeholder="" />
+                <label for="BillNo">BILL NO *</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col l3">
+                <input id="Advance" type="number" step=".01" placeholder="" value="0.00" />
+                <label for="Advance">ADVANCE PAYMENT *</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col l10">
+                <input id="Prospect" type="text" placeholder="List of all prospect numbers" />
+                <label for="Prospect">PROSPECT NO</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col l5">
+                <input id="Attention" type="text" placeholder="" maxlength="50" />
+                <label for="Attention">KIND ATTENTION</label>
+            </div>
+            <div class="input-field col l5">
+                <input id="AdRef" type="text" placeholder="" maxlength="100" />
+                <label for="AdRef">AD REFERENCE</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col l2">
+                <input id="Product" type="text" placeholder="" maxlength="10" />
+                <label for="Product">PRODUCT</label>
+            </div>
+            <div class="input-field col l2">
+                <input id="Month" type="text" placeholder="" maxlength="15" />
+                <label for="Month">BILL MONTH</label>
+            </div>
+            <div class="input-field col l3">
+                <input id="Activity" type="text" placeholder="" maxlength="20" />
+                <label for="Activity">ACTIVITY</label>
+            </div>
+        </div>
+        <div class="row buttons">
+            <a id="showBtn" onclick="show()" class="btn col push-l2">Show</a>
+            <a id="editBtn" onclick="submit()" class="btn col push-l3">Edit</a>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../../node_modules/materialize-css/dist/js/materialize.min.js"></script>
+<script src="../../Backend/connector/Input/connectEditBill.js"></script>
+
+</html>

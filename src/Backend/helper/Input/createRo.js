@@ -1,17 +1,16 @@
 const fs = require("fs");
 const PDFWindow = require('electron-pdf-window');
 const PDFDocument = require("pdfkit");
-let y = 210;
 
 function createRo(sameD, diffD, compD, paperMap, cityMap, signStamp) {
     let doc = new PDFDocument({ size: "A4", margin: 20 });
 
     generateHeader(doc, compD);
-    let s = "";
+    let s = "", y = 0;
     for(let ele of diffD) s+= ele['ShortName'] + ' + ';
     generateCustomerInfo(doc, s.substring(0, s.length-2), sameD);
-    generateRoTable(doc, diffD, paperMap, cityMap, sameD, compD.IGst);
-    generateFooter(doc, compD.Name, sameD, signStamp);
+    y = generateRoTable(doc, y, diffD, paperMap, cityMap, sameD, compD.IGst);
+    generateFooter(doc, y, compD.Name, sameD, signStamp);
 
     doc.end();
     doc.pipe(fs.createWriteStream(compD.File_path + 'File.pdf'));
@@ -34,7 +33,7 @@ function generateHeader(doc, compD) {
         .text(`Tel. ${compD.Phone} Fax: ${compD.Fax} Cell: ${compD.Mobile}`, { align: 'right' })
         .text(`Email: ${compD.Email} Website: ${compD.Website}`, { align: 'right' })
         .font("Times-Bold")
-        .text(`INS / AGENCY CODE: ${compD.Code} | GST: ${compD.Gstin} | PAN: ${compD.Pan} | CIN: ${compD.Cin}`, { align: 'right' });
+        .text(`INS / AGENCY CODE: ${compD.Code} | GST: ${compD.Gstin} | PAN: ${compD.Pan} | CIN: ${compD.Cin}`, { align: 'right', underline: true });
 
     doc.moveDown();
 }
@@ -63,7 +62,7 @@ function generateCustomerInfo(doc, pub, sameD) {
         .font("Times-Bold")
         .text(pub, 65)
         .font("Times-Roman")
-        .text('Customer:', 20)
+        .text('Client:', 20)
         .moveUp()
         .font("Times-Bold")
         .text(sameD.VendName, 65)
@@ -89,60 +88,75 @@ function generateCustomerInfo(doc, pub, sameD) {
             .text(formatDate(sameD.RoDate), 502, 180);
 }
 
-function generateRoTable(doc, diffD, paperMap, cityMap, sameD, IGst) {
-    let x = [20, 153, 286, 405, 438, 485, 538];
-    generateTableRow(doc, x, "CAPTION", "NEWSPAPER / PUBLICATION", "EDITIONS", "RATES", "SIZE", "", "DATES", "DAY", 210);
-    x = [20, 153, 286, 405, 431, 472, 538], y = 220;
-    generateTableRow(doc, x, "", "", "", "SQCM", "W", "H", "DD/MM/YYYY", "", 210);
+function generateRoTable(doc, y, diffD, paperMap, cityMap, sameD, IGst) {
+    let x = [20, 123, 226, 405, 438, 485, 538];
+    y = 210;
+    generateTableRow(doc, y, x, "CAPTION", "NEWSPAPER / PUBLICATION", "EDITIONS / SUB-EDITION / PACKAGE", "RATES", "SIZE", "", "DATES", "DAY", 210, sameD.AdType);
+    x = [20, 123, 226, 405, 431, 472, 538];
+    y = 220;
+    generateTableRow(doc, y, x, "", "", "", "SQCM", "W", "H", "DD/MM/YYYY", "", 210, sameD.AdType);
     var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    x = [20, 153, 286, 405, 431, 482, 535];
     let gross = 0, check;
     y = 232;
     for(let obj of diffD) {
+        x = [20, 123, 226, 425 - doc.widthOfString(obj.RatePR), 431, 482, 535];
         let day = days[new Date(obj.DateP).getDay()];
-        generateTableRow(doc, x, obj.Caption, paperMap[obj.ShortName], cityMap[obj.EditionCode], obj.RatePR, parseInt(obj.Width), obj.Height, formatDate(obj.DateP), day, y);
+        let edi_sub_pkg = cityMap[obj.EditionCode];
+        if (obj.SubE != '') edi_sub_pkg+= ' / ' + obj.SubE;
+        if(sameD.Package != '') edi_sub_pkg+= ' / ' + sameD.Package;
+        generateTableRow(doc, y, x, obj.Caption, paperMap[obj.ShortName], edi_sub_pkg, obj.RatePR, parseInt(obj.Width), obj.Height, formatDate(obj.DateP), day, y, sameD.AdType);
         y+= 10;
         generateHr(doc, y - 2, "#aaaaaa");
-        gross+= obj.RatePR * obj.Width * obj.Height;
+        if(sameD.AdType == 'D') gross+= obj.RatePR * obj.Width * obj.Height;
+        else gross+= parseFloat(obj.RatePR);
     }
+    y+= 10;
     check = y-10;
-    generateTableRow(doc, x, "Discount | Rates confirmed by:", "", "", "", "", "", "", "", check);
+    generateTableRow(doc, y, x, "Discount | Rates confirmed by:", sameD.RConfirm, "", "", "", "", "", "", check, sameD.AdType);
     y+= 10;
     generateHr(doc, y - 2, "black");
-    x = [20, 233, 320, 383, 435, 509, 526];
-    generateTableRow(doc, x, `Special Discount : ${sameD.SplDis}`, "GROSS VALUE", "ADDL DISCOUNT", "T. DISCOUNT", "NET AMT", "", "GST", "NET PAYABLE", check);
+    x = [20, 173, 320, 383, 435, 509, 526];
+    generateTableRow(doc, y, x, `Special Discount : ${sameD.SplDis}`, "GROSS VALUE", "ADDL DISCOUNT", "T. DISCOUNT", "NET AMT", "", "GST", "NET PAYABLE", check, sameD.AdType);
     y+= 10;
     generateHr(doc, y - 2, "black");
     let addl = gross * sameD.SplDis * 0.01;
     let trade = (gross - addl) * sameD.TradeDis * 0.01;
     let net = gross - addl - trade;
     let gst = net * IGst * 0.01;
-    x = [20, 245, 350, 394, 435, 495, 540];
-    generateTableRow(doc, x, "Trade Discount / AC  : 15 %", commaSeparated(gross) + '0.00', commaSeparated(addl) + '0.00', commaSeparated(trade) + '0.00', commaSeparated(net) + '0.00', "", commaSeparated(gst) + '0.00', commaSeparated(net + gst) + '0.00', check);
+    x = [20,
+        220 - doc.widthOfString(commaSeparated(gross) + '.00'),
+        380 - doc.widthOfString(commaSeparated(addl) + '.00'),
+        424 - doc.widthOfString(commaSeparated(trade) + '.00'),
+        465 - doc.widthOfString(commaSeparated(net) + '.00'),
+        520 - doc.widthOfString(commaSeparated(gst) + '.00'),
+        570 - doc.widthOfString(commaSeparated(net + gst) + '.00')];
+    generateTableRow(doc, y, x, `Trade Discount / AC  : ${sameD.TradeDis} %`, commaSeparated(gross) + '.00', commaSeparated(addl) + '.00', commaSeparated(trade) + '.00', commaSeparated(net) + '.00', "", commaSeparated(gst) + '.00', commaSeparated(net + gst) + '.00', check, sameD.AdType);
     y+= 10;
     generateHr(doc, y - 2, "black");
-    generateVr(doc);
+    generateVr(doc, y);
 
     doc.font("Times-Bold");
     y+= 10;
-    generateTableRow(doc, x, `POSITION: ${sameD.Position}`, "", "Material : Attached in email", "", "", "", "", "", check);
+    generateTableRow(doc, y, x, `POSITION: ${sameD.Position}`, "", "Material : Attached in email", "", "", "", "", "", check, sameD.AdType);
+
+    return y;
 }
 
-function generateTableRow(doc, x, caption, paper, edition, rate, w, h, date, day, check) {
+function generateTableRow(doc, y, x, caption, paper, edition, rate, w, h, date, day, check, AdType) {
     doc
         .font("Times-Roman")
         .fillColor('black')
         .lineWidth(12);
 
     if(y == 210) {
-        fillBackground(doc);
+        fillBackground(doc, y);
         doc.fillColor('white');
     }
     else if(y == 220) {
         doc
             .font("Times-Bold")
             .strokeColor('pink');
-        fillBackground(doc);
+        fillBackground(doc, y);
     }
     else if (y > check) doc.font("Times-Bold");
 
@@ -151,7 +165,7 @@ function generateTableRow(doc, x, caption, paper, edition, rate, w, h, date, day
         .text(caption, x[0], y);
     
     if(y == check+20) doc.fillColor('red');
-    else doc.fillColor('black');
+    else if(y != 210) doc.fillColor('black');
     doc  
         .text(paper, x[1], y)
         .text(edition, x[2], y)
@@ -161,13 +175,16 @@ function generateTableRow(doc, x, caption, paper, edition, rate, w, h, date, day
         .text(day, x[6], y);
     
     if(w == 'W' || typeof w == 'number') {
-        doc
-            .text('x', 444, y)
-            .text(h, 455, y);
+        if(AdType == 'D') {
+            doc
+                .text('x', 444, y)
+                .text(h, 455, y);
+        }
+        else if (w != 'W') doc.text('LINES', 445, y);
     }
 }
 
-function generateFooter(doc, cName, sameD, signStamp) {
+function generateFooter(doc, y, cName, sameD, signStamp) {
     doc
         .fontSize(8)
         .moveDown()
@@ -217,12 +234,12 @@ function generateFooter(doc, cName, sameD, signStamp) {
         .moveUp()
         .text('CONFIRMED', 470);
 
-    lines(doc);
+    lines(doc, y);
 }
 
-function fillBackground(doc) {
-    let mt = [18, 152, 285, 384, 430, 471, 527];
-    let lt = [151, 284, 383, 429, 470, 526, 577];
+function fillBackground(doc, y) {
+    let mt = [18, 122, 225, 384, 430, 471, 527];
+    let lt = [121, 224, 383, 429, 470, 526, 577];
 
     for(let i in mt) {
         doc
@@ -242,8 +259,8 @@ function generateHr(doc, y, color) {
         .stroke();
 }
 
-function generateVr(doc) {
-    let x = [151, 284, 383, 429, 470, 526, 577];
+function generateVr(doc, y) {
+    let x = [121, 224, 383, 429, 470, 526, 577];
     for (let i in x) {
             doc
                 .strokeColor("#aaaaaa")
@@ -254,7 +271,7 @@ function generateVr(doc) {
     }
 }
 
-function lines(doc) {
+function lines(doc, y) {
     y+= 55;
     let x1 = [290, 450];
     let x2 = [440, 580];

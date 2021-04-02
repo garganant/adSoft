@@ -12,19 +12,46 @@
     <div class="container">
         <h3 align="center">SETTINGS</h3>
         <div class="row">
-            <label id="compulsory" class="col l5 push-l9">Fields marked with (*) are compulsory</label>
+            <label id="compulsory" class="col l3 push-l9">Fields marked with (*) are compulsory</label>
         </div>
         <div class="row">
             <div class="input-field col l11">
-                <input id="input1" type="text" placeholder="Spl instruction 1" maxlength="100" />
-            <label for="input1">SPECIAL INSTRUCTION 1</label>
+                <input id="Spl1" type="text" placeholder="Spl instruction 1" maxlength="100" />
+            <label for="Spl1">SPECIAL INSTRUCTION 1</label>
             </div>
         </div>
         <div class="row">
             <div class="input-field col l11">
-                <input id="input2" type="text" placeholder="Spl instruction 2" maxlength="100" />
-                <label for="input2">SPECIAL INSTRUCTION 2</label>
+                <input id="Spl2" type="text" placeholder="Spl instruction 2" maxlength="100" />
+                <label for="Spl2">SPECIAL INSTRUCTION 2</label>
             </div>
+        </div>
+        <div class="row">
+            <div class="input-field col l4">
+                <input id="Bank" type="text" placeholder="Bank name" />
+                <label for="Bank">BANK NAME</label>
+            </div>
+            <div class="input-field col l5">
+                <input id="Branch" type="text" placeholder="Bank branch" />
+                <label for="Branch">BANK BRANCH</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col l5">
+                <input id="BCName" type="text" placeholder="Name" />
+                <label for="BCName">ACCOUNT NAME</label>
+            </div>
+            <div class="input-field col l2">
+                <input id="AccNo" type="text" placeholder="Account no" maxlength="12" />
+                <label for="AccNo">ACCOUNT No</label>
+            </div>
+            <div class="input-field col l2">
+                <input id="Ifsc" type="text" placeholder="IFSC Code" maxlength="11" />
+                <label for="Ifsc">IFSC Code</label>
+            </div>
+        </div>
+        <div class="row buttons">
+            <a id="addBtn" onclick="addData()" class="btn col push-l4 push-xl4">Add/Edit data</a>
         </div>
         <div class="row">
             <div class="input-field col l6">
@@ -34,9 +61,6 @@
             <div class="input-field col l2">
                 <button class="btn-small" id="fileBtn" onclick="select()">Change</button>
             </div>
-        </div>
-        <div class="row buttons">
-            <a id="addBtn" onclick="addData()" class="btn col push-l4 push-xl4">Add/Edit data</a>
         </div>
     </div>
 </body>

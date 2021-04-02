@@ -9,8 +9,8 @@ const RoSame = sequelize.define('RoSame', {
     GroupCode: {
         type: Sequelize.STRING(6)
     },
-    VendName: {
-        type: Sequelize.STRING
+    VendCode: {
+        type: Sequelize.INTEGER
     },
     RoDate: {
         type: Sequelize.DATEONLY
@@ -51,6 +51,18 @@ const RoSame = sequelize.define('RoSame', {
     Advance: {
         type: Sequelize.DECIMAL(9,2)
     },
+    TParty: {
+        type: Sequelize.STRING
+    },
+    Package : {
+        type: Sequelize.STRING(25)
+    },
+    AdType: {   // D = Display, C = Classified
+        type: Sequelize.STRING(1)
+    },
+    RConfirm: {
+        type: Sequelize.STRING
+    }
 }, {
     //options
     charset: 'utf8',

@@ -77,10 +77,28 @@ function menuTemplate() {
                     }
                 },
                 {
-                    label: 'Bill',
+                    label: 'New Bill',
+                    accelerator: 'Alt+N',
+                    click() {
+                        win.loadURL(path.join(__dirname, path.relative('Backend/Populate', 'Frontend/Input/NewBill.html')));
+                    }
+                },
+                {
+                    label: 'Edit Bill',
                     accelerator: 'Alt+B',
                     click() {
-                        win.loadURL(path.join(__dirname, path.relative('Backend/Populate', 'Frontend/Input/Bill.html')));
+                        win.loadURL(path.join(__dirname, path.relative('Backend/Populate', 'Frontend/Input/EditBill.html')));
+                    }
+                }
+            ]
+        },
+        {
+            label: 'Reports',
+            submenu: [
+                {
+                    label: 'Print bill',
+                    click() {
+                        win.loadURL(path.join(__dirname, path.relative('Backend/Populate', 'Frontend/Report/PrintBill.html')));
                     }
                 }
             ]

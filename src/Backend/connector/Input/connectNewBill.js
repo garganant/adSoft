@@ -1,6 +1,6 @@
 const electron = require('electron');
 const { ipcRenderer } = electron;
-const { shell, dialog } = electron.remote;
+const { dialog } = electron.remote;
 const customTitlebar = require('custom-electron-titlebar');
 
 new customTitlebar.Titlebar({
@@ -8,10 +8,12 @@ new customTitlebar.Titlebar({
     icon: '../../../assets/images/Logo.ico'
 });
 
+M.AutoInit();
+
 ipcRenderer.send('roCust:get');
 
 ipcRenderer.on('roCust:got', (event, data) => {
-    var group = document.querySelector('#input1');
+    var group = document.querySelector('#RoNo');
     group.length = 1;
     for (let d of data) {
         var opt = document.createElement("option");
@@ -23,13 +25,16 @@ ipcRenderer.on('roCust:got', (event, data) => {
 });
 
 function submit() {
-    var e = document.querySelector('#input1');
-    var adv = document.querySelector('#input2').value;
+    let obj = {}, arr = ['Advance', 'Prospect', 'Attention', 'Product', 'Month', 'Activity', 'AdRef'];
+    for(let ele of arr) obj[ele] = document.querySelector(`#${ele}`).value;
+    let e = document.querySelector('#BType');
+    let btype = e.options[e.selectedIndex].value;
+    e = document.querySelector('#RoNo');
     let RoNo = [];
     for (let i = 0; i < e.length; i++) if (e.options[i].selected) RoNo.push(e.options[i].value);
     if (!RoNo.length) dialog.showMessageBox({ type: "error", message: 'No RO selected!' });
-    else if (adv == "") dialog.showMessageBox({ type: "error", message: 'Required fields cannot be empty!' });
-    else ipcRenderer.send('bill:make', RoNo, adv);
+    else if (obj['Advance'] == "") dialog.showMessageBox({ type: "error", message: 'Required fields cannot be empty!' });
+    else ipcRenderer.send('bill:make', RoNo, obj, btype);
 }
 
 ipcRenderer.on('bill:made', (event) => {

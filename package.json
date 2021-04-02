@@ -42,8 +42,8 @@
     "material-icons": "^0.5.4",
     "materialize-css": "^1.0.0",
     "mysql2": "^2.2.5",
-    "num-words": "^1.2.2",
     "pdfkit": "^0.11.0",
-    "sequelize": "^6.6.2"
+    "sequelize": "^6.6.2",
+    "to-words": "^2.3.1"
   }
 }

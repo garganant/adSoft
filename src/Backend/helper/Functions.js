@@ -13,7 +13,7 @@ async function groupDetails() {
 }
 
 async function vendDetails() {
-    const data = await Vend.findAll({attributes: ['Name'], order: ['Name']});
+    const data = await Vend.findAll({attributes: ['id', 'Name', 'Identify'], order: ['Name']});
     let obj = [];
     for (let ele of data) obj.push(ele.dataValues);
     return obj;

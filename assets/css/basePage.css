@@ -3,14 +3,14 @@ html{
 }
 
 body {
-  background-color: #f4e1d2;
-  background-repeat: no-repeat;
+  /* background-color: #00BFFF; */
+  /* background-repeat: no-repeat; */
   /* background-image: url("../images/Home.jpeg"); */
   background-size: 100vw 100vh;
 }
 
 h1 {
-  color: yellow;
+  color: #D7FF20;
   font-family: 'Constantia';
 }
 

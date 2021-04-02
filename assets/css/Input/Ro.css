@@ -1,6 +1,5 @@
 .completePage {
-    padding-left: 1%;
-    padding-right: 1%;
+    padding-left: 4%;
 }
 
 .row {
@@ -16,14 +15,18 @@ h3 {
 #compulsory {
   color: black;
   font-family: Georgia;
-  font-size: 17px;
+  font-size: 14px;
 }
 
 .input-field label {
   color: #30110D;
   font-weight: bolder;
   font-family: 'Constantia';
-  font-size: 20px;
+  font-size: 16px;
+}
+
+.input-field input[type="text"], .input-field input[type="number"], .input-field input[type="date"] {
+    font-size:15px;
 }
 
 ::-webkit-input-placeholder {
@@ -53,15 +56,30 @@ h3 {
   max-height: 20vw;
 }
 
+.switch label {
+  color: black;
+  font-size: 16px;
+}
+
+.switch label .lever {
+   background-color: saddlebrown;
+}
+.switch label input[type=checkbox]:checked+.lever {
+   background-color: palegreen;
+}
+.switch label input[type=checkbox]:checked+.lever:after {
+   background-color: white;
+}
+
 .tableDiv {
     position: absolute;
-    max-width: 95%;
+    max-width: 96%;
     width: auto;
     max-height: 40%;
     height: auto;
     overflow-x: auto;
     display: flex;
-    padding-left: 5%;
+    padding-right: 1%;
   }
 
 table, th, td {

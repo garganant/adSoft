@@ -8,7 +8,9 @@ function createExcelVend(arr, path) {
     var sheet = workbook.addWorksheet('Sheet1');
     // A table header
     sheet.columns = [
+        {header: 'ID', key: 'id', width: 5},
         { header: 'VEND NAME', key: 'vname', width: 30 },
+        {header: 'IDENTIFIER', key: 'identify', width: 15},
         { header: 'STREET1', key: 'street1', width: 40 },
         { header: 'STREET2', key: 'street2', width: 40 },
         { header: 'CITY', key: 'city', width: 40 },
@@ -22,7 +24,7 @@ function createExcelVend(arr, path) {
     ]
 
     // Add rows in the above header
-    for (let i in arr) sheet.addRow({ vname: arr[i].Name, street1: arr[i].Street1, street2: arr[i].Street2, city: arr[i].City, state: arr[i].State, person: arr[i].ContactPerson, contact: arr[i].ContactNo, gstin: arr[i].Gstin, pan: arr[i].Pan, status: arr[i].Status });
+    for (let i in arr) sheet.addRow({ id: arr[i].id, vname: arr[i].Name, identify: arr[i].Identify, street1: arr[i].Street1, street2: arr[i].Street2, city: arr[i].City, pincode: arr[i].Pincode, state: arr[i].State, person: arr[i].ContactPerson, contact: arr[i].ContactNo, gstin: arr[i].Gstin, pan: arr[i].Pan, status: arr[i].Status });
 
     // Save Excel on Hard Disk
     workbook.xlsx.writeFile(path)

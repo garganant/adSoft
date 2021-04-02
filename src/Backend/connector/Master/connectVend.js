@@ -11,7 +11,7 @@ new customTitlebar.Titlebar({
 
 var display = ['Reached start of file!', 'Reached end of file!', 'No data to fetch!', 'No data to fetch!'], btnNo;
 
-M.FormSelect.init(document.querySelector('#input11'));
+M.FormSelect.init(document.querySelector('#Status'));
 
 fillDropdown();
 
@@ -26,13 +26,13 @@ function fillDropdown() {
 
 function prev() {
     btnNo = 0;
-    var Name = document.querySelector('#input1').value;
+    var Name = document.querySelector('#Name').value;
     ipcRenderer.send('vend:prev', Name);
 }
 
 function nxt() {
     btnNo = 1;
-    var Name = document.querySelector('#input1').value;
+    var Name = document.querySelector('#Name').value;
     if (Name == "") ipcRenderer.send('vend:fst');
     else ipcRenderer.send('vend:nxt', Name);
 }
@@ -49,18 +49,18 @@ function lst() {
 
 function show() {
     btnNo = 3;
-    Name = document.querySelector('#input1').value;
+    Name = document.querySelector('#Name').value;
     if (Name == "") dialog.showMessageBox({ type: "error", message: 'Please enter a name first!' })
     else ipcRenderer.send('vend:data', Name);
 }
 
 ipcRenderer.on('vend:getData', (e, arg) => {
     if (arg != null) {
-        let arr = ['Name', 'Street1', 'Street2', 'City', 'Pincode', 'State', 'ContactPerson', 'ContactNo', 'Gstin', 'Pan'];
-        for(let i=1; i<=arr.length; i++) document.querySelector(`#input${i}`).value = arg[arr[i-1]];
+        let arr = ['id', 'Name', 'Identify', 'Street1', 'Street2', 'City', 'Pincode', 'State', 'ContactPerson', 'ContactNo', 'Gstin', 'Pan'];
+        for(let i=0; i<arr.length; i++) document.querySelector(`#${arr[i]}`).value = arg[arr[i]];
 
         var elems = document.querySelectorAll('select');
-        var select = document.getElementById('input11');
+        var select = document.getElementById('Status');
         for (var i = 0; i < select.options.length; i++) {
             if (select[i].value == arg.Status) select.options[i].selected = "selected";
         }
@@ -79,14 +79,18 @@ function submit() {
         ipcRenderer.send('vend:submit', path);
     }
     else {
-        let arr = ['Name', 'Street1', 'Street2', 'City', 'Pincode', 'State', 'ContactPerson', 'ContactNo', 'Gstin', 'Pan'];
+        let arr = ['id', 'Name', 'Identify', 'Street1', 'Street2', 'City', 'Pincode', 'State', 'ContactPerson', 'ContactNo', 'Gstin', 'Pan'];
         let obj = {}, empty = false;
-        for (let i = 1; i <= 10; i++) obj[arr[i - 1]] = document.querySelector(`#input${i}`).value;
+        for (let i = 0; i < arr.length; i++) obj[arr[i]] = document.querySelector(`#${arr[i]}`).value;
 
-        var e = document.getElementById("input11");
+        var e = document.getElementById("Status");
         var Status = e.options[e.selectedIndex].value;
         obj['Status'] = Status;
-        for ([key, val] of Object.entries(obj)) if(val == "") empty = true;
+        for ([key, val] of Object.entries(obj)) {
+            if (key == 'id' || key == 'Identify') continue;
+            else if (key == 'Pincode') obj[key] = (val == "") ? null : parseInt(val);
+            else if(val == "") empty = true;
+        }
         if (empty) dialog.showMessageBox({ type: "error", message: 'Required fields cannot be empty!' })
         else {
             btnSet();

@@ -6,9 +6,9 @@ new customTitlebar.Titlebar({
     shadow: true
 });
 
-var curr = new Date(), exp = new Date(2021, 02, 20);
-// if (curr > exp)
-//     document.getElementById('warning').hidden = false
+var curr = new Date(), exp = new Date(2022, 02, 20);
+if (curr > exp)
+    document.getElementById('warning').hidden = false
 
 function reload(e) {
     if (e.ctrlKey && e.keyCode == 82) window.location.reload()

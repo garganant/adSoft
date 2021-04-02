@@ -8,7 +8,7 @@ new customTitlebar.Titlebar({
     icon: '../../../assets/images/Logo.ico'
 });
 
-ipcRenderer.send('compPath:show');
+ipcRenderer.send('compDetail:show');
 
 function select() {
     ipcRenderer.send('select');
@@ -16,15 +16,15 @@ function select() {
 
 ipcRenderer.on('selected', (e, arg) => {
     if(arg != null) {
-        document.querySelector('#input1').value = arg.Spl1;
-        document.querySelector('#input2').value = arg.Spl2;
+        let arr = ['Spl1', 'Spl2', 'Bank', 'Branch', 'BCName', 'AccNo', 'Ifsc'];
+        for(let ele of arr) document.querySelector(`#${ele}`).value = arg[ele];
         document.querySelector('#input0').value = arg.File_path;
     }
 });
 
 function addData() {
-    let arr = {}, obj = ['Spl1', 'Spl2'];
-    for (let i = 1; i <= obj.length; i++) arr[obj[i - 1]] = document.querySelector(`#input${i}`).value;
+    let arr = {}, obj = ['Spl1', 'Spl2', 'Bank', 'Branch', 'BCName', 'AccNo', 'Ifsc'];
+    for (let ele of obj) arr[ele] = document.querySelector(`#${ele}`).value;
     ipcRenderer.send('settings:submit', arr);
 }
 

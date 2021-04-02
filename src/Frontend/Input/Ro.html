@@ -15,55 +15,76 @@
         </div>
         <form>
             <div class="row">
-                <div class="input-field col push-l1 push-xl1">
-                    <input id="input1" type="number" placeholder="" />
-                    <label for="input1">RO NUMBER *</label>
+                <div class="input-field col l1">
+                    <input id="RoNo" type="number" placeholder="" />
+                    <label for="RoNo">RO NUMBER *</label>
                 </div>
-                <div class="input-field col push-l1 push-xl1">
-                    <input id="roDate" type="date" placeholder="" />
-                    <label for="roDate">RO DATE *</label>
+                <div class="input-field col">
+                    <input id="RoDate" type="date" placeholder="" />
+                    <label for="RoDate">RO DATE *</label>
                 </div>
-                <div class="input-field col l3 xl4 push-xl1">
-                    <input id="input2" list="customers" placeholder="CUSTOMER *" />
+                <div class="input-field col l4">
+                    <input id="VendName" list="customers" placeholder="CUSTOMER *" />
                     <datalist id="customers"></datalist>
                 </div>
-                <div class="input-field col l3 xl2 push-xl1">
-                    <select id="input3" required>
+                <div class="input-field col l2">
+                    <select id="Group" required>
                         <option value="" disabled selected>Group name</option>
                     </select>
                     <label>GROUP *</label>
                 </div>
+                <br><br>
+                <div class="col switch">
+                    <label>
+                        Display Ad
+                        <input type="checkbox" id="AdType">
+                        <span class="lever"></span>
+                        Classified Ad
+                    </label>
+                </div>
             </div>
             <div class="row">
-                <div class="input-field col l3 xl4 push-xl1">
-                    <select id="input4" required>
+                <div class="input-field col l3">
+                    <select id="Subject" required>
                         <option value="" disabled selected>Subject detail</option>
                     </select>
                     <label>SUBJECT *</label>
                 </div>
-                <div class="input-field col push-xl1">
-                    <input id="input5" type="number" step=".01" placeholder="" />
-                    <label for="input5">TRADE DIS *</label>
+                <div class="input-field col l1">
+                    <input id="TradeDis" type="number" step=".01" placeholder="" />
+                    <label for="TradeDis">TRADE DIS *</label>
                 </div>
-                <div class="input-field col l1 push-xl1">
-                    <input id="input6" type="number" step=".01" value=0 />
-                    <label for="input6">SPL DIS *</label>
+                <div class="input-field col l1">
+                    <input id="SplDis" type="number" step=".01" value=0 />
+                    <label for="SplDis">SPL DIS *</label>
                 </div>
-                <div class="input-field col l3 push-xl1">
-                    <input id="input7" type="text" placeholder="Ad position" maxlength="30" />
-                    <label for="input7">POSITION *</label>
+                <div class="input-field col l3">
+                    <input id="Position" type="text" value="RHS Page Requested" placeholder="" maxlength="30" />
+                    <label for="Position">POSITION *</label>
                 </div>
-            </div>
-            <div class="row">
-                <div class="input-field col l8 push-xl1">
-                    <input id="input8" type="text" placeholder="Spl instruction 1" maxlength="100" />
-                    <label for="input8">SPECIAL INSTRUCTION 1</label>
+                <div class="input-field col l2">
+                    <input id="RConfirm" type="text" placeholder="" />
+                    <label for="RConfirm">RATES CONFIRMED BY *</label>
                 </div>
             </div>
             <div class="row">
-                <div class="input-field col l8 push-xl1">
-                    <input id="input9" type="text" placeholder="Spl instruction 2" maxlength="100" />
-                    <label for="input9">SPECIAL INSTRUCTION 2</label>
+                <div class="input-field col l7">
+                    <input id="Spl1" type="text" placeholder="Spl instruction 1" maxlength="100" />
+                    <label for="Spl1">SPECIAL INSTRUCTION 1</label>
+                </div>
+                <div class="input-field col l2">
+                    <input id="Package" type="text" placeholder="" maxlength="25" />
+                    <label for="Package">PACKAGE</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col l7">
+                    <input id="Spl2" type="text" placeholder="Spl instruction 2" maxlength="100" />
+                    <label for="Spl2">SPECIAL INSTRUCTION 2</label>
+                </div>
+                <div class="input-field col l3">
+                    <input id="TParty" type="text" placeholder="Third party name" maxlength="255" />
+                    <label for="TParty">THIRD PARTY</label>
                 </div>
             </div>
             <div class="row tableDiv">
@@ -76,15 +97,15 @@
                             <tr>
                                 <th style="width:70px">NEWSPAPER</th>
                                 <th style="width:220px">EDITION</th>
+                                <th style="width:220px">SUB EDITION</th>
                                 <th style="width:260px">CAPTION *</th>
-                                <th style="width:50px">PUBLICATION DATE</th>
-                                <th style="width:85px">CR</th>
-                                <th style="width:85px">PR</th>
+                                <th style="width:20px">PUBLICATION DATE</th>
+                                <th style="width:90px">CR</th>
+                                <th style="width:90px">PR</th>
                                 <th style="width:70px">WIDTH</th>
                                 <th style="width:70px">HEIGHT</th>
-                                <th style="width:85px">CR AMT</th>
-                                <th style="width:85px">PR AMT</th>
-                                <th>REMOVE</th>
+                                <th style="width:90px">CR AMT</th>
+                                <th style="width:90px">PR AMT</th>
                             </tr>
                         </thead>
                     </table>

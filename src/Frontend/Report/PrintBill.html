@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+    <link type="text/css" href="../../../node_modules/material-icons/iconfont/material-icons.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="../../../node_modules/materialize-css/dist/css/materialize.min.css"
+        media="screen,projection" />
+    <link rel="stylesheet" href="../../../assets/css/Input/Bill.css">
+    <title>AdSoft</title>
+</head>
+<body>
+    <div class="container">
+        <h3 align="center">PRINT BILL</h3>
+        <div class="row">
+            <label id="compulsory" class="col l4 push-l9">Fields marked with (*) are compulsory</label>
+        </div>
+        <br><br><br><br>
+        <div class="row">
+            <h6 class="col push-xl3">Bill range</h6>
+            <div class="input-field col l4 xl2 push-xl3"><input id="from" type="number" placeholder="Start *" class="validate" /></div>
+            <h6 class="col push-xl3">to</h6>
+            <div class="input-field col l4 xl2 push-xl3"><input id="to" type="number" placeholder="End" class="validate" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col l2 push-l4">
+                <select id="BType" required>
+                    <option value="1">BILL 1</option>
+                    <option value="2">BILL 2</option>
+                    <option value="3">BILL 3</option>
+                </select>
+                <label>BILL FORMAT *</label>
+            </div>
+        </div>
+        <div class="row buttons">
+            <a id="prtBtn" onclick="prt()" class="btn col push-l4">Print</a>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../../node_modules/materialize-css/dist/js/materialize.min.js"></script>
+<script src="../../Backend/connector/Report/connectPrintBill.js"></script>
+</html>

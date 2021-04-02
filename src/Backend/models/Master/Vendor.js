@@ -2,9 +2,16 @@ const Sequelize = require('sequelize');
 
 module.exports = sequelize.define('vend', {
     //attributes
+    id: {
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
     Name: {
-        type: Sequelize.STRING,
-        primaryKey: true
+        type: Sequelize.STRING
+    },
+    Identify: {
+        type: Sequelize.STRING(15)
     },
     Street1: {
         type: Sequelize.STRING(40)
