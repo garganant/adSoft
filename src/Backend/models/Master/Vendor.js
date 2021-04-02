@@ -23,7 +23,7 @@ module.exports = sequelize.define('vend', {
         type: Sequelize.STRING(40)
     },
     Pincode: {
-        type: Sequelize.INTEGER(6)
+        type: Sequelize.STRING(6)
     },
     State: {
         type: Sequelize.STRING(40)

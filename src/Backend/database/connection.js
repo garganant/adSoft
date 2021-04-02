@@ -6,14 +6,14 @@ var sequelize = new Sequelize('print_db', 'root', 'CALCULATION1164', {
             charset: 'utf8',
             collate: 'utf8_general_ci'
         },
-        host: 'localhost', 
+        host: '192.168.1.8',  // localhost
         dialect: 'mysql'
     });
 
 sequelize.authenticate()
     .then(async () => {
         console.log('Connection has been established successfully.');
-        basic()
+        basic();
     })
     .catch(err => console.error('Unable to connect to the database:', err) );
 

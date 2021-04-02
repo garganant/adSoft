@@ -131,7 +131,7 @@ ipcMain.on('vend:submit', async (event, arg) => {
                 var worksheet = workbook.getWorksheet('Sheet1');
                 worksheet.eachRow({ includeEmpty: true }, function (currRow, rowNumber) {
                     let row = currRow.values;
-                    if (rowNumber != 1 && row[2] != null && row[13] != null) {
+                    if (rowNumber != 1 && row[2] != null && (row[13] != 'L' || row[13] != 'C')) {
                         var obj = {
                             id: row[1],
                             Name: row[2].toString().trim(),
@@ -139,12 +139,12 @@ ipcMain.on('vend:submit', async (event, arg) => {
                             Street1: row[4] != null ? row[4].toString().trim().substring(0, 40) : '',
                             Street2: row[5] != null ? row[5].toString().trim().substring(0, 40) : '',
                             City: row[6] != null ? row[6].toString().trim().substring(0, 40) : '',
-                            Pincode: row[7],
+                            Pincode: row[7] != null ? row[7].toString().trim().substring(0, 6) : '',
                             State: row[8] != null ? row[8].toString().trim().substring(0, 40) : '',
                             ContactPerson: row[9].toString().trim(),
                             ContactNo: row[10].toString().trim(),
-                            Gstin: row[11].toString().trim(),
-                            Pan: row[12].toString().trim(),
+                            Gstin: row[11] != null ? row[11].toString().trim().substring(0, 15) : '',
+                            Pan: row[12] != null ? row[12].toString().trim().substring(0, 10) : '',
                             Status: row[13].toString().trim()
                         };
                         arr.push(obj);
@@ -245,8 +245,12 @@ ipcMain.on('group:submit', async (event, arg) => {
                     let empty = false, ok = true;
                     for (let i = 1; i <= 3; i++) if (row[i] == null) empty = true;
                     if (rowNumber == 1 || empty || row[1].length > 6 || row[2].length > 30 || row[2].length > 25) ok = false;
-                    var obj = { Code: row[1], GroupName: row[2], HoLoc: row[3] };
-                    if (ok) arr.push(obj);
+                    var obj = {
+                        Code: row[1] != null ? row[1].toString().trim().substring(0, 6) : '',
+                        GroupName: row[2] != null ? row[2].toString().trim().substring(0, 30) : '',
+                        HoLoc: row[3] != null ? row[3].toString().trim().substring(0, 25) : ''
+                    };
+                    if(ok) arr.push(obj);
                 });
                 await PaperGroups.bulkCreate(arr, {
                     updateOnDuplicate: ["GroupName", "HoLoc"]
@@ -348,7 +352,11 @@ ipcMain.on('newspaper:submit', async (event, arg) => {
                     let empty = false, ok = true;
                     for (let i = 1; i <= 3; i++) if (row[i] == null) empty = true;
                     if (rowNumber == 1 || empty || row[1].length > 5 || row[2].length > 25 || row[3].length > 6) ok = false;
-                    var obj = { ShortName: row[1], PaperName: row[2], GroupCode: row[3] };
+                    var obj = {
+                        ShortName: row[1] != null ? row[1].toString().trim().substring(0, 5) : '',
+                        PaperName: row[2] != null ? row[2].toString().trim().substring(0, 25) : '',
+                        GroupCode: row[3] != null ? row[3].toString().trim().substring(0, 6) : ''
+                    };
                     if (ok) arr.push(obj);
                 });
                 await Newspaper.bulkCreate(arr, {
@@ -444,7 +452,10 @@ ipcMain.on('edition:submit', async (event, arg) => {
                     let empty = false, ok = true;
                     for (let i = 1; i <= 2; i++) if (row[i] == null) empty = true;
                     if (rowNumber == 1 || empty || row[1].length > 5 || row[2].length > 25) ok = false;
-                    var obj = { Code: row[1], CityName: row[2] };
+                    var obj = {
+                        Code: row[1] != null ? row[1].toString().trim().substring(0, 5) : '',
+                        CityName: row[2] != null ? row[2].toString().trim().substring(0, 25) : ''
+                    };
                     if (ok) arr.push(obj);
                 });
                 await Edition.bulkCreate(arr, {
@@ -540,7 +551,10 @@ ipcMain.on('subject:submit', async (event, arg) => {
                     let empty = false, ok = true;
                     for (let i = 1; i <= 2; i++) if (row[i] == null) empty = true;
                     if (rowNumber == 1 || empty || row[1].length > 2 || row[2].length > 40) ok = false;
-                    var obj = { Code: row[1], SubjectDetail: row[2] };
+                    var obj = {
+                        Code: row[1],
+                        SubjectDetail: row[2] != null ? row[2].toString().trim().substring(0, 40) : ''
+                    };
                     if (ok) arr.push(obj);
                 });
                 await Subject.bulkCreate(arr, {
