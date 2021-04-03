@@ -196,7 +196,7 @@ function generateTableRow(doc, y, x, caption, paper, edition, rate, w, h, date, 
             doc
                 .text(h, 455, y);
         }
-        else if (typeof w == 'number') doc.text('LINES', 445, y);
+        else if (typeof w == 'number') doc.text('LINES/W', 445, y);
     }
 }
 

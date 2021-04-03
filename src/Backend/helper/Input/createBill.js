@@ -14,7 +14,7 @@ let limit, y;
 
 function createBill(cData, rupee, btype, bills) {
     let doc = new PDFDocument({ size: "A4", margins: {
-            top: 20,
+            top: 10,
             bottom: 20,
             left: 50,
             right: 20
@@ -40,13 +40,13 @@ function generateHeader(doc, compD) {
     doc
         .fillColor('blue')
         .fontSize(12)
-        .font("Times-Bold")
+        .font("Helvetica-Bold")
         .text(compD.Name, { align: 'right' });
 
     doc
         .fillColor('black')
-        .fontSize(8)
-        .font("Times-Roman")
+        .fontSize(6)
+        .font("Helvetica")
         .text(compD.Address, { align: 'right' })
         .text(`Tel. ${compD.Phone} Fax: ${compD.Fax} Cell: ${compD.Mobile}`, { align: 'right' })
         .text(`Email: ${compD.Email} Website: ${compD.Website}`, { align: 'right' })
@@ -55,88 +55,86 @@ function generateHeader(doc, compD) {
 }
 
 function generateCustomerInfo(doc, billNo, bDate, vendD, FY, subject, obj, btype) {
-    let x = [459, 508, 579], yH = [85, 122], yV = [97, 109, 122];
+    let x = [439, 498, 579], yH = [85, 122], yV = [97, 109, 122];
     fillInv(doc, x, yH, yV, 1);
     yH = [127, 163], yV = [127, 138, 150, 163];
 
     doc
         .moveDown(1)
         .text(obj['Salutation'], { align: 'left' })
-        .font("Times-Bold")
+        .fontSize(8)
+        .font("Helvetica-Bold")
         .text(vendD.Name)
-        .font("Times-Roman")
+        .font("Helvetica")
         .text(vendD.Street1)
         .text(vendD.Street2)
         .text(`${vendD.City} - ${vendD.Pincode}`)
         .text(vendD.State)
-        .moveUp(7)
+        .moveUp(4.6)
         .fontSize(14)
-        .font("Times-Bold")
+        .font("Helvetica-Bold")
         .fillColor('white')
-        .text('TAX INVOICE', 472)
+        .text('TAX INVOICE', 465, 69)
         .moveDown(0.5)
         .fontSize(7)
         .fillColor('black')
-        .text('No.', 460, 88)
-        .text(FY + '/' + billNo, 510, 88)
-        .text('Date:', 460, 100)
-        .text(formatDate(bDate), 510, 100)
-        .text('Place of Supply', 460, 112)
-        .font("Times-Roman")
-        .text(vendD.State, 510, 112)
+        .text('No.', 440, 88)
+        .text(FY + '/' + billNo, 501, 88)
+        .text('Date:', 440, 100)
+        .text(formatDate(bDate), 501, 100)
+        .text('Place of Supply', 440, 112)
+        .text(vendD.State, 501, 112)
         .moveDown(2)
-        .text(`GST NUMBER : ${vendD.Gstin}`, 50)
+        .font("Helvetica-Bold")
+        .text('GST NUMBER :', 50)
+        .font("Helvetica")
+        .moveUp()
+        .text(vendD.Gstin, 105);
 
     let sub = subject;
-    if(btype == 1) {
-        doc
-            .moveUp()
-            .text(`PAN : ${vendD.Pan}`, 200);
-
-        if(obj.Prospect != "") sub+= ` | Prospect No. ${obj.Prospect}`;
-    }
+    if (btype == 1 && obj.Prospect != "") sub+= ` | Prospect No. ${obj.Prospect}`;
 
     doc
-        .font("Times-Roman")
+        .font("Helvetica")
         .text("Subject :", 50, 165, { underline: true })
-        .font("Times-Bold")
-        .text(sub, 102, 165, { underline: true });
+        .font("Helvetica-Bold")
+        .text(sub, 80, 165);
 
     if (btype == 2) {
         if(obj.Attention != "") {
             doc
-                .font("Times-Bold")
-                .text("Kind Attention :", 50, 155)
-                .text(obj.Attention, 102, 155);
+                .font("Helvetica-Bold")
+                .text("Kind Attention :", 50, 150)
+                .text(obj.Attention, 105, 150);
         }
 
         if (obj.AdRef != "") {
             doc
-                .font("Times-Roman")
+                .font("Helvetica")
                 .text("Ad Reference :", doc.widthOfString(sub) + 170, 165, { underline: true })
-                .font("Times-Bold")
-                .text(obj.AdRef, doc.widthOfString(sub) + 212, 165, { bold: true });
+                .font("Helvetica-Bold")
+                .text(obj.AdRef, doc.widthOfString(sub) + 218, 165, { bold: true });
         }
     }
     else if(btype == 3) {
         doc
-            .font("Times-Roman")
-            .text('Product', 460, 130)
-            .font("Times-Bold")
-            .text(obj.Product, 510, 130);
+            .font("Helvetica")
+            .text('Product', 440, 130)
+            .font("Helvetica-Bold")
+            .text(obj.Product, 501, 130);
     }
 
     if(btype == 2 || btype == 3) {
         fillInv(doc, x, yH, yV, btype);
         doc
-            .font("Times-Roman")
-            .text('Bill Month', 460, 141)
-            .font("Times-Bold")
-            .text(obj.Month, 510, 141)
-            .font("Times-Roman")
-            .text('Activity', 460, 153)
-            .font("Times-Bold")
-            .text(obj.Activity, 510, 153)
+            .font("Helvetica")
+            .text('Bill Month', 440, 141)
+            .font("Helvetica-Bold")
+            .text(obj.Month, 501, 141)
+            .font("Helvetica")
+            .text('Activity', 440, 153)
+            .font("Helvetica-Bold")
+            .text(obj.Activity, 501, 153)
             .moveDown(2.5);
     }
         
@@ -146,19 +144,20 @@ function generateCustomerInfo(doc, billNo, bDate, vendD, FY, subject, obj, btype
 }
 
 function generateRoTable(doc, arr, sData, SplDis, rupee) {
-    generateTableRow(doc, "PUBLICATION (S)", "       DATE", "  SIZE", "SPACE", "RATE", "AMOUNT");
+    generateTableRow(doc, "PUBLICATION (S)", "       DATE", "  SIZE", "SPACE", " RATE", "AMOUNT", sData.AdType);
     y = 205;
     let sz = sData.AdType == 'D' ? "W  x  H": "W    LINES";
-    generateTableRow(doc, "EDITIONS", "DD/MM/YYYY", sz, "SQ. CM.", "SQ. CM.", "  INR");
-    doc.image(rupee, 567, 195, { scale: 0.03 });
+    generateTableRow(doc, "EDITIONS", "DD/MM/YYYY", sz, "SQ. CM.", "SQ. CM.", "  INR", sData.AdType);
+    doc.image(rupee, 569, 198, { scale: 0.02 });
 
     y = 220 , amt = 0;
     for(let p of arr) {
         sz = sData.AdType == 'D' ? `${p[3]}  x  ${p[4]}` : `${p[3]}   LINES`;
+        let space = sData.AdType == 'D' ? p[3] * p[4] : `${p[3]}   LINES`;
         let tAmt = sData.AdType == 'D' ? p[3] * p[4] * p[5] : p[5];
-        generateTableRow(doc, p[0], formatDate(p[2]), sz, p[3] * p[4], (p[5]).toFixed(2), commaSeparated(tAmt) + '.00');
+        generateTableRow(doc, `  ${p[0]}`, ` ${formatDate(p[2])}`, sz, space, (p[5]).toFixed(2), commaSeparated(tAmt) + '.00', sData.AdType);
         y+= 10;
-        generateTableRow(doc, `          ${p[6]}    (${p[1]})`, "", "", "", "", "");
+        generateTableRow(doc, `          ${p[6]}    (${p[1]})`, "", "", "", "", "", sData.AdType);
         y+= 18;
         amt+= tAmt;
     }
@@ -166,15 +165,14 @@ function generateRoTable(doc, arr, sData, SplDis, rupee) {
     generateVr(doc);
     generateHr(doc, 48, 580, y-1);
     y+= 3;
-    generateTableRow(doc, "", "GRAND TOTAL", "", "", "", commaSeparated(amt, 0)+'.00');
+    generateTableRow(doc, "", "GRAND TOTAL", "", "", "", commaSeparated(amt, 0) + '.00', sData.AdType);
     y+= 10;
-    let dis = amt * SplDis * 0.01;
-    generateTableRow(doc, "", "LESS: SPECIAL PACKAGE DISCOUNTS & OTHER  ADJUSTMENTS", "", "", "", "   " + commaSeparated(dis, 0) + '.00');
+    generateTableRow(doc, "", "LESS: Other Dr/Cr Adjustments", "", "", "", "   " + commaSeparated(SplDis, 0), sData.AdType);
     y+= 10;
     generateHr(doc, 48, 580, y - 1);
     y+= 3;
 
-    return Math.round(amt - dis);
+    return Math.round(amt - SplDis);
 }
 
 function generateFooter(doc, cData, Status, sData, adv, gross) {
@@ -191,7 +189,7 @@ function generateFooter(doc, cData, Status, sData, adv, gross) {
     let s2 = 'the date of bill. Any objection regarding the bill / ';
 
     doc
-        .fillColor('#FF1493')
+        .fillColor('#9a0000')
         .text('BANK DETAIL FOR ONLINE PAYMENT', 50, y, { bold: true, underline: true })
         .moveDown(0.5)
         .fillColor('black')
@@ -215,47 +213,48 @@ function generateFooter(doc, cData, Status, sData, adv, gross) {
         .moveUp()
         .text(`: ${cData.Ifsc}`, 100)
         .moveUp(8.5)
-        .font("Times-Bold")
-        .text('GROSS AMOUNT', 400)
+        .font("Helvetica-Bold")
+        .text('GROSS AMOUNT', 396)
         .moveUp()
         .text(g, 573 - doc.widthOfString(g))
         .moveDown(0.5)
-        .font("Times-Roman")
-        .text('CGST', 400)
+        .font("Helvetica")
+        .text('CGST', 396)
         .moveUp()
         .text(sData.CGst + ' %', 450)
         .moveDown(0.5)
-        .text('SGST', 400)
+        .text('SGST', 396)
         .moveUp()
         .text(sData.SGst + ' %', 450)
         .moveDown(0.5)
-        .text('IGST', 400)
+        .text('IGST', 396)
         .moveUp()
         .text(sData.IGst + ' %', 450)
         .moveDown(0.5)
-        .text('CESS', 400)
+        .text('CESS', 396)
         .moveDown(0.5)
-        .font("Times-Bold")
-        .text('Total Amount Payable', 400)
+        .font("Helvetica-Bold")
+        .text('Total Amount', 396)
         .moveUp()
         .text(total, 573 - doc.widthOfString(total))
         .moveDown(0.5)
-        .font("Times-Roman")
-        .text('Less: Advance / Credit Adjustments', 400)
+        .font("Helvetica")
+        .text('Less: Advance / Credit Adjustments', 396)
         .moveUp()
         .text(adv, 573 - doc.widthOfString(adv))
-        .moveDown()
-        .font("Times-Bold")
-        .text('Net Amount Payable', 400)
+        .moveDown(0.5)
+        .font("Helvetica-Bold")
+        .text('Net Amount Payable', 396)
         .moveUp()
         .text(net, 573 - doc.widthOfString(net))
-        .font("Times-Roman")
+        .font("Helvetica")
         .moveUp(10.5);
         
     if(Status == 'L') {
         let cgst = commaSeparated(gross * sData.CGst * 0.01, 2);
         let sgst = commaSeparated(gross * sData.SGst * 0.01, 2);
         doc
+            .moveDown(0.5)
             .text(cgst, 573 - doc.widthOfString(cgst))
             .moveDown(0.5)
             .text(sgst, 573 - doc.widthOfString(sgst))
@@ -272,110 +271,119 @@ function generateFooter(doc, cData, Status, sData, adv, gross) {
     }
 
     doc
-        .moveDown(7)
+        .moveDown(6.8)
         .fontSize(8)
-        .font("Times-Bold")
+        .font("Helvetica-Bold")
         .text(words, 50)
         .moveDown(0.5)
         .fontSize(6)
-        .fillColor('#FF1493')
+        .fillColor('#9a0000')
         .text('MSME REGN:', 50)
         .moveUp()
         .fillColor('black')
         .text(cData.MsmeRegn, 92)
         .moveUp()
-        .fillColor('#FF1493')
+        .fillColor('#9a0000')
         .text('|    CIN :', 155)
         .fillColor('black')
         .moveUp()
         .text(cData.Cin, 180)
         .moveUp()
         .text(`for ${cData.Name}`, { align: 'right' })
-        .fillColor('#FF1493')
+        .fillColor('#9a0000')
         .text('GST No :', 50)
         .fillColor('black')
         .moveUp()
         .text(cData.Gstin, 77)
         .moveUp()
-        .fillColor('#FF1493')
+        .fillColor('#9a0000')
         .text('HSN CODE :', 170)
         .moveUp()
         .fillColor('black')
         .text(cData.HsnCode, 206)
-        .fillColor('#FF1493')
+        .fillColor('#9a0000')
         .text('PAN :', 50)
         .moveUp()
         .fillColor('black')
         .text(cData.Pan, 68)
         .moveUp()
-        .fillColor('#FF1493')
+        .fillColor('#9a0000')
         .text('|   TAN :', 110)
         .moveUp()
         .fillColor('black')
         .text(cData.Tan, 135)
-        .moveDown(0.5)
-        .font("Times-Roman")
+        .moveUp()
+        .fillColor('#9a0000')
+        .text('|   UDYAM :', 180)
+        .fillColor('black')
+        .moveUp()
+        .text(cData.Udyam, 215)
+        .moveDown()
+        .font("Helvetica")
         .text(s1, 50)
         .text(s2)
         .moveUp()
-        .fillColor('#FF1493')
-        .text('GST Particulars ', doc.widthOfString(s1) - 30)
+        .fillColor('#9a0000')
+        .text('GST Particulars ', doc.widthOfString(s1) - 36)
         .moveUp()
         .fillColor('black')
         .text('will not be', doc.widthOfString(s1) + 10)
         .text('entertained', 50)
         .moveUp()
-        .fillColor('#FF1493')
-        .text('after seven days of the bill.', 81)
+        .fillColor('#9a0000')
+        .text('after seven days of the bill.', 83)
         .fillColor('black')
         .moveUp()
         .text('Authorised Signatory', { align : 'right' })
         .moveDown(0.5)
         .text('Prepared by :', 50)
-        .moveUp()
-        .text('                                             ', 87, 740, { underline: true })
-        .moveUp()
+        .text('                                             ', 87, 748, { underline: true })
+        .moveUp(0.8)
         .text('Checked by :', 177)
-        .text('                                             ', 212, 740, { underline: true })
+        .text('                                             ', 212, 748, { underline: true })
         .fontSize(7)
-        .font("Times-Bold")
-        .text('NEWSPAPER CUTTINGS ENCLOSED', 50, 750, { underline: true })
+        .font("Helvetica-Bold")
+        .text('NEWSPAPER CUTTINGS ENCLOSED', 50, 758, { underline: true })
         .moveDown()
         .text('E&OE')
-        .font("Times-Roman")
+        .font("Helvetica")
         .moveUp(1.05)
         .text('BH / CR / SP / COL', 80);
 
     lines(doc);
 }
 
-function generateTableRow(doc, publication, date, size, space, rate, amount) {
+function generateTableRow(doc, publication, date, size, space, rate, amount, AdType) {
     doc
-        .font("Times-Roman")
+        .font("Helvetica")
         .fillColor('black')
         .lineWidth(12);
 
     if (y == 195 || y == 205) {
         fillBackground(doc, y+3);
-        doc.fillColor('white');
+        doc
+            .font("Helvetica-Bold")
+            .fillColor('white');
     }
-    if (date != "" && y > 205) doc.font("Times-Bold");
+    if (date != "" && y > 205) doc.font("Helvetica-Bold");
 
     doc
         .fontSize(7.2)
         .text(publication, 50, y)
-        .text(date, 285, y)
-        .text(size, 354, y);
+        .text(date, 285, y);
 
     if (y == 195 || y == 205) {
+        if (y == 195) doc.text(size, 354, y);
+        else if (y == 205 && AdType == 'D') doc.text(size, 354, y);
         doc
             .text(space, 410, y)
-            .text(rate, 484, y)
+            .text(rate, 464, y)
             .text(amount, 533, y);
     }
     else {
         doc
-            .text(space, 408, y)
+            .text(size, 381 - doc.widthOfString(size), y)
+            .text(space, 442 - doc.widthOfString('' + space), y)
             .text(rate, 506 - doc.widthOfString(rate), y)
             .text(amount, 573 - doc.widthOfString(amount), y);
     }
@@ -386,7 +394,7 @@ function fillInv(doc, x, yH, yV, btype) {
         doc
             .lineWidth(22)
             .lineCap('butt')
-            .moveTo(459, 74)
+            .moveTo(439, 74)
             .lineTo(580, 74)
             .stroke();
     }
@@ -404,7 +412,7 @@ function fillInv(doc, x, yH, yV, btype) {
         doc
             .strokeColor("black")
             .lineWidth(0.1)
-            .moveTo(459, yV[i])
+            .moveTo(439, yV[i])
             .lineTo(579, yV[i])
             .stroke();
     }
@@ -465,8 +473,8 @@ function lines(doc) {
     generateHr(doc, 48, 580, 688);
 
     doc
-        .strokeColor('#FF1493')
-        .rect(48, 763, 100, 12)
+        .strokeColor('#9a0000')
+        .rect(48, 770, 100, 12)
         .stroke();
 }
 
@@ -480,7 +488,7 @@ function generateHr(doc, x1, x2, y) {
 }
 
 function commaSeparated(num, d) {
-    return num.toLocaleString('en-IN', { maximumFractionDigits: d })
+    return num.toLocaleString('en-IN', { minimumFractionDigits: d, maximumFractionDigits: d })
 }
 
 function formatDate(date) {
