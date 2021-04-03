@@ -66,3 +66,30 @@ h3 {
 #chooseFile {
   background-color: #722620;
 }
+
+@media screen and (min-width: 2560px) {
+  h3 {
+    font-size: 90px;
+    margin-bottom: 5%;
+  }
+
+  #compulsory {
+    font-size: 30px;
+  }
+
+  .row {
+    margin: 4%;
+  }
+
+  .input-field label {
+    font-size: 28px;
+  }
+
+  .input-field input[type="text"] {
+    font-size: 35px;
+  }
+
+  .btn {
+    font-size: 37px;
+  }
+}

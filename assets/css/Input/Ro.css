@@ -113,3 +113,9 @@ th, td {
 .btn:hover {
   background-color: #491910;
 }
+
+@media screen and (max-width: 1024px) {
+  .tableDiv {
+    max-height: 33%;
+  }
+}

@@ -3,7 +3,7 @@ const Sequelize = require('sequelize');
 module.exports = sequelize.define('Subject', {
     //attributes
     Code: {
-        type: Sequelize.INTEGER(2),
+        type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },

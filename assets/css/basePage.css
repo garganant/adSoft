@@ -44,3 +44,9 @@ h5 {
     transform: translate(-100%, 0);
   }
 }
+
+@media screen and (min-width: 2560px) {
+  h1 {
+    font-size: 130px;
+  }
+}

@@ -6,7 +6,7 @@ var sequelize = new Sequelize('print_db', 'root', 'CALCULATION1164', {
             charset: 'utf8',
             collate: 'utf8_general_ci'
         },
-        host: '192.168.1.8',  // localhost
+        host: 'localhost',
         dialect: 'mysql'
     });
 

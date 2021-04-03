@@ -10,12 +10,12 @@
     "setup": "electron-installer-windows --src dist/AdSoft-win32-ia32/ --dest dist/installers/"
   },
   "build": {
-    "appId": "AdSoft app",
-    "win": {
-      "target": [
-        "nsis"
-      ]
+    "directories": {
+      "buildResources": "build",
+      "app": "build"
     },
+    "appId": "AdSoft app",
+    "win": { "target": [ "nsis" ] },
     "nsis": {
       "uninstallDisplayName": "AdSoft",
       "oneClick": false,

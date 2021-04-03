@@ -12,8 +12,7 @@ const toWords = new ToWords({
 });
 let limit, y;
 
-function createBill(cData, rupee, bills, btype) {
-    limit = 8, y = 195;
+function createBill(cData, rupee, btype, bills) {
     let doc = new PDFDocument({ size: "A4", margins: {
             top: 20,
             bottom: 20,
@@ -23,11 +22,12 @@ function createBill(cData, rupee, bills, btype) {
     });
     
     for (var i = 0; i < bills.length; i++) {
+        limit = 8, y = 195;
         if (i != 0) doc.addPage();
         generateHeader(doc, cData);
-        generateCustomerInfo(doc, bills[i][0], bills[i][1], bills[i][2], cData.FY, bills[i][3], bills[i][6], btype);
-        let gross = generateRoTable(doc, bills[i][4], bills[i][5], rupee);
-        generateFooter(doc, cData, bills[i][2].Status, bills[i][5], parseFloat(bills[i][6]['Advance']), gross);
+        generateCustomerInfo(doc, bills[i][3]['BillNo'], bills[i][3]['BillDate'], bills[i][0], cData.FY, bills[i][1], bills[i][4], btype);
+        let gross = generateRoTable(doc, bills[i][2], bills[i][3], bills[i][4]['LSplDis'], rupee);
+        generateFooter(doc, cData, bills[i][0].Status, bills[i][3], parseFloat(bills[i][3]['Advance']), gross);
     }
 
     doc.end();
@@ -75,7 +75,7 @@ function generateCustomerInfo(doc, billNo, bDate, vendD, FY, subject, obj, btype
         .fontSize(14)
         .font("Times-Bold")
         .fillColor('white')
-        .text('TAX INVOICE', 465)
+        .text('TAX INVOICE', 472)
         .moveDown(0.5)
         .fontSize(7)
         .fillColor('black')
@@ -156,7 +156,7 @@ function generateCustomerInfo(doc, billNo, bDate, vendD, FY, subject, obj, btype
         .text('Being the charges towards selling of space in Print Media as per detail given below:', 50)
 }
 
-function generateRoTable(doc, arr, sData, rupee) {
+function generateRoTable(doc, arr, sData, SplDis, rupee) {
     generateTableRow(doc, "PUBLICATION (S)", " Ref.", "       DATE", "  SIZE", "SPACE", "RATE", "AMOUNT");
     y = 205;
     let sz = sData.AdType == 'D' ? "W  x  H": "W    LINES";
@@ -179,7 +179,7 @@ function generateRoTable(doc, arr, sData, rupee) {
     y+= 3;
     generateTableRow(doc, "", "", "GRAND TOTAL", "", "", "", commaSeparated(amt, 0)+'.00');
     y+= 10;
-    let dis = amt * sData.SplDis * 0.01;
+    let dis = amt * SplDis * 0.01;
     generateTableRow(doc, "", "", "LESS: SPECIAL PACKAGE DISCOUNTS & OTHER  ADJUSTMENTS", "", "", "", "   " + commaSeparated(dis, 0) + '.00');
     y+= 10;
     generateHr(doc, 48, 580, y - 1);

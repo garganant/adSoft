@@ -3,7 +3,7 @@ const Sequelize = require('sequelize');
 const RoSame = sequelize.define('RoSame', {
     //attributes
     RoNo: {
-        type: Sequelize.INTEGER(10),
+        type: Sequelize.INTEGER,
         primaryKey: true
     },
     GroupCode: {
@@ -16,7 +16,7 @@ const RoSame = sequelize.define('RoSame', {
         type: Sequelize.DATEONLY
     },
     SubjectCode: {
-        type: Sequelize.INTEGER(2)
+        type: Sequelize.INTEGER
     },
     CGst: {
         type: Sequelize.DECIMAL(5, 2)
@@ -43,7 +43,7 @@ const RoSame = sequelize.define('RoSame', {
         type: Sequelize.STRING(100)
     },
     BillNo: {
-        type: Sequelize.INTEGER(10)
+        type: Sequelize.INTEGER
     },
     BillDate: {
         type: Sequelize.DATEONLY
@@ -62,6 +62,9 @@ const RoSame = sequelize.define('RoSame', {
     },
     RConfirm: {
         type: Sequelize.STRING
+    },
+    PBillNo: {
+        type: Sequelize.INTEGER
     }
 }, {
     //options

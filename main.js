@@ -25,7 +25,21 @@ function createWindow() {
 
 
 // This method will be called when Electron has finished initialization and is ready to create browser windows. Some APIs can only be used after this event occurs.
-app.whenReady().then(createWindow)
+app.whenReady().then(() => {
+    createWindow();
+
+    app.on('activate', () => {
+        if (BrowserWindow.getAllWindows().length === 0) createWindow();
+    });
+
+    let d = new Date(), last = new Date(2022, 02, 31);
+    if (d > last) {
+        showError('Validity over. Contact for renewal!');
+        setTimeout(() => {
+            app.quit();
+        }, 2000);
+    }
+});
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
@@ -40,23 +54,12 @@ app.on('activate', () => {
 
 // Code starts here ///////////////////////////////////////////////////////////
 
-const sequelize = require('./src/Backend/database/connection.js');
-const RoPaper = require('./src/Backend/models/Input/RoPaper.js');
+require('./src/Backend/database/connection.js');
 
 function showError(err) {
     const messageBoxOptions = { type: "error", title: "Process cancelled!", message: err };
     dialog.showMessageBox(messageBoxOptions);
 }
-
-app.whenReady().then(() => {
-    let d = new Date(), last = new Date(2022, 02, 31);
-    if (d > last) {
-        showError('Validity over. Contact for renewal!');
-        setTimeout(() => {
-            app.quit();
-        }, 2000);
-    }
-});
 
 // MASTER /////////////////////////////////////////////////////////////////////
 
@@ -754,51 +757,17 @@ ipcMain.on('roCust:get', async (event) => {
 
 ipcMain.on('bill:make', async (event, roNo, obj, btype) => {
     try {
-        const Comp = require('./src/Backend/models/Master/Comp.js');
-        const Vend = require('./src/Backend/models/Master/Vendor.js');
-        const PaperGroups = require('./src/Backend/models/Master/PaperGroups.js');
-        const Subject = require('./src/Backend/models/Master/Subject.js');
-        const Newspaper = require('./src/Backend/models/Master/Newspaper.js');
-        const Edition = require('./src/Backend/models/Master/Edition.js');
         const RoSame = require('./src/Backend/models/Input/RoSame.js');
-        const RoPaper = require('./src/Backend/models/Input/RoPaper.js');
         const { createBill } = require('./src/Backend/helper/Input/createBill.js');
-        const { billAdd } = require('./src/Backend/helper/Input/BillFunc.js');
-
-        let grpMap = {}, paperMap = {}, cityMap = {};
-        var publications = await PaperGroups.findAll();
-        var papers = await Newspaper.findAll({ attributes: ['ShortName', 'PaperName'] });
-        var cities = await Edition.findAll();
-        for (let ele of publications) grpMap[ele.dataValues['Code']] = ele.dataValues['GroupName'];
-        for (let ele of papers) paperMap[ele.dataValues['ShortName']] = ele.dataValues['PaperName'];
-        for (let ele of cities) cityMap[ele.dataValues['Code']] = ele.dataValues['CityName'];
+        const { billAdd, billPrtData } = require('./src/Backend/helper/Input/BillFunc.js');
+        let rupee = path.join(__dirname, 'assets/images/Rupee.png');
 
         var billNo = ( await RoSame.findOne({ attributes: ['BillNo'], order: [['BillNo', 'DESC']] }) ).dataValues.BillNo;
         billNo = billNo == null ? 1 : billNo+1;
-        billAdd(obj, roNo, billNo);
+        await billAdd(obj, roNo, billNo);
 
-        var cData = await Comp.findOne();
-        var sData = await RoSame.findOne({ attributes: ['VendCode', 'SubjectCode', 'CGst', 'SGst', 'IGst', 'SplDis', 'AdType'], where: {RoNo: roNo[0]} });
-        var vend = await Vend.findOne({ where: {id: sData.dataValues.VendCode} });
-        var subject = (await Subject.findOne({ attributes: ['SubjectDetail'], where: { Code: sData.SubjectCode } })).dataValues.SubjectDetail;
-        var arr = [], bDate = (new Date()).toLocaleDateString('en-CA');
-        for(let num of roNo) {
-            let pData = await RoPaper.findAll({ where: {RoNo: num} });
-            for(let i in pData) {
-                let tmp = [];
-                tmp.push(paperMap[pData[i].dataValues.ShortName]);
-                tmp.push(num);
-                tmp.push(pData[i].dataValues.DateP);
-                tmp.push(pData[i].dataValues.Width);
-                tmp.push(pData[i].dataValues.Height);
-                tmp.push(parseFloat(pData[i].dataValues.RatePR));
-                tmp.push(pData[i].dataValues.EditionCode);
-                arr.push(tmp);
-            }
-        }
-        
-        let rupee = path.join(__dirname, 'assets/images/Rupee.png');
-        createBill(cData.dataValues, rupee, [[billNo, bDate, vend.dataValues, subject, arr, sData.dataValues, obj]], btype);
+        let arr = await billPrtData(billNo, billNo);
+        createBill(arr[0], rupee, btype, arr[1]);
         win.webContents.send('bill:made');
     }
     catch (err) {
@@ -847,9 +816,14 @@ ipcMain.on('billData:add', async (event, adv, arg) => {
 
 // PRINT BILL ///////////////////////////////////////////
 
-ipcMain.on('bill:prt', async (event, s, e, btype) => {
+ipcMain.on('bill:prt', async (event, start, end, btype) => {
     try {
-        
+        const { createBill } = require('./src/Backend/helper/Input/createBill.js');
+        const { billPrtData } = require('./src/Backend/helper/Input/BillFunc.js');
+        let rupee = path.join(__dirname, 'assets/images/Rupee.png');
+
+        let arr = await billPrtData(start, end);
+        createBill(arr[0], rupee, btype, arr[1]);
         win.webContents.send('bill:prted');
     } catch (err) {
         showError(err.stack);

@@ -25,7 +25,7 @@ ipcRenderer.on('roCust:got', (event, data) => {
 });
 
 function submit() {
-    let obj = {}, arr = ['Advance', 'Prospect', 'Attention', 'Product', 'Month', 'Activity', 'AdRef'];
+    let obj = {}, arr = ['Advance', 'LSplDis', 'Prospect', 'Attention', 'Product', 'Month', 'Activity', 'AdRef'];
     for(let ele of arr) obj[ele] = document.querySelector(`#${ele}`).value;
     let e = document.querySelector('#BType');
     let btype = e.options[e.selectedIndex].value;
@@ -34,12 +34,23 @@ function submit() {
     for (let i = 0; i < e.length; i++) if (e.options[i].selected) RoNo.push(e.options[i].value);
     if (!RoNo.length) dialog.showMessageBox({ type: "error", message: 'No RO selected!' });
     else if (obj['Advance'] == "") dialog.showMessageBox({ type: "error", message: 'Required fields cannot be empty!' });
-    else ipcRenderer.send('bill:make', RoNo, obj, btype);
+    else {
+        setBtn('addBtn');
+        ipcRenderer.send('bill:make', RoNo, obj, btype);
+    }
 }
 
 ipcRenderer.on('bill:made', (event) => {
     window.location.reload();
 });
+
+function setBtn(btn) {
+    var btn = document.getElementById(btn);
+    btn.style.cursor = 'wait';
+    btn.disabled = true;
+    btn.innerHTML = '...processing...';
+    btn.style.background = 'grey';
+}
 
 function formatDate(date) {
     var arr = date.split('-')

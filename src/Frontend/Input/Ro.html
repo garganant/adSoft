@@ -17,13 +17,13 @@
             <div class="row">
                 <div class="input-field col l1">
                     <input id="RoNo" type="number" placeholder="" />
-                    <label for="RoNo">RO NUMBER *</label>
+                    <label for="RoNo">RO NUM *</label>
                 </div>
                 <div class="input-field col">
                     <input id="RoDate" type="date" placeholder="" />
                     <label for="RoDate">RO DATE *</label>
                 </div>
-                <div class="input-field col l4">
+                <div class="input-field col l2 xl4">
                     <input id="VendName" list="customers" placeholder="CUSTOMER *" />
                     <datalist id="customers"></datalist>
                 </div>
@@ -33,8 +33,7 @@
                     </select>
                     <label>GROUP *</label>
                 </div>
-                <br><br>
-                <div class="col switch">
+                <div class="switch col input-field l4 xl3 push-l0 push-xl0">
                     <label>
                         Display Ad
                         <input type="checkbox" id="AdType">
@@ -50,7 +49,7 @@
                     </select>
                     <label>SUBJECT *</label>
                 </div>
-                <div class="input-field col l1">
+                <div class="input-field col l2 xl1">
                     <input id="TradeDis" type="number" step=".01" placeholder="" />
                     <label for="TradeDis">TRADE DIS *</label>
                 </div>
@@ -62,23 +61,23 @@
                     <input id="Position" type="text" value="RHS Page Requested" placeholder="" maxlength="30" />
                     <label for="Position">POSITION *</label>
                 </div>
-                <div class="input-field col l2">
+                <div class="input-field col l3 xl2">
                     <input id="RConfirm" type="text" placeholder="" />
                     <label for="RConfirm">RATES CONFIRMED BY *</label>
                 </div>
             </div>
             <div class="row">
-                <div class="input-field col l7">
+                <div class="input-field col l8 xl7">
                     <input id="Spl1" type="text" placeholder="Spl instruction 1" maxlength="100" />
                     <label for="Spl1">SPECIAL INSTRUCTION 1</label>
                 </div>
-                <div class="input-field col l2">
+                <div class="input-field col l3 xl2">
                     <input id="Package" type="text" placeholder="" maxlength="25" />
                     <label for="Package">PACKAGE</label>
                 </div>
             </div>
             <div class="row">
-                <div class="input-field col l7">
+                <div class="input-field col l8 xl7">
                     <input id="Spl2" type="text" placeholder="Spl instruction 2" maxlength="100" />
                     <label for="Spl2">SPECIAL INSTRUCTION 2</label>
                 </div>
@@ -113,13 +112,13 @@
             </div>
         </form>
         <div class="row buttons">
-            <a id="prevBtn" onclick="prev()" class="btn">Previous</a>
-            <a id="nxtBtn" onclick="nxt()" class="btn">Next</a>
-            <a id="fstBtn" onclick="fst()" class="btn">First</a>
-            <a id="lstBtn" onclick="lst()" class="btn">Last</a>
-            <a id="showBtn" onclick="show()" class="btn">Search</a>
-            <a id="addBtn" onclick="submit()" class="btn">Create/Edit RO</a>
-            <a id="prtBtn" onclick="prt()" class="btn">Print</a>
+            <a id="prevBtn" onclick="prev()" class="btn col push-xl1">Previous</a>
+            <a id="nxtBtn" onclick="nxt()" class="btn col push-xl1">Next</a>
+            <a id="fstBtn" onclick="fst()" class="btn col push-xl1">First</a>
+            <a id="lstBtn" onclick="lst()" class="btn col push-xl1">Last</a>
+            <a id="showBtn" onclick="show()" class="btn col push-xl1">Search</a>
+            <a id="addBtn" onclick="submit('addBtn')" class="btn col push-xl1">Create/Edit RO</a>
+            <a id="prtBtn" onclick="prt()" class="btn col push-xl1">Print</a>
         </div>
     </div>
 </body>

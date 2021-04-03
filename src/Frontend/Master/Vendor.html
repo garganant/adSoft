@@ -21,23 +21,23 @@
                 <div class="input-field col l1">
                     <input id="id" type="number" hidden />
                 </div>
-                <div class="input-field col l7 xl6 push-xl1">
+                <div class="input-field col l7 xl6 pull-l1 push-xl1">
                     <input id="Name" type="text" placeholder="Vendor name" />
                     <label for="Name">NAME *</label>
                 </div>
-                <div class="input-field col l3 xl2 push-xl1">
+                <div class="input-field col l3 xl2 pull-l1 push-xl1">
                     <input id="Identify" type="text" placeholder="" maxlength="15" />
                     <label for="Identify">IDENTIFIER</label>
                 </div>
             </div>
             <div class="row">
-                <div class="input-field col l6 xl5 push-xl2">
+                <div class="input-field col l7 xl5 push-xl2">
                     <input id="Street1" type="text" placeholder="Street line 1*" maxlength="40" />
                     <label for="Street1">ADDRESS *</label>
                 </div>
             </div>
             <div class="row">
-                <div class="input-field col l6 xl5 push-xl2">
+                <div class="input-field col l7 xl5 push-xl2">
                     <input id="Street2" type="text" placeholder="Street line 2*" maxlength="40" />
                 </div>
             </div>
@@ -46,21 +46,21 @@
                     <input id="City" type="text" placeholder="City*" maxlength="40" />
                 </div>
                 <div class="input-field col l2 xl2 push-xl2">
-                    <input id="Pincode" type="number" placeholder="Pincode" />
+                    <input id="Pincode" type="number" placeholder="Pincode" maxlength="6" />
                 </div>
             </div>
             <div class="row">
-                <div class="input-field col l3 xl4 push-xl2">
+                <div class="input-field col l4 push-xl2">
                     <input id="State" list="states" placeholder="STATE*" maxlength="40" />
                     <datalist id="states"></datalist>
                 </div>
             </div>
             <div class="row">
-                <div class="input-field col l3 xl3 push-xl2">
+                <div class="input-field col l4 xl3 push-xl2">
                     <input id="ContactPerson" type="text" placeholder="Contact person" />
                     <label for="ContactPerson">CONTACT PERSON *</label>
                 </div>
-                <div class="input-field col l3 xl3  push-xl2">
+                <div class="input-field col l4 xl3  push-xl2">
                     <input id="ContactNo" type="text" placeholder="Contact no" />
                     <label for="ContactNo">CONTACT NUMBER *</label>
                 </div>
@@ -90,7 +90,7 @@
                 </div>
             </div>
         </form>
-        <br><br>
+        <br>
         <div class="row">
             <div class="buttons">
                 <a id="prevBtn" onclick="prev()" class="btn col pull-l1 push-xl0">Previous</a>

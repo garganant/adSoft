@@ -11,7 +11,7 @@ const RoPaper = sequelize.define('RoPaper', {
         autoIncrement: true
     },
     RoNo: {
-        type: Sequelize.INTEGER(10)
+        type: Sequelize.INTEGER
     },
     ShortName: {
         type: Sequelize.STRING(5)
@@ -32,10 +32,10 @@ const RoPaper = sequelize.define('RoPaper', {
         type: Sequelize.DECIMAL(7, 2)
     },
     Width: {
-        type: Sequelize.INTEGER(2)
+        type: Sequelize.INTEGER
     },
     Height: {
-        type: Sequelize.INTEGER(2)
+        type: Sequelize.INTEGER
     },
     DateP: {
         type: Sequelize.DATEONLY

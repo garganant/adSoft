@@ -105,10 +105,14 @@ function show() {
     btnNo = 2;
     const No = document.querySelector('#RoNo').value;
     if (No == "") dialog.showMessageBox({ type: "error", message: 'Please enter a RO number first!' });
-    else ipcRenderer.send('roData:get', No, 's');
+    else {
+        setBtn('showBtn');
+        ipcRenderer.send('roData:get', No, 's');
+    }
 }
 
 ipcRenderer.on('roData:got', (event, arg, arg2) => {
+    resetBtn('showBtn');
     if (Object.keys(arg).length) {
         same = arg, diff = arg2;
         fillFields(arg, arg2);
@@ -148,7 +152,7 @@ function selectDropdown(select, val) {
     M.FormSelect.init(select);
 }
 
-async function submit() {
+async function submit(btn) {
     let ans = await dialog.showMessageBox({ type: "warning", buttons: ["Yes", "No"], message: "Do you want to save the changes?" });
     if (ans.response) return false;
 
@@ -193,8 +197,10 @@ async function submit() {
     if (!diffD.length) dialog.showMessageBox({ type: "error", message: 'Empty RO cannot be created!' });
     else if (vendObj[d] === undefined) dialog.showMessageBox({ type: "error", message: 'Customer does not exist.' });
     else if (empty) dialog.showMessageBox({ type: "error", message: 'Required fields cannot be empty!' });
-    else ipcRenderer.send('addEditRO', same, diffD);
-
+    else {
+        setBtn(btn);
+        ipcRenderer.send('addEditRO', same, diffD);
+    }
     return true;
 }
 
@@ -310,7 +316,7 @@ function removeRow(e) {
 }
 
 async function prt() {
-    let res = await submit();
+    let res = await submit('prtBtn');
     if(res) {
         let empty = false;
         for ([key, val] of Object.entries(same_d)) {
@@ -322,11 +328,28 @@ async function prt() {
         }
         if (diff_d.length && !empty) ipcRenderer.send('ro:prt', same_d, diff_d);
     }
+    else resetBtn('prtBtn');
 }
 
 ipcRenderer.on('ro:prted', (event, path) => {
     if (path != null) shell.openPath(path);
 });
+
+function setBtn(btn) {
+    var btn = document.getElementById(btn);
+    btn.style.cursor = 'wait';
+    btn.disabled = true;
+    btn.innerHTML = '...processing...';
+    btn.style.background = 'grey';
+}
+
+function resetBtn(btn) {
+    var btn = document.getElementById(btn);
+    btn.style.cursor = 'pointer';
+    btn.disabled = false;
+    btn.innerHTML = 'Select';
+    btn.style.background = '#722620';
+}
 
 function reload(e) {
     if (e.ctrlKey && e.keyCode == 82) window.location.reload();

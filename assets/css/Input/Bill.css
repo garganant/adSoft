@@ -9,6 +9,10 @@ h3 {
   font-size: 17px;
 }
 
+.row {
+  margin-bottom: 0%;
+}
+
 .input-field label {
   color: #30110D;
   font-weight: bolder;

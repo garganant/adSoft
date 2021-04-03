@@ -3,7 +3,7 @@ const Sequelize = require('sequelize');
 module.exports = sequelize.define('Bill', {
     //attributes
     BillNo: {
-        type: Sequelize.INTEGER(10),
+        type: Sequelize.INTEGER,
         primaryKey: true
     },
     Prospect: {
@@ -23,6 +23,9 @@ module.exports = sequelize.define('Bill', {
     },
     AdRef: {
         type: Sequelize.STRING(100)
+    },
+    LSplDis: {
+        type: Sequelize.DECIMAL(5, 2)
     }
 }, {
     //options

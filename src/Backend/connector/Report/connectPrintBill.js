@@ -11,14 +11,14 @@ new customTitlebar.Titlebar({
 M.AutoInit();
 
 function prt() {
-    let s = document.querySelector('#from').value;
-    if(s == "") dialog.showMessageBox({ type: "error", message: "Required fields cannot be empty!" });
+    let start = document.querySelector('#from').value;
+    if (start == "") dialog.showMessageBox({ type: "error", message: "Required fields cannot be empty!" });
     else {
-        let e = document.querySelector('#to').value;
+        let end = document.querySelector('#to').value;
         let e = document.querySelector('#BType');
         let btype = e.options[e.selectedIndex].value;
-        if(e == "") e = s;
-        ipcRenderer.send('bill:prt', s, e, btype);
+        if(end == "") end = start;
+        ipcRenderer.send('bill:prt', start, end, btype);
     }
 }
 
