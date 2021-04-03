@@ -6,6 +6,9 @@ module.exports = sequelize.define('Bill', {
         type: Sequelize.INTEGER,
         primaryKey: true
     },
+    Salutation: {
+        type: Sequelize.STRING(15)
+    },
     Prospect: {
         type: Sequelize.STRING
     },

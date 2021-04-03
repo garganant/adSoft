@@ -103,16 +103,16 @@ function menuTemplate() {
                 }
             ]
         }
-        ,
-        {label: 'Tools',
-        submenu: [
-          {label: 'Developer tools',
-          accelerator: process.platform === 'darwin' ? 'Command+Alt+I' : 'F11',
-          click(){
-            win.webContents.openDevTools()
-          }
-          }]
-        }
+        // ,
+        // {label: 'Tools',
+        // submenu: [
+        //   {label: 'Developer tools',
+        //   accelerator: process.platform === 'darwin' ? 'Command+Alt+I' : 'F11',
+        //   click(){
+        //     win.webContents.openDevTools()
+        //   }
+        //   }]
+        // }
     ]);
     Menu.setApplicationMenu(menu);
 }

@@ -19,7 +19,7 @@ function show() {
 
 ipcRenderer.on('billData:got', (event, adv, data) => {
     resetBtn('showBtn');
-    let arr = ['Advance', 'LSplDis', 'Prospect', 'Attention', 'AdRef', 'Product', 'Month', 'Activity'];
+    let arr = ['Salutation', 'Advance', 'LSplDis', 'Prospect', 'Attention', 'AdRef', 'Product', 'Month', 'Activity'];
     for (let e of arr) document.querySelector(`#${e}`).value = "";
     if (adv != null) {
         document.querySelector('#Advance').value = adv;
@@ -29,7 +29,7 @@ ipcRenderer.on('billData:got', (event, adv, data) => {
 });
 
 function submit() {
-    let obj = {}, arr = ['BillNo', 'LSplDis', 'Prospect', 'Attention', 'AdRef', 'Product', 'Month', 'Activity'];
+    let obj = {}, arr = ['BillNo', 'Salutation', 'LSplDis', 'Prospect', 'Attention', 'AdRef', 'Product', 'Month', 'Activity'];
     for(let e of arr) obj[e] = document.querySelector(`#${e}`).value;
     let adv = document.querySelector('#Advance').value;
     if (obj['BillNo'] == "") dialog.showMessageBox({ type: "error", message: 'Please select a bill to continue!' });

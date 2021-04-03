@@ -14,6 +14,7 @@ async function billAdd(obj, roNo, billNo) {
     await Bill.findOrCreate({
         where: { BillNo: billNo },
         defaults: {
+            Salutation: obj.Salutation,
             Prospect: obj.Prospect,
             Attention: obj.Attention,
             Product: obj.Product,
@@ -38,6 +39,7 @@ async function billPrtData(s, e) {
     for (let num = s; num <= e; num++) {
         let arr = [];
         var sData = await RoSame.findOne({ where: { BillNo: num } });
+        if(sData == null) continue;
         var vend = await Vend.findOne({ where: { id: sData.dataValues.VendCode } });
         var subject = (await Subject.findOne({ attributes: ['SubjectDetail'], where: { Code: sData.SubjectCode } })).dataValues.SubjectDetail;
         let pData = await RoPaper.findAll({ where: { RoNo: sData.dataValues.RoNo } });
@@ -50,7 +52,7 @@ async function billPrtData(s, e) {
             tmp.push(pData[i].dataValues.Width);
             tmp.push(pData[i].dataValues.Height);
             tmp.push(parseFloat(pData[i].dataValues.RatePR));
-            tmp.push(pData[i].dataValues.EditionCode);
+            tmp.push(cityMap[pData[i].dataValues.EditionCode]);
             arr.push(tmp);
         }
         collection.push([vend.dataValues, subject, arr, sData.dataValues, bData.dataValues]);

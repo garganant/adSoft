@@ -61,16 +61,14 @@ function generateCustomerInfo(doc, billNo, bDate, vendD, FY, subject, obj, btype
 
     doc
         .moveDown(1)
-        .text('M/s / Mr. / Ms.', { align: 'left' })
+        .text(obj['Salutation'], { align: 'left' })
         .font("Times-Bold")
         .text(vendD.Name)
         .font("Times-Roman")
         .text(vendD.Street1)
         .text(vendD.Street2)
         .text(`${vendD.City} - ${vendD.Pincode}`)
-        .fillColor('#FF1493')
         .text(vendD.State)
-        .fillColor('black')
         .moveUp(7)
         .fontSize(14)
         .font("Times-Bold")
@@ -86,23 +84,14 @@ function generateCustomerInfo(doc, billNo, bDate, vendD, FY, subject, obj, btype
         .text('Place of Supply', 460, 112)
         .font("Times-Roman")
         .text(vendD.State, 510, 112)
-        .font("Times-Bold")
         .moveDown(2)
-        .fillColor('#FF1493')
-        .text('GST NUMBER :', 50)
-        .moveUp()
-        .fillColor('black')
-        .text(vendD.Gstin, 102);
+        .text(`GST NUMBER : ${vendD.Gstin}`, 50)
 
     let sub = subject;
     if(btype == 1) {
         doc
             .moveUp()
-            .fillColor('#FF1493')
-            .text('PAN :', 200)
-            .moveUp()
-            .fillColor('black')
-            .text(vendD.Pan, 220);
+            .text(`PAN : ${vendD.Pan}`, 200);
 
         if(obj.Prospect != "") sub+= ` | Prospect No. ${obj.Prospect}`;
     }
@@ -148,7 +137,7 @@ function generateCustomerInfo(doc, billNo, bDate, vendD, FY, subject, obj, btype
             .text('Activity', 460, 153)
             .font("Times-Bold")
             .text(obj.Activity, 510, 153)
-            .moveDown(1.5);
+            .moveDown(2.5);
     }
         
     doc
@@ -157,19 +146,19 @@ function generateCustomerInfo(doc, billNo, bDate, vendD, FY, subject, obj, btype
 }
 
 function generateRoTable(doc, arr, sData, SplDis, rupee) {
-    generateTableRow(doc, "PUBLICATION (S)", " Ref.", "       DATE", "  SIZE", "SPACE", "RATE", "AMOUNT");
+    generateTableRow(doc, "PUBLICATION (S)", "       DATE", "  SIZE", "SPACE", "RATE", "AMOUNT");
     y = 205;
     let sz = sData.AdType == 'D' ? "W  x  H": "W    LINES";
-    generateTableRow(doc, "EDITIONS", "", "DD/MM/YYYY", sz, "SQ. CM.", "SQ. CM.", "  INR");
+    generateTableRow(doc, "EDITIONS", "DD/MM/YYYY", sz, "SQ. CM.", "SQ. CM.", "  INR");
     doc.image(rupee, 567, 195, { scale: 0.03 });
 
     y = 220 , amt = 0;
     for(let p of arr) {
         sz = sData.AdType == 'D' ? `${p[3]}  x  ${p[4]}` : `${p[3]}   LINES`;
         let tAmt = sData.AdType == 'D' ? p[3] * p[4] * p[5] : p[5];
-        generateTableRow(doc, p[0], p[1], formatDate(p[2]), sz, p[3] * p[4], (p[5]).toFixed(2), commaSeparated(tAmt) + '.00');
+        generateTableRow(doc, p[0], formatDate(p[2]), sz, p[3] * p[4], (p[5]).toFixed(2), commaSeparated(tAmt) + '.00');
         y+= 10;
-        generateTableRow(doc, p[6], "", "", "", "", "", "");
+        generateTableRow(doc, `          ${p[6]}    (${p[1]})`, "", "", "", "", "");
         y+= 18;
         amt+= tAmt;
     }
@@ -177,10 +166,10 @@ function generateRoTable(doc, arr, sData, SplDis, rupee) {
     generateVr(doc);
     generateHr(doc, 48, 580, y-1);
     y+= 3;
-    generateTableRow(doc, "", "", "GRAND TOTAL", "", "", "", commaSeparated(amt, 0)+'.00');
+    generateTableRow(doc, "", "GRAND TOTAL", "", "", "", commaSeparated(amt, 0)+'.00');
     y+= 10;
     let dis = amt * SplDis * 0.01;
-    generateTableRow(doc, "", "", "LESS: SPECIAL PACKAGE DISCOUNTS & OTHER  ADJUSTMENTS", "", "", "", "   " + commaSeparated(dis, 0) + '.00');
+    generateTableRow(doc, "", "LESS: SPECIAL PACKAGE DISCOUNTS & OTHER  ADJUSTMENTS", "", "", "", "   " + commaSeparated(dis, 0) + '.00');
     y+= 10;
     generateHr(doc, 48, 580, y - 1);
     y+= 3;
@@ -360,7 +349,7 @@ function generateFooter(doc, cData, Status, sData, adv, gross) {
     lines(doc);
 }
 
-function generateTableRow(doc, publication, ref, date, size, space, rate, amount) {
+function generateTableRow(doc, publication, date, size, space, rate, amount) {
     doc
         .font("Times-Roman")
         .fillColor('black')
@@ -375,7 +364,6 @@ function generateTableRow(doc, publication, ref, date, size, space, rate, amount
     doc
         .fontSize(7.2)
         .text(publication, 50, y)
-        .text(ref, 238, y)
         .text(date, 285, y)
         .text(size, 354, y);
 
@@ -423,8 +411,8 @@ function fillInv(doc, x, yH, yV, btype) {
 }
 
 function fillBackground(doc, y) {
-    let mt = [48, 232, 275, 339, 395, 446, 512];
-    let lt = [231, 274, 338, 394, 445, 511, 580];
+    let mt = [48, 275, 339, 395, 446, 512];
+    let lt = [274, 338, 394, 445, 511, 580];
 
     for (let i in mt) {
         doc
@@ -437,7 +425,7 @@ function fillBackground(doc, y) {
 }
 
 function generateVr(doc) {
-    let x = [48, 232, 275, 338, 395, 446, 512, 580];
+    let x = [48, 275, 338, 395, 446, 512, 580];
     for (let i of x) {
         doc
             .strokeColor("black")

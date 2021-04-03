@@ -112,7 +112,7 @@ function show() {
 }
 
 ipcRenderer.on('roData:got', (event, arg, arg2) => {
-    resetBtn('showBtn');
+    resetBtn('showBtn', 'Search');
     if (Object.keys(arg).length) {
         same = arg, diff = arg2;
         fillFields(arg, arg2);
@@ -328,7 +328,7 @@ async function prt() {
         }
         if (diff_d.length && !empty) ipcRenderer.send('ro:prt', same_d, diff_d);
     }
-    else resetBtn('prtBtn');
+    else resetBtn('prtBtn', 'Print');
 }
 
 ipcRenderer.on('ro:prted', (event, path) => {
@@ -343,11 +343,11 @@ function setBtn(btn) {
     btn.style.background = 'grey';
 }
 
-function resetBtn(btn) {
+function resetBtn(btn, name) {
     var btn = document.getElementById(btn);
     btn.style.cursor = 'pointer';
     btn.disabled = false;
-    btn.innerHTML = 'Select';
+    btn.innerHTML = name;
     btn.style.background = '#722620';
 }
 

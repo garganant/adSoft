@@ -134,7 +134,7 @@ ipcMain.on('vend:submit', async (event, arg) => {
                 var worksheet = workbook.getWorksheet('Sheet1');
                 worksheet.eachRow({ includeEmpty: true }, function (currRow, rowNumber) {
                     let row = currRow.values;
-                    if (rowNumber != 1 && row[2] != null && (row[13] != 'L' || row[13] != 'C')) {
+                    if (rowNumber != 1 && row[2] != null && row[4] != null && row[5] != null && row[6] != null && row[7] != null && row[8] != null && (row[13] != 'L' || row[13] != 'C')) {
                         var obj = {
                             id: row[1],
                             Name: row[2].toString().trim(),
@@ -722,7 +722,7 @@ ipcMain.on('ro:prt', async (event, sameD, diffD) => {
     
         let signStamp = path.join(__dirname, 'assets/images/signStamp.png');
         createRo(sameD, diffD, cData.dataValues, paperMap, cityMap, signStamp);
-        let pt = cData.dataValues.File_path + 'Print.xlsx';
+        let pt = `${cData.dataValues.File_path}RO${sameD.RoNo}.xlsx`;
         createRoExcel(sameD, diffD, cData.dataValues, paperMap, cityMap, signStamp, pt);
 
         win.webContents.send('ro:prted', pt);

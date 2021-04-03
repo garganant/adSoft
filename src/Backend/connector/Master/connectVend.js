@@ -87,7 +87,7 @@ function submit() {
         var Status = e.options[e.selectedIndex].value;
         obj['Status'] = Status;
         for ([key, val] of Object.entries(obj)) {
-            if (key == 'id' || key == 'Identify') continue;
+            if (key == 'id' || key == 'Identify' || key == 'ContactPerson' || key == 'ContactNo' || key == 'Gstin' || key == 'Pan') continue;
             else if (key == 'Pincode') obj[key] = (val == "") ? null : parseInt(val);
             else if(val == "") empty = true;
         }

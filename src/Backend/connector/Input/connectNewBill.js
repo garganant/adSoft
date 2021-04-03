@@ -25,7 +25,7 @@ ipcRenderer.on('roCust:got', (event, data) => {
 });
 
 function submit() {
-    let obj = {}, arr = ['Advance', 'LSplDis', 'Prospect', 'Attention', 'Product', 'Month', 'Activity', 'AdRef'];
+    let obj = {}, arr = ['Salutation', 'Advance', 'LSplDis', 'Prospect', 'Attention', 'Product', 'Month', 'Activity', 'AdRef'];
     for(let ele of arr) obj[ele] = document.querySelector(`#${ele}`).value;
     let e = document.querySelector('#BType');
     let btype = e.options[e.selectedIndex].value;
