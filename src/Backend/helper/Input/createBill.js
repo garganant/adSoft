@@ -25,7 +25,7 @@ function createBill(cData, rupee, btype, bills) {
         limit = 8, y = 195;
         if (i != 0) doc.addPage();
         generateHeader(doc, cData);
-        generateCustomerInfo(doc, bills[i][3]['BillNo'], bills[i][3]['BillDate'], bills[i][0], cData.FY, bills[i][1], bills[i][4], btype);
+        generateCustomerInfo(doc, bills[i][3]['BillNo'], bills[i][3]['BillDate'], bills[i][0], cData.FY, bills[i][1], bills[i][4], bills[i][5], btype);
         let gross = generateRoTable(doc, bills[i][2], bills[i][3], bills[i][4]['LSplDis'], rupee);
         generateFooter(doc, cData, bills[i][0].Status, bills[i][3], parseFloat(bills[i][3]['Advance']), gross);
     }
@@ -54,7 +54,7 @@ function generateHeader(doc, compD) {
     doc.moveDown();
 }
 
-function generateCustomerInfo(doc, billNo, bDate, vendD, FY, subject, obj, btype) {
+function generateCustomerInfo(doc, billNo, bDate, vendD, FY, subject, obj, custTparty, btype) {
     let x = [439, 498, 579], yH = [85, 122], yV = [97, 109, 122];
     fillInv(doc, x, yH, yV, 1);
     yH = [127, 163], yV = [127, 138, 150, 163];
@@ -92,6 +92,7 @@ function generateCustomerInfo(doc, billNo, bDate, vendD, FY, subject, obj, btype
         .text(vendD.Gstin, 105);
 
     let sub = subject;
+    if (custTparty != "") sub += `   | ${custTparty}`;
     if (btype == 1 && obj.Prospect != "") sub+= ` | Prospect No. ${obj.Prospect}`;
 
     doc

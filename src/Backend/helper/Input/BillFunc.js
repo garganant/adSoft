@@ -37,10 +37,16 @@ async function billPrtData(s, e) {
     for (let ele of cities) cityMap[ele.dataValues['Code']] = ele.dataValues['CityName'];
 
     for (let num = s; num <= e; num++) {
-        let arr = [];
+        let arr = [], custTparty = "";
         var sData = await RoSame.findOne({ where: { BillNo: num } });
         if(sData == null) continue;
         var vend = await Vend.findOne({ where: { id: sData.dataValues.VendCode } });
+        if(sData.dataValues.TParty != "") {
+            custTparty = vend.dataValues.Name;
+            let v = await Vend.findOne({ attributes: ['id'], where: { Name: sData.dataValues.TParty } });
+            sData.dataValues.VendCode = v.dataValues.id;
+        }
+        vend = await Vend.findOne({ where: { id: sData.dataValues.VendCode } });
         var subject = (await Subject.findOne({ attributes: ['SubjectDetail'], where: { Code: sData.SubjectCode } })).dataValues.SubjectDetail;
         let pData = await RoPaper.findAll({ where: { RoNo: sData.dataValues.RoNo } });
         let bData = await Bill.findOne({ where: {BillNo: num } });
@@ -55,7 +61,7 @@ async function billPrtData(s, e) {
             tmp.push(cityMap[pData[i].dataValues.EditionCode]);
             arr.push(tmp);
         }
-        collection.push([vend.dataValues, subject, arr, sData.dataValues, bData.dataValues]);
+        collection.push([vend.dataValues, subject, arr, sData.dataValues, bData.dataValues, custTparty]);
     }
     return [cData.dataValues, collection];
 }
