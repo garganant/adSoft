@@ -49,7 +49,9 @@ function generateHeader(doc, compD) {
         .fontSize(6)
         .font("Helvetica")
         .text(compD.Address, { align: 'right' })
+        .moveDown(0.3)
         .text(`Tel. ${compD.Phone} Fax: ${compD.Fax} Cell: ${compD.Mobile}`, { align: 'right' })
+        .moveDown(0.2)
         .text(`Email: ${compD.Email} Website: ${compD.Website}`, { align: 'right' })
 
     doc.moveDown();
@@ -97,10 +99,8 @@ function generateCustomerInfo(doc, billNo, bDate, vendD, FY, subject, obj, custT
     if (btype == 1 && obj.Prospect != "") sub+= ` | ${obj.Prospect}`;
 
     doc
-        .font("Helvetica")
-        .text("Subject :", 50, 165, { underline: true })
         .font("Helvetica-Bold")
-        .text(sub, 80, 165);
+        .text(`Subject : ${sub}`, 50, 165,);
 
     if (btype == 2) {
         if(obj.Attention != "") {
@@ -165,13 +165,13 @@ function generateRoTable(doc, arr, sData, SplDis, rupee) {
     }
     y = 560;
     generateVr(doc);
-    generateHr(doc, 48, 590, y-1);
+    generateHr(doc, 48, 580, y-1);
     y+= 3;
     generateTableRow(doc, "", "GRAND TOTAL", "", "", "", commaSeparated(amt, 0) + '.00', sData.AdType);
     y+= 10;
     generateTableRow(doc, "", "LESS: Other Dr/Cr Adjustments", "", "", "", "   " + commaSeparated(SplDis, 0), sData.AdType);
     y+= 10;
-    generateHr(doc, 48, 590, y - 1);
+    generateHr(doc, 48, 580, y - 1);
     y+= 3;
 
     return Math.round(amt - SplDis);

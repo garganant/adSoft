@@ -16,6 +16,7 @@ table.addEventListener('change', () => widthHeight());
 document.querySelector('#AdType').addEventListener('click', () => {
     if (document.querySelector('#AdType').checked) {
         document.querySelector('#matter').style.visibility = "visible";
+        document.querySelector('#Spl1').value = document.querySelector('#Spl2').value = '';
     }
     else document.querySelector('#matter').style.visibility = "hidden";
     widthHeight();
@@ -34,9 +35,9 @@ ipcRenderer.on('newRO:got', (e, RoNo, cData) => {
     document.querySelector('#RoNo').value = RoNo;
     let d = new Date();
     document.querySelector('#RoDate').value = d.toLocaleDateString('en-CA');
-    document.querySelector('#TradeDis').value = cData.dataValues.TradeDis;
-    document.querySelector('#Spl1').value = cData.dataValues.Spl1;
-    document.querySelector('#Spl2').value = cData.dataValues.Spl2;
+    document.querySelector('#TradeDis').value = cData.TradeDis;
+    document.querySelector('#Spl1').value = cData.Spl1;
+    document.querySelector('#Spl2').value = cData.Spl2;
 });
 ipcRenderer.on('vendDetails:got', (e, vendName) => {
     fillDropdown('customers', vendName, 'Name', 'Identify', 'id');
@@ -72,7 +73,7 @@ function addNewRow() {
 
 ipcRenderer.on('papers:got', (e, paperNames) => {
     let table = document.getElementById('dataTable');
-    let obj = {'SubE': '', 'Caption': '', 'DateP': '', 'RateCR': '', 'RatePR': '', 'Width': '', 'Height': ''};
+    let obj = {'SubE': '', 'Caption': '', 'DateP': '', 'RateCR': '', 'RatePR': '', 'Width': '', 'Height': '', 'PBillNo': ''};
     fillTable(table.rows.length, paperNames, obj);
 });
 
@@ -193,6 +194,7 @@ async function submit(btn) {
 
         let arr = ['SubE', 'Caption', 'DateP', 'RateCR', 'RatePR', 'Width', 'Height'];
         for (let j = 2; j <= 8; j++) tableD[arr[j - 2]] = row.cells[j].childNodes[0].value;
+        tableD['PBillNo'] = row.cells[11].childNodes[0].value;
         diffD.push(tableD);
     }
 
@@ -203,7 +205,10 @@ async function submit(btn) {
         if(val == "") empty = true;
     }
     for(let obj of diffD) {
-        for ([key, val] of Object.entries(obj)) if (val == "" && key != 'SubE') empty = true;
+        for ([key, val] of Object.entries(obj)) {
+            if(key == 'SubE' || key == 'PBillNo') continue;
+            if (val == "") empty = true;
+        }
     }
     same_d = same, diff_d = diffD;
     if (!diffD.length) dialog.showMessageBox({ type: "error", message: 'Empty RO cannot be created!' });
@@ -236,7 +241,11 @@ function fillTable(idx, paperNames, arr) {
     let height = row.insertCell(8);
     row.insertCell(9);
     row.insertCell(10);
-    let remove = row.insertCell(11);
+    let pBillNo = row.insertCell(11);
+    let remove = row.insertCell(12);
+    pdate.style.padding = 0;
+    newspaper.style.padding = 0;
+    edition.style.padding = 0;
     remove.style = "border: hidden; border-left: inherit;";
 
     fillSelect(newspaper, paperNames, 'ShortName', 'ShortName');
@@ -249,6 +258,7 @@ function fillTable(idx, paperNames, arr) {
     createInput(pr, 'number', '.01', arr['RatePR'], '');
     createInput(width, 'number', '1', arr['Width'], '');
     createInput(height, 'number', '', arr['Height'], '');
+    createInput(pBillNo, 'text', '', arr['PBillNo'], '20');
     removeBtn(remove, row.rowIndex);
     widthHeight();
 }
@@ -320,7 +330,7 @@ function widthHeight() {
 function removeRow(e) {
     let table = document.getElementById('dataTable');
     for (let i = 1; i < table.rows.length; i++) {
-        if (table.rows[i].childNodes[11].childNodes[0].id == e['id']) {
+        if (table.rows[i].childNodes[12].childNodes[0].id == e['id']) {
             table.deleteRow(i);
             break;
         }
@@ -337,7 +347,10 @@ async function prt() {
             if (val == "") empty = true;
         }
         for (let obj of diff_d) {
-            for ([key, val] of Object.entries(obj)) if (val == "" && key != 'SubE') empty = true;
+            for ([key, val] of Object.entries(obj)) {
+                if (key == 'SubE' || key == 'PBillNo') continue;
+                if (val == "") empty = true;
+            }
         }
         if (diff_d.length && !empty) ipcRenderer.send('ro:prt', same_d, diff_d);
     }

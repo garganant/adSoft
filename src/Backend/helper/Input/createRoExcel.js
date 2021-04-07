@@ -395,7 +395,7 @@ function styling2(sheet, hLen, tLen) {
         sheet.getRow(8).getCell(i + 1).fill = {
             type: 'pattern',
             pattern: 'solid',
-            bgColor: { argb: '255000000' }
+            fgColor: { argb: 'FF2F20FF' }
         };
     }
     for (let i=9; i<tLen; i++) {
@@ -419,7 +419,7 @@ function styling2(sheet, hLen, tLen) {
     sheet.getRow(tLen+2).getCell(1).fill = {
         type: 'pattern',
         pattern: 'solid',
-        bgColor: { argb: '255000000' }
+        fgColor: { argb: 'FF2F20FF' }
     };
 }
 

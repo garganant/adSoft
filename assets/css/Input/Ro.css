@@ -61,23 +61,15 @@ h3 {
 }
 
 #matter {
-  /* border-radius: 6%; */
-  /* border: none; */
-  /* box-shadow: none; */
   visibility: hidden;
-  /* color: gray; */
 }
 
 .collapsible-header {
   padding: 1% 1% 1% 1%;
-  /* border-radius: 6%; */
-  /* width: 26%; */
 }
 
 .collapsible-body {
   padding: 0%;
-  /* padding: 5% 5% 3% 1%; */
-  /* border: none; */
 }
 
 .select-dropdown{
@@ -101,7 +93,7 @@ h3 {
 
 .tableDiv {
     position: absolute;
-    max-width: 96%;
+    max-width: 100%;
     width: auto;
     max-height: 40%;
     height: auto;

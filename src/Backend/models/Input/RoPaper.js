@@ -39,6 +39,9 @@ const RoPaper = sequelize.define('RoPaper', {
     },
     DateP: {
         type: Sequelize.DATEONLY
+    },
+    PBillNo: {
+        type: Sequelize.STRING(20)
     }
 }, {
     //options

@@ -645,7 +645,7 @@ ipcMain.on('getNewRO', async (event) => {
     var cData = await Comp.findOne({ attributes: ['TradeDis', 'Spl1', 'Spl2'] });
     let RoNo = 1;
     if(data != null) RoNo = data.dataValues.RoNo + 1;
-    win.webContents.send('newRO:got', RoNo, cData);
+    win.webContents.send('newRO:got', RoNo, cData.dataValues);
 });
 
 ipcMain.on('getVend', async (event) => {

@@ -58,7 +58,7 @@ async function billPrtData(s, e) {
                 tmp.push(pData[j].dataValues.DateP);
                 tmp.push(pData[j].dataValues.Width);
                 tmp.push(pData[j].dataValues.Height);
-                tmp.push(parseFloat(pData[j].dataValues.RatePR));
+                tmp.push(parseFloat(pData[j].dataValues.RateCR));
                 tmp.push(cityMap[pData[j].dataValues.EditionCode]);
                 tmp.push(pData[j].dataValues.RoNo);
                 arr.push(tmp);

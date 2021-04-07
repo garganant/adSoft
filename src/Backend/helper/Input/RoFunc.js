@@ -50,7 +50,7 @@ async function addEditRO(same, diff) {
     await RoPaper.destroy({ where: { RoNo: same.RoNo}});
 
     await RoPaper.bulkCreate(diff, {
-        updateOnDuplicate: ["ShortName", "EditionCode", "SubE", "Caption", "RatePR", "RateCR", "Width", "Height", "DateP", "Position", "Spl1", "Spl2", "TParty"]
+        updateOnDuplicate: ["ShortName", "EditionCode", "SubE", "Caption", "RatePR", "RateCR", "Width", "Height", "DateP", "Position", "Spl1", "Spl2", "TParty", "PBillNo"]
     });
 
     if (created) return 'New RO entry added!'

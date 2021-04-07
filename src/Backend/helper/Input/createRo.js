@@ -29,8 +29,11 @@ function generateHeader(doc, compD) {
         .fontSize(6.5)
         .font("Helvetica")
         .text(compD.Address, { align: 'right' })
+        .moveDown(0.3)
         .text(`Tel. ${compD.Phone} Fax: ${compD.Fax} Cell: ${compD.Mobile}`, { align: 'right' })
+        .moveDown(0.2)
         .text(`Email: ${compD.Email} Website: ${compD.Website}`, { align: 'right' })
+        .moveDown(0.2)
         .font("Helvetica-Bold")
         .text(`INS / AGENCY CODE: ${compD.Code} | GST: ${compD.Gstin} | PAN: ${compD.Pan} | CIN: ${compD.Cin}`, { align: 'right', underline: true });
 
@@ -217,12 +220,10 @@ function generateFooter(doc, y, compD, sameD, signStamp) {
         .fillColor('red')
         .text(sameD.Spl2 != null ? sameD.Spl2 : '', 115)
         .font("Helvetica")
-        .fillColor('black')
-        .moveDown(0.2)
-        .text('Payment will be made as per INS rules (within 60 days from the last date of the month in which the ads has / have published)', 20);
+        .fillColor('black');
     
-    y+= 82;
-        generateHr(doc, y, 'black');
+    y+= 60;
+    doc.text('Payment will be made as per INS rules (within 60 days from the last date of the month in which the ads has / have published)', 20, y);
 
     doc
         .moveDown(0.5)
@@ -250,6 +251,9 @@ function generateFooter(doc, y, compD, sameD, signStamp) {
         .text('MATERIAL SENT', 370)
         .moveUp()
         .text('CONFIRMED', 470);
+
+    y += 42;
+    generateHr(doc, y, 'black');
 
     if(sameD.Matter != "") {
         doc

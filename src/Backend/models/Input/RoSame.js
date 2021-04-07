@@ -63,9 +63,6 @@ const RoSame = sequelize.define('RoSame', {
     RConfirm: {
         type: Sequelize.STRING
     },
-    PBillNo: {
-        type: Sequelize.INTEGER
-    },
     Matter: {
         type: Sequelize.STRING
     },
