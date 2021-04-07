@@ -1,5 +1,5 @@
 .completePage {
-    padding-left: 4%;
+    padding-left: 1%;
 }
 
 .row {
@@ -16,6 +16,10 @@ h3 {
   color: black;
   font-family: Georgia;
   font-size: 14px;
+}
+
+.input-field {
+  margin-bottom: 0.5%;
 }
 
 .input-field label {
@@ -50,6 +54,30 @@ h3 {
 .input-field input:focus {
   border-bottom: 1px solid red !important;
   box-shadow: 0 1px 0 0 red !important
+}
+
+.collapsible {
+  margin: 0%;
+}
+
+#matter {
+  /* border-radius: 6%; */
+  /* border: none; */
+  /* box-shadow: none; */
+  visibility: hidden;
+  /* color: gray; */
+}
+
+.collapsible-header {
+  padding: 1% 1% 1% 1%;
+  /* border-radius: 6%; */
+  /* width: 26%; */
+}
+
+.collapsible-body {
+  padding: 0%;
+  /* padding: 5% 5% 3% 1%; */
+  /* border: none; */
 }
 
 .select-dropdown{

@@ -102,6 +102,17 @@ function menuTemplate() {
                     }
                 }
             ]
+        },
+        {
+            label: 'Utilities',
+            submenu: [
+                {
+                    label: 'Backup & restore',
+                    click() {
+                        win.loadURL(path.join(__dirname, path.relative('Backend/Populate', 'Frontend/Utilities/BacRes/BackupRestore.html')));
+                    }
+                }
+            ]
         }
         ,
         {label: 'Tools',

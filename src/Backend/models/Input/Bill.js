@@ -29,9 +29,6 @@ module.exports = sequelize.define('Bill', {
     },
     LSplDis: {
         type: Sequelize.DECIMAL(9, 2)
-    },
-    Matter: {
-        type: Sequelize.STRING
     }
 }, {
     //options

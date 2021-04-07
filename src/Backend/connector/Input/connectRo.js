@@ -13,7 +13,13 @@ var messages = ['Reached start of file!', 'Reached end of file!', 'No data to fe
 let table = document.getElementById('dataTable');
 
 table.addEventListener('change', () => widthHeight());
-document.querySelector('#AdType').addEventListener('click', () => widthHeight());
+document.querySelector('#AdType').addEventListener('click', () => {
+    if (document.querySelector('#AdType').checked) {
+        document.querySelector('#matter').style.visibility = "visible";
+    }
+    else document.querySelector('#matter').style.visibility = "hidden";
+    widthHeight();
+});
 
 document.addEventListener('DOMContentLoaded', function () {
     M.AutoInit();
@@ -34,6 +40,7 @@ ipcRenderer.on('newRO:got', (e, RoNo, cData) => {
 });
 ipcRenderer.on('vendDetails:got', (e, vendName) => {
     fillDropdown('customers', vendName, 'Name', 'Identify', 'id');
+    fillDropdown('tparty', vendName, 'Name', '', '');
 });
 ipcRenderer.on('groupCode:got', (e, group_code) => fillDropdown('Group', group_code, 'Code', 'GroupName', '') );
 ipcRenderer.on('subjectDetails:got', (e, subject) => fillDropdown('Subject', subject, 'Code', 'SubjectDetail', '') );
@@ -50,10 +57,10 @@ function fillDropdown(fieldId, data, val, txt, id) {
             if(ele[txt] != '') opt.value+= ' ~ ' + ele[txt];
             vendObj[ele[val] + ele[txt]] = ele[id];
         }
-        else opt.text = ele[txt];
+        else if (fieldId !== 'tparty') opt.text = ele[txt];
         group.append(opt);
     }
-    if (fieldId !== 'customers') M.FormSelect.init(group);
+    if (fieldId !== 'customers' && fieldId !== 'tparty') M.FormSelect.init(group);
 }
 
 function addNewRow() {
@@ -124,12 +131,14 @@ ipcRenderer.on('roData:got', (event, arg, arg2) => {
 });
 
 function fillFields(arg, arg2) {
-    let arr = ['RoNo', 'RoDate', 'VendName', 'TradeDis', 'SplDis', 'Position', 'RConfirm', 'Spl1', 'Package', 'Spl2', 'TParty'];
+    let arr = ['RoNo', 'RoDate', 'VendName', 'TradeDis', 'SplDis', 'Position', 'RConfirm', 'Spl1', 'Package', 'Matter', 'Spl2', 'TParty'];
     for (let i = 0; i<arr.length; i++) document.querySelector(`#${arr[i]}`).value = arg[arr[i]];
 
     document.querySelector('#AdType').checked = arg['AdType'] == 'D' ? false : true;
+    document.querySelector('#matter').style.visibility = (arg['AdType'] == 'C') ? "visible" : "hidden";
     selectDropdown(document.querySelector('#Group'), arg.GroupCode);
     selectDropdown(document.querySelector('#Subject'), arg.SubjectCode);
+    selectDropdown(document.querySelector('#Hue'), arg.Hue);
 
     var table = document.getElementById("dataTable");
     for (let i = table.rows.length - 1; i >= 1; i--) table.deleteRow(i);
@@ -156,7 +165,7 @@ async function submit(btn) {
     let ans = await dialog.showMessageBox({ type: "warning", buttons: ["Yes", "No"], message: "Do you want to save the changes?" });
     if (ans.response) return false;
 
-    let arr = ['RoNo', 'RoDate', 'RoDate', 'TradeDis', 'SplDis', 'Position', 'RConfirm', 'Spl1', 'Package', 'Spl2', 'TParty', 'RConfirm'];
+    let arr = ['RoNo', 'RoDate', 'RoDate', 'TradeDis', 'SplDis', 'Position', 'RConfirm', 'Spl1', 'Package', 'Matter', 'Spl2', 'TParty', 'RConfirm'];
     var same = {}, diffD = [], roNum = document.querySelector('#RoNo').value;
     for (let i = 0; i < arr.length; i++) same[arr[i]] = document.querySelector(`#${arr[i]}`).value;
 
@@ -169,6 +178,8 @@ async function submit(btn) {
     same['GroupCode'] = e.options[e.selectedIndex].value;
     e = document.querySelector('#Subject');
     same['SubjectCode'] = e.options[e.selectedIndex].value;
+    e = document.querySelector('#Hue');
+    same['Hue'] = e.options[e.selectedIndex].value;
 
     var table = document.getElementById("dataTable");
     for(let i=1; i<table.rows.length; i++) {
@@ -188,6 +199,7 @@ async function submit(btn) {
     let empty = false;
     for([key, val] of Object.entries(same)) {
         if (key === 'Spl1' || key == 'Package' || key === 'Spl2' || key === 'TParty') continue;
+        else if (key == 'Matter' && same['AdType'] == "D") continue;
         if(val == "") empty = true;
     }
     for(let obj of diffD) {
@@ -321,6 +333,7 @@ async function prt() {
         let empty = false;
         for ([key, val] of Object.entries(same_d)) {
             if (key === 'Spl1' || key === 'Spl2' || key === 'TParty' || key === 'Package') continue;
+            else if (key == 'Matter' && same_d['AdType'] == "D") continue;
             if (val == "") empty = true;
         }
         for (let obj of diff_d) {

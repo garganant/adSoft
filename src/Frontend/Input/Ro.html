@@ -11,7 +11,7 @@
     <div class="completePage">
         <h3 align="center">RO</h3>
         <div class="row">
-            <label id="compulsory" class="col l3 push-l9">Fields marked with (*) are compulsory</label>
+            <label id="compulsory" class="col l4 push-l8">Fields marked with (*) are compulsory</label>
         </div>
         <form>
             <div class="row">
@@ -57,7 +57,7 @@
                     <input id="SplDis" type="number" step=".01" value=0 />
                     <label for="SplDis">SPL DIS *</label>
                 </div>
-                <div class="input-field col l3">
+                <div class="input-field col l2 xl3">
                     <input id="Position" type="text" value="RHS Page Requested" placeholder="" maxlength="30" />
                     <label for="Position">POSITION *</label>
                 </div>
@@ -65,25 +65,45 @@
                     <input id="RConfirm" type="text" placeholder="" />
                     <label for="RConfirm">RATES CONFIRMED BY *</label>
                 </div>
+                <div class="input-field col l1">
+                    <select id="Hue" required>
+                        <option value="B">B/W</option>
+                        <option value="C">Coloured</option>
+                    </select>
+                    <label>HUE *</label>
+                </div>
             </div>
             <div class="row">
-                <div class="input-field col l8 xl7">
-                    <input id="Spl1" type="text" placeholder="Spl instruction 1" maxlength="100" />
-                    <label for="Spl1">SPECIAL INSTRUCTION 1</label>
+                <div class="input-field col l9 xl8">
+                    <ul class="collapsible popout">
+                        <li style="margin: 0%;">
+                            <div class="collapsible-header">SPECIAL INSTRUCTION 1</div>
+                            <div class="collapsible-body">
+                                <input id="Spl1" type="text" placeholder="Spl instruction 1" maxlength="100" />
+                            </div>
+                        </li>
+                        <li style="margin: 0%;">
+                           <div class="collapsible-header">SPECIAL INSTRUCTION 2</div> 
+                           <div class="collapsible-body">
+                                <input id="Spl2" type="text" placeholder="Spl instruction 2" maxlength="200" />
+                           </div>
+                        </li>
+                        <li id="matter" style="margin: 0%;">
+                            <div class="collapsible-header"><i class="material-icons">note</i>MATTER*</div>
+                            <div class="collapsible-body">
+                                <input type="text" id="Matter" maxlength="255" />
+                            </div>
+                        </li>
+                    </ul>
                 </div>
                 <div class="input-field col l3 xl2">
                     <input id="Package" type="text" placeholder="" maxlength="25" />
                     <label for="Package">PACKAGE</label>
                 </div>
-            </div>
-            <div class="row">
-                <div class="input-field col l8 xl7">
-                    <input id="Spl2" type="text" placeholder="Spl instruction 2" maxlength="100" />
-                    <label for="Spl2">SPECIAL INSTRUCTION 2</label>
-                </div>
                 <div class="input-field col l3">
-                    <input id="TParty" type="text" placeholder="Third party name" maxlength="255" />
+                    <input id="TParty" type="text" list="tparty" placeholder="Third party name" maxlength="255" />
                     <label for="TParty">THIRD PARTY</label>
+                    <datalist id="tparty"></datalist>
                 </div>
             </div>
             <div class="row tableDiv">

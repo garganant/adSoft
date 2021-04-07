@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+    <link rel="stylesheet" href="../../../../node_modules/materialize-css/dist/css/materialize.min.css" />
+    <link rel="stylesheet" href="../../../../assets/css/Utilities/BacRes/BackupRestore.css">
+    <title>AdSoft</title>
+</head>
+
+<body>
+    <div class="container">
+        <h3 align="center">BACKUP AND RESTORE</h3>
+        <br /><br /><br /><br /><br /><br /><br /><br />
+        <div class="buttons row">
+            <div class="input-field">
+                <a id="backupBtn" type="button" onclick="backup()" class="red btn col push-s4">BACKUP</a>
+                <a id="restoreBtn" type="button" onclick="restore()" class="red btn col push-s5">RESTORE</a>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="input-field col l3 xl2 push-l5 push-xl5"><input type="password" id="pass" hidden /> <label
+                    id="passl" for="pass" hidden>Password</label></div>
+            <div class="input-field col l7 xl6 push-l1 push-xl2">
+                <p id="warning"></p>
+            </div>
+        </div>
+        <div class="buttons row">
+            <div class="input-field col push-l5"><a id="passBtn" onclick="check()" class="btn">Continue</a></div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../../../node_modules/materialize-css/dist/js/materialize.min.js" async></script>
+<script src="../../../Backend/connector/Utilities/BacRes/connectBackupRestore.js"></script>
+
+</html>

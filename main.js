@@ -31,14 +31,6 @@ app.whenReady().then(() => {
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) createWindow();
     });
-
-    let d = new Date(), last = new Date(2022, 02, 31);
-    if (d > last) {
-        showError('Validity over. Contact for renewal!');
-        setTimeout(() => {
-            app.quit();
-        }, 2000);
-    }
 });
 
 // Quit when all windows are closed.
@@ -719,7 +711,7 @@ ipcMain.on('ro:prt', async (event, sameD, diffD) => {
         let paperMap = {}, cityMap = {};
         for (let ele of papers) paperMap[ele.dataValues['ShortName']] = ele.dataValues['PaperName'];
         for(let ele of cities) cityMap[ele.dataValues['Code']] = ele.dataValues['CityName'];
-    
+
         let signStamp = path.join(__dirname, 'assets/images/signStamp.png');
         createRo(sameD, diffD, cData.dataValues, paperMap, cityMap, signStamp);
         let pt = `${cData.dataValues.File_path}RO${sameD.RoNo}.xlsx`;
@@ -829,4 +821,50 @@ ipcMain.on('bill:prt', async (event, start, end, btype) => {
         showError(err.stack);
         win.webContents.send('bill:prted');
     }
+});
+
+// UTILITIES ///////////////////////////////////////////////
+// Back&Res //////////////////////////////////////////////////////////////////
+ipcMain.on('db:backup', async () => {
+    var Comp = require('./src/Backend/models/Master/Comp');
+    var exec = require('child_process').exec;
+    var data = (await Comp.findOne({ attributes: ['Code', 'File_path'] }));
+    var today = new Date();
+    var date = today.getDate() + '' + (today.getMonth() + 1) + '' + today.getFullYear();
+    if (data.dataValues.File_path == null) win.webContents.send('Db:backed', 'First set storage path in settings!')
+    else {
+        var path = data.dataValues.File_path;
+        var db = await sequelize.query('Select database() as db_name');
+        var cmd = 'mysqldump -uroot -hlocalhost -pCALCULATION1164 ' + db[0][0].db_name + ' > ' + path + db[0][0].db_name + '-' + date + '.sql';
+        await exec(cmd);
+        win.webContents.send('db:backed', 'Database backup created!');
+    }
+});
+
+ipcMain.on('db:restore', async (event) => {
+    var Restore_info = require('./src/Backend/models/Restore_info.js');
+    var c = await dialog.showOpenDialog({ filters: [{ name: '', extensions: ['sql'], properties: ['openFile'] }] });
+    if (c.canceled == false) {
+        let ans = await dialog.showMessageBox({ type: "warning", buttons: ["Yes", "No"], message: "Do you really want to restore all data?" });
+        if (ans.response) win.webContents.send('db:restored', 'Restoration cancelled!');
+        else {
+            var pt = (c.filePaths + '').split('\\');
+            var file = pt[pt.length - 1].split('-');
+            var db = await sequelize.query('Select database() as db_name');
+            if (file[0] != db[0][0].db_name) win.webContents.send('db:restored', 'Incorrect file selected!');
+            else {
+                var exec = require('child_process').exec;
+                var cmd = 'mysql -uroot -hlocalhost -pCALCULATION1164 ' + db[0][0].db_name + ' < ' + c.filePaths;
+                await exec(cmd, async (error) => {
+                    if (error) win.webContents.send('db:restored', 'Error occured while restoration!');
+                    else {
+                        var today = new Date() + '';
+                        await Restore_info.create({ Path: c.filePaths + '', DateTime: today });
+                        win.webContents.send('db:restored', 'Database restored!');
+                    }
+                });
+            }
+        }
+    }
+    else win.webContents.send('db:restored', 'Restoration cancelled!');
 });

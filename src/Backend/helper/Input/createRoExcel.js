@@ -40,8 +40,6 @@ function summSheet(sheet, sameD, diffD, compD, paperMap, cityMap, imageId1) {
 }
 
 function roPart(sheet, sameD, diffD, compD, paperMap, cityMap, imageId1) {
-    let s = "";
-    for (let ele of diffD) s += ele['ShortName'] + ' + ';
 
     sheet.getRow(1).getCell(4).value = compD.Name;
     sheet.getRow(2).getCell(9).value = compD.Address;
@@ -55,16 +53,16 @@ function roPart(sheet, sameD, diffD, compD, paperMap, cityMap, imageId1) {
     sheet.getRow(10).getCell(1).value = 'Dear Sir,';
     sheet.getRow(11).getCell(1).value = 'Kindly arrange to publish the advertisement(s) as per terms and conditions and instructions below:';
     sheet.getRow(11).getCell(7).value = 'RELEASE ORDER';
-    sheet.getRow(12).getCell(1).value = 'Publication';
-    sheet.getRow(12).getCell(2).value = s.substring(0, s.length - 2);
     sheet.getRow(12).getCell(7).value = 'RO No.';
     sheet.getRow(12).getCell(8).value = sameD.RoNo;
-    sheet.getRow(13).getCell(1).value = 'Client:';
-    sheet.getRow(13).getCell(2).value = sameD.VendName;
+    sheet.getRow(12).getCell(1).value = 'Client :';
+    sheet.getRow(12).getCell(2).value = sameD.VendName;
     sheet.getRow(13).getCell(7).value = 'Date:';
     sheet.getRow(13).getCell(8).value = formatDate(sameD.RoDate);
-    sheet.getRow(14).getCell(1).value = 'Subject :';
-    sheet.getRow(14).getCell(2).value = sameD.SubjectDetail;
+    sheet.getRow(13).getCell(1).value = 'Subject :';
+    sheet.getRow(13).getCell(2).value = sameD.SubjectDetail;
+    sheet.getRow(14).getCell(1).value = 'Hue :';
+    sheet.getRow(14).getCell(2).value = (sameD.Hue == 'B') ? 'B / W' : 'Coloured';
     
     let arr = ['CAPTION', 'NEWSPAPER / PUBLICATION', 'EDITIONS / SUB-EDITIONS / PACKAGE', 'RATES', 'SIZE'];
     for (let i=0; i<arr.length; i++) sheet.getRow(16).getCell(i+1).value = arr[i];
@@ -82,7 +80,7 @@ function roPart(sheet, sameD, diffD, compD, paperMap, cityMap, imageId1) {
     else sheet.getRow(17).getCell(7).value = 'LINES';
 
     let a = fillTable(sheet, 18, sameD, diffD, paperMap, cityMap);
-    let idx = a[0], gross = a[1];
+    let idx = a[0] + 2, gross = a[1];
     sheet.getRow(idx).getCell(1).value = 'Discount | Rates confirmed by:';
 
     arr = [`Special Discount: ${sameD.SplDis}%`, 'GROSS VALUE', 'ADDL DISCOUNT', 'T. DISCOUNT', 'NET AMT'];
@@ -133,18 +131,19 @@ function roPart(sheet, sameD, diffD, compD, paperMap, cityMap, imageId1) {
     });
 
     sheet.getRow(idx + 13).getCell(1).value = 'Media Executive';
+    sheet.getRow(idx + 14).getCell(1).value = sameD.Matter;
 
     styling1Ro(sheet, idx);
 }
 
 function styling1Ro(sheet, idx) {
-    let r1 = [1, 2, 3, 4, 5, 6, 11, 16, idx + 1, idx + 2, idx + 7];
-    let r2 = [1, 2, 3, 4, 5, 6, 11, 16, idx + 1, idx + 2, idx + 7];
-    let c1 = [4, 9, 3, 9, 2, 4, 1, 5, 5, 5, 1];
-    let c2 = [9, 9, 9, 9, 9, 9, 6, 7, 7, 7, 9];
-    for (let i in r1) sheet.mergeCells(r1[i], c1[i], r2[i], c2[i]);
+    let r = [1, 2, 3, 4, 5, 6, 11, 16, idx + 1, idx + 2, idx + 7, idx + 14];
+    let c1 = [4, 9, 3, 9, 2, 4, 1, 5, 5, 5, 1, 1];
+    let c2 = [9, 9, 9, 9, 9, 9, 6, 7, 7, 7, 9, 9];
+    for (let i in r) sheet.mergeCells(r[i], c1[i], r[i], c2[i]);
 
-    let r = [3, 5, 5], c = [1, 4, 2];
+    r = [3, 5, 5];
+    let c = [1, 4, 2];
     for (let i in r) sheet.getRow(r[i]).getCell(c[i]).style = { font: { bold: true, underline: true, size: 8 } };
 
     r = [2, 3, 4, 5, 7], c = [9, 3, 9, 1, 1];
@@ -231,54 +230,58 @@ function styling1Ro(sheet, idx) {
     for(let i of [9, 10]) sheet.getRow(idx + i).getCell(8).border = { bottom: { style: 'thin' } };
 
     sheet.getRow(idx + 13).getCell(1).style = { font: { size: 7 } };
+    sheet.getRow(idx + 14).getCell(1).alignment = { wrapText: true };
+    sheet.getRow(idx + 14).height = 40;
 }
 
 function summPart(sheet, sameD, diffD, paperMap, cityMap) {
-    sheet.getRow(44).getCell(5).value = sameD.VendName;
-    sheet.getRow(46).getCell(1).value = `RO - ${sameD.RoNo}`;
-    sheet.getRow(48).getCell(1).value = sameD.VendName;
-    sheet.getRow(49).getCell(1).value = sameD.SubjectDetail;
-    sheet.getRow(50).getCell(1).value = sameD.Position;
+    sheet.getRow(47).getCell(5).value = sameD.VendName;
+    sheet.getRow(49).getCell(1).value = `RO - ${sameD.RoNo}`;
+    sheet.getRow(51).getCell(1).value = sameD.VendName;
+    sheet.getRow(52).getCell(1).value = sameD.SubjectDetail;
+    sheet.getRow(53).getCell(1).value = sameD.Position;
 
     let head = ['CAPTION', 'NEWSPAPER', 'EDITIONS / SUB-EDITIONS / PACKAGE', 'RATES', 'SIZE', '', '', 'DATE', 'DAY'];
-    for (let i = 0; i < head.length; i++) sheet.getRow(51).getCell(i + 1).value = head[i];
+    for (let i = 0; i < head.length; i++) sheet.getRow(54).getCell(i + 1).value = head[i];
     
-    let a = fillTable(sheet, 52, sameD, diffD, paperMap, cityMap);
+    let a = fillTable(sheet, 55, sameD, diffD, paperMap, cityMap);
     let idx = a[0];
+    sheet.getRow(idx + 1).getCell(1).value = sameD.Matter;
 
     styling1(sheet, head.length, idx);
 }
 
 function styling1(sheet, hLen, tLen) {
-    sheet.mergeCells(44, 5, 45, 9);
-    sheet.mergeCells(46, 5, 47, 9);
-    sheet.mergeCells(51, 5, 51, 7);
+    sheet.mergeCells(47, 5, 48, 9);
+    sheet.mergeCells(49, 5, 50, 9);
+    sheet.mergeCells(54, 5, 54, 7);
+    sheet.mergeCells(tLen + 1, 1, tLen + 1, 9);
 
-    sheet.getRow(44).font = { size: 16, bold: true, color: { argb: 'FFFFFFFF' } };
-    sheet.getRow(46).font = { name: 'Arial Black', size: 18, bold: true };
-    for (let i = 47; i <= 50; i++) sheet.getRow(i).font = { bold: true, underline: true };
-    sheet.getRow(51).font = { bold: true, color: { argb: 'FFFFFFFF' } };
+    sheet.getRow(47).font = { size: 16, bold: true, color: { argb: 'FFFFFFFF' } };
+    sheet.getRow(49).font = { name: 'Arial Black', size: 18, bold: true };
+    for (let i = 50; i <= 53; i++) sheet.getRow(i).font = { bold: true, underline: true };
+    sheet.getRow(54).font = { bold: true, color: { argb: 'FFFFFFFF' } };
 
-    sheet.getRow(44).getCell(5).alignment = { vertical: 'middle', horizontal: 'center' };
-    sheet.getRow(51).getCell(5).alignment = { horizontal: 'center' };
-    for (let i = 52; i < tLen; i++) {
+    sheet.getRow(47).getCell(5).alignment = { vertical: 'middle', horizontal: 'center' };
+    sheet.getRow(54).getCell(5).alignment = { horizontal: 'center' };
+    for (let i = 55; i < tLen; i++) {
         for (let j = 4; j <= 8; j++) sheet.getRow(i).getCell(j).alignment = { horizontal: 'center' };
     }
 
-    sheet.getCell('E44').fill = {
+    sheet.getCell('E47').fill = {
         type: 'pattern',
         pattern: 'solid',
         bgColor: { argb: '255000000' }
     };
     for (let i = 0; i < hLen; i++) {
-        sheet.getRow(51).getCell(i + 1).fill = {
+        sheet.getRow(54).getCell(i + 1).fill = {
             type: 'pattern',
             pattern: 'solid',
             bgColor: { argb: '255000000' }
         };
     }
 
-    for (let i = 46; i <= 47; i++) {
+    for (let i = 49; i <= 50; i++) {
         for(let j = 5; j <= 9; j++)
         sheet.getRow(i).getCell(j).border = {
             top: { style: 'thin' },
@@ -287,6 +290,8 @@ function styling1(sheet, hLen, tLen) {
             right: { style: 'thin' }
         };
     }
+    sheet.getRow(tLen + 1).getCell(1).alignment = { wrapText: true };
+    sheet.getRow(tLen + 1).height = 40;
 }
 
 function fillTable(sheet, idx, sameD, diffD, paperMap, cityMap) {

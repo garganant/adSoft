@@ -38,30 +38,33 @@ async function billPrtData(s, e) {
 
     for (let num = s; num <= e; num++) {
         let arr = [], custTparty = "";
-        var sData = await RoSame.findOne({ where: { BillNo: num } });
+        var sData = await RoSame.findAll({ where: { BillNo: num } });
         if(sData == null) continue;
-        var vend = await Vend.findOne({ where: { id: sData.dataValues.VendCode } });
-        if(sData.dataValues.TParty != "") {
+        var vend = await Vend.findOne({ where: { id: sData[0].dataValues.VendCode } });
+        if(sData[0].dataValues.TParty != "") {
             custTparty = vend.dataValues.Name;
-            let v = await Vend.findOne({ attributes: ['id'], where: { Name: sData.dataValues.TParty } });
-            sData.dataValues.VendCode = v.dataValues.id;
+            let v = await Vend.findOne({ attributes: ['id'], where: { Name: sData[0].dataValues.TParty } });
+            sData[0].dataValues.VendCode = v.dataValues.id;
         }
-        vend = await Vend.findOne({ where: { id: sData.dataValues.VendCode } });
-        var subject = (await Subject.findOne({ attributes: ['SubjectDetail'], where: { Code: sData.SubjectCode } })).dataValues.SubjectDetail;
-        let pData = await RoPaper.findAll({ where: { RoNo: sData.dataValues.RoNo } });
+        vend = await Vend.findOne({ where: { id: sData[0].dataValues.VendCode } });
+        var subject = (await Subject.findOne({ attributes: ['SubjectDetail'], where: { Code: sData[0].SubjectCode } })).dataValues.SubjectDetail;
         let bData = await Bill.findOne({ where: {BillNo: num } });
-        for (let i in pData) {
-            let tmp = [];
-            tmp.push(paperMap[pData[i].dataValues.ShortName]);
-            tmp.push(num);
-            tmp.push(pData[i].dataValues.DateP);
-            tmp.push(pData[i].dataValues.Width);
-            tmp.push(pData[i].dataValues.Height);
-            tmp.push(parseFloat(pData[i].dataValues.RatePR));
-            tmp.push(cityMap[pData[i].dataValues.EditionCode]);
-            arr.push(tmp);
+        for(let i in sData) {
+            let pData = await RoPaper.findAll({ where: { RoNo: sData[i].dataValues.RoNo } });
+            for (let j in pData) {
+                let tmp = [];
+                tmp.push(paperMap[pData[j].dataValues.ShortName]);
+                tmp.push(num);
+                tmp.push(pData[j].dataValues.DateP);
+                tmp.push(pData[j].dataValues.Width);
+                tmp.push(pData[j].dataValues.Height);
+                tmp.push(parseFloat(pData[j].dataValues.RatePR));
+                tmp.push(cityMap[pData[j].dataValues.EditionCode]);
+                tmp.push(pData[j].dataValues.RoNo);
+                arr.push(tmp);
+            }
         }
-        collection.push([vend.dataValues, subject, arr, sData.dataValues, bData.dataValues, custTparty]);
+        collection.push([vend.dataValues, subject, arr, sData[0].dataValues, bData.dataValues, custTparty]);
     }
     return [cData.dataValues, collection];
 }

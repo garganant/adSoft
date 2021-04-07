@@ -57,7 +57,7 @@ function resetBtn(btn) {
     var btn = document.getElementById(btn);
     btn.style.cursor = 'pointer';
     btn.disabled = false;
-    btn.innerHTML = 'Select';
+    btn.innerHTML = 'Show';
     btn.style.background = '#722620';
 }
 

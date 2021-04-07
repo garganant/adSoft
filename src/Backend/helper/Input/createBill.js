@@ -15,14 +15,14 @@ let limit, y;
 function createBill(cData, rupee, btype, bills) {
     let doc = new PDFDocument({ size: "A4", margins: {
             top: 10,
-            bottom: 20,
+            bottom: 10,
             left: 50,
             right: 20
         }
     });
     
     for (var i = 0; i < bills.length; i++) {
-        limit = 8, y = 195;
+        limit = 8, y = 198;
         if (i != 0) doc.addPage();
         generateHeader(doc, cData);
         generateCustomerInfo(doc, bills[i][3]['BillNo'], bills[i][3]['BillDate'], bills[i][0], cData.FY, bills[i][1], bills[i][4], bills[i][5], btype);
@@ -31,9 +31,10 @@ function createBill(cData, rupee, btype, bills) {
     }
 
     doc.end();
-    doc.pipe(fs.createWriteStream(cData.File_path + 'File.pdf'));
+    let pt = `${cData.File_path}B${bills[0][3]['BillNo']}.pdf`;
+    doc.pipe(fs.createWriteStream(pt));
     let child = new PDFWindow({ title: 'File', autoHideMenuBar: true });
-    child.loadURL(cData.File_path + 'File.pdf');
+    child.loadURL(pt);
 }
 
 function generateHeader(doc, compD) {
@@ -79,7 +80,7 @@ function generateCustomerInfo(doc, billNo, bDate, vendD, FY, subject, obj, custT
         .fontSize(7)
         .fillColor('black')
         .text('No.', 440, 88)
-        .text(FY + '/' + billNo, 501, 88)
+        .text(FY + ' / ' + billNo, 501, 88)
         .text('Date:', 440, 100)
         .text(formatDate(bDate), 501, 100)
         .text('Place of Supply', 440, 112)
@@ -93,7 +94,7 @@ function generateCustomerInfo(doc, billNo, bDate, vendD, FY, subject, obj, custT
 
     let sub = subject;
     if (custTparty != "") sub += `   | ${custTparty}`;
-    if (btype == 1 && obj.Prospect != "") sub+= ` | Prospect No. ${obj.Prospect}`;
+    if (btype == 1 && obj.Prospect != "") sub+= ` | ${obj.Prospect}`;
 
     doc
         .font("Helvetica")
@@ -145,32 +146,32 @@ function generateCustomerInfo(doc, billNo, bDate, vendD, FY, subject, obj, custT
 }
 
 function generateRoTable(doc, arr, sData, SplDis, rupee) {
-    generateTableRow(doc, "PUBLICATION (S)", "       DATE", "  SIZE", "SPACE", " RATE", "AMOUNT", sData.AdType);
-    y = 205;
+    generateTableRow(doc, "PUBLICATION (S)", "      DATE", "  SIZE", "SPACE", " RATE", "AMOUNT", sData.AdType);
+    y = 211;
     let sz = sData.AdType == 'D' ? "W  x  H": "W    LINES";
-    generateTableRow(doc, "EDITIONS", "DD/MM/YYYY", sz, "SQ. CM.", "SQ. CM.", "  INR", sData.AdType);
-    doc.image(rupee, 569, 198, { scale: 0.02 });
+    generateTableRow(doc, "Editions", "DD/MM/YYYY", sz, "SQ. CM.", "SQ. CM.", "     INR", sData.AdType);
+    doc.image(rupee, 569, 201, { scale: 0.02 });
 
-    y = 220 , amt = 0;
+    y = 230 , amt = 0;
     for(let p of arr) {
         sz = sData.AdType == 'D' ? `${p[3]}  x  ${p[4]}` : `${p[3]}   LINES`;
         let space = sData.AdType == 'D' ? p[3] * p[4] : `${p[3]}   LINES`;
         let tAmt = sData.AdType == 'D' ? p[3] * p[4] * p[5] : p[5];
         generateTableRow(doc, `  ${p[0]}`, ` ${formatDate(p[2])}`, sz, space, (p[5]).toFixed(2), commaSeparated(tAmt) + '.00', sData.AdType);
         y+= 10;
-        generateTableRow(doc, `          ${p[6]}    (${p[1]})`, "", "", "", "", "", sData.AdType);
+        generateTableRow(doc, `          ${p[6]}    (${p[7]})`, "", "", "", "", "", sData.AdType);
         y+= 18;
         amt+= tAmt;
     }
-    y = 550;
+    y = 560;
     generateVr(doc);
-    generateHr(doc, 48, 580, y-1);
+    generateHr(doc, 48, 590, y-1);
     y+= 3;
     generateTableRow(doc, "", "GRAND TOTAL", "", "", "", commaSeparated(amt, 0) + '.00', sData.AdType);
     y+= 10;
     generateTableRow(doc, "", "LESS: Other Dr/Cr Adjustments", "", "", "", "   " + commaSeparated(SplDis, 0), sData.AdType);
     y+= 10;
-    generateHr(doc, 48, 580, y - 1);
+    generateHr(doc, 48, 590, y - 1);
     y+= 3;
 
     return Math.round(amt - SplDis);
@@ -260,7 +261,8 @@ function generateFooter(doc, cData, Status, sData, adv, gross) {
             .moveDown(0.5)
             .text(sgst, 573 - doc.widthOfString(sgst))
             .moveDown(0.5)
-            .text('-', 570);
+            .text('-', 570)
+            .moveDown(6.8);
     }
     else {
         doc
@@ -268,11 +270,11 @@ function generateFooter(doc, cData, Status, sData, adv, gross) {
             .moveDown(0.5)
             .text('-', 570)
             .moveDown(0.5)
-            .text(igst, 573 - doc.widthOfString(igst));
+            .text(igst, 573 - doc.widthOfString(igst))
+            .moveDown(7.1);
     }
 
     doc
-        .moveDown(6.8)
         .fontSize(8)
         .font("Helvetica-Bold")
         .text(words, 50)
@@ -338,18 +340,30 @@ function generateFooter(doc, cData, Status, sData, adv, gross) {
         .text('Authorised Signatory', { align : 'right' })
         .moveDown(0.5)
         .text('Prepared by :', 50)
-        .text('                                             ', 87, 748, { underline: true })
+        .text('', 87)
+        .moveUp()
+        .text('                                             ', { underline: true })
         .moveUp(0.8)
         .text('Checked by :', 177)
-        .text('                                             ', 212, 748, { underline: true })
+        .text('', 212)
+        .moveUp()
+        .text('                                             ', { underline: true })
         .fontSize(7)
         .font("Helvetica-Bold")
-        .text('NEWSPAPER CUTTINGS ENCLOSED', 50, 758, { underline: true })
+        .text('NEWSPAPER CUTTINGS ENCLOSED', 50, 768, { underline: true })
         .moveDown()
         .text('E&OE')
         .font("Helvetica")
         .moveUp(1.05)
         .text('BH / CR / SP / COL', 80);
+
+    if (sData.Matter != "") {
+        doc
+            .text('', 49)
+            .fillColor('black')
+            .moveDown(1)
+            .text(sData.Matter, { align: 'justify' });
+    }
 
     lines(doc);
 }
@@ -360,30 +374,32 @@ function generateTableRow(doc, publication, date, size, space, rate, amount, AdT
         .fillColor('black')
         .lineWidth(12);
 
-    if (y == 195 || y == 205) {
-        fillBackground(doc, y+3);
+    if (y == 198 || y == 211) {
+        if(y == 198) fillBackground(doc, y+2);
+        else fillBackground(doc, y+3);
         doc
             .font("Helvetica-Bold")
             .fillColor('white');
     }
-    if (date != "" && y > 205) doc.font("Helvetica-Bold");
+    if (date != "" && y > 211) doc.font("Helvetica-Bold");
 
     doc
         .fontSize(7.2)
         .text(publication, 50, y)
         .text(date, 285, y);
 
-    if (y == 195 || y == 205) {
-        if (y == 195) doc.text(size, 354, y);
-        else if (y == 205 && AdType == 'D') doc.text(size, 354, y);
+    if (y == 198 || y == 211) {
+        if (y == 198) doc.text(size, 354, y);
+        else if (y == 211 && AdType == 'D') doc.text(size, 354, y);
         doc
             .text(space, 410, y)
             .text(rate, 464, y)
             .text(amount, 533, y);
     }
     else {
+        if (AdType == 'D') doc.text(size, 352, y, { width: 30, align: 'center' });
+        else doc.text(size, 381 - doc.widthOfString(size), y);
         doc
-            .text(size, 381 - doc.widthOfString(size), y)
             .text(space, 442 - doc.widthOfString('' + space), y)
             .text(rate, 506 - doc.widthOfString(rate), y)
             .text(amount, 573 - doc.widthOfString(amount), y);
@@ -425,7 +441,7 @@ function fillBackground(doc, y) {
 
     for (let i in mt) {
         doc
-            .lineWidth(9)
+            .lineWidth(13)
             .lineCap('butt')
             .moveTo(mt[i], y)
             .lineTo(lt[i], y)
@@ -439,7 +455,7 @@ function generateVr(doc) {
         doc
             .strokeColor("black")
             .lineWidth(0.1)
-            .moveTo(i, 195)
+            .moveTo(i, 198)
             .lineTo(i, y - 1)
             .stroke();
     }
@@ -451,31 +467,31 @@ function lines(doc) {
         doc
             .strokeColor("black")
             .lineWidth(0.1)
-            .moveTo(i, 549)
-            .lineTo(i, 688)
+            .moveTo(i, 559)
+            .lineTo(i, 699)
             .stroke();
     }
     doc
         .strokeColor("black")
         .lineWidth(0.1)
-        .moveTo(395, 572)
-        .lineTo(395, 674)
+        .moveTo(395, 582)
+        .lineTo(395, 684)
         .stroke();
     doc
         .strokeColor("black")
         .lineWidth(0.1)
         .moveTo(512, 549)
-        .lineTo(512, 674)
+        .lineTo(512, 684)
         .stroke();
 
     generateHr(doc, 395, 580, 633);
-    generateHr(doc, 395, 580, 660);
-    generateHr(doc, 48, 580, 674);
-    generateHr(doc, 48, 580, 688);
+    generateHr(doc, 395, 580, 671);
+    generateHr(doc, 48, 580, 684);
+    generateHr(doc, 48, 580, 699);
 
     doc
         .strokeColor('#9a0000')
-        .rect(48, 770, 100, 12)
+        .rect(48, 780, 100, 13)
         .stroke();
 }
 

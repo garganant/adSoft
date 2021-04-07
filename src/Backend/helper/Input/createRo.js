@@ -6,9 +6,8 @@ function createRo(sameD, diffD, compD, paperMap, cityMap, signStamp) {
     let doc = new PDFDocument({ size: "A4", margin: 20 });
 
     generateHeader(doc, compD);
-    let s = "", y = 0;
-    for(let ele of diffD) s+= ele['ShortName'] + ' + ';
-    generateCustomerInfo(doc, s.substring(0, s.length-2), sameD);
+    let y = 0;
+    generateCustomerInfo(doc, sameD);
     y = generateRoTable(doc, y, diffD, paperMap, cityMap, sameD, compD.IGst);
     generateFooter(doc, y, compD, sameD, signStamp);
 
@@ -38,7 +37,7 @@ function generateHeader(doc, compD) {
     doc.moveDown();
 }
 
-function generateCustomerInfo(doc, pub, sameD) {
+function generateCustomerInfo(doc, sameD) {
     doc
         .fontSize(8)
         .font("Helvetica-Bold")
@@ -58,11 +57,6 @@ function generateCustomerInfo(doc, pub, sameD) {
         .text('Kindly arrange to publish the advertisement(s) as per terms and conditions and instructions below:')
         .moveDown(0.3)
         .fontSize(8)
-        .text('Publication:')
-        .moveUp()
-        .font("Helvetica-Bold")
-        .text(pub, 65)
-        .moveDown(0.3)
         .font("Helvetica")
         .text('Client:', 20)
         .moveUp()
@@ -73,7 +67,13 @@ function generateCustomerInfo(doc, pub, sameD) {
         .text('Subject:', 20)
         .moveUp()
         .font("Helvetica-Bold")
-        .text(sameD.SubjectDetail, 65);
+        .text(sameD.SubjectDetail, 65)
+        .font("Helvetica")
+        .moveDown(0.3)
+        .text('Hue:', 20)
+        .moveUp()
+        .font("Helvetica-Bold")
+        .text(sameD.Hue == 'B' ? 'B / W' : 'Coloured', 65);
 
         doc
             .moveUp(4.5)
@@ -250,6 +250,14 @@ function generateFooter(doc, y, compD, sameD, signStamp) {
         .text('MATERIAL SENT', 370)
         .moveUp()
         .text('CONFIRMED', 470);
+
+    if(sameD.Matter != "") {
+        doc
+            .text('', 20)
+            .fillColor('black')
+            .moveDown(5)
+            .text(sameD.Matter, { align: 'justify' });
+    }
 
     lines(doc, y);
 }

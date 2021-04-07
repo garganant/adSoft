@@ -40,7 +40,7 @@ const RoSame = sequelize.define('RoSame', {
         type: Sequelize.STRING(100)
     },
     Spl2: {
-        type: Sequelize.STRING(100)
+        type: Sequelize.STRING(200)
     },
     BillNo: {
         type: Sequelize.INTEGER
@@ -65,6 +65,12 @@ const RoSame = sequelize.define('RoSame', {
     },
     PBillNo: {
         type: Sequelize.INTEGER
+    },
+    Matter: {
+        type: Sequelize.STRING
+    },
+    Hue: {   // B = B/W, C = Coloured
+        type: Sequelize.STRING(1)
     }
 }, {
     //options

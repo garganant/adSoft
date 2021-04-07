@@ -1,0 +1,39 @@
+h3 {
+    font-family: "Constantia";
+    color: #722620;
+}
+::-webkit-input-placeholder {
+    color: #686868;
+}
+.input-field input:empty {
+    border-bottom: 1px solid #000;
+    box-shadow: 0 1px 0 0 #000;
+}
+.input-field input:read-write {
+    border-bottom: 1px solid #000 !important;
+    box-shadow: 0 1px 0 0 #000 !important;
+}
+.input-field label {
+    color: grey !important;
+}
+.input-field input:focus {
+    border-bottom: 1px solid red !important;
+    box-shadow: 0 1px 0 0 red !important;
+}
+#warning {
+    position: absolute;
+    top: 58.8%;
+    left: 60%;
+    color: red;
+}
+.buttons a {
+    position: absolute;
+    font-family: "Constantia";
+    background-color: #722620;
+}
+.btn:hover {
+    background-color: #491910;
+}
+#passBtn {
+    visibility: hidden;
+}
