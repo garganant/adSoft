@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+    <link type="text/css" href="../../../node_modules/material-icons/iconfont/material-icons.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="../../../node_modules/materialize-css/dist/css/materialize.min.css"
+        media="screen,projection" />
+    <link rel="stylesheet" href="../../../assets/css/Master/Group.css">
+    <title>AdSoft</title>
+</head>
+<body>
+    <div class="container">
+        <h3 align="center">OFFICE MASTER</h3>
+        <div class="row">
+            <label id="compulsory" class="col l4 push-l8">Fields marked with (*) are compulsory</label>
+        </div>
+        <br><br><br><br>
+        <div class="row">
+            <div class="input-field col l2 push-l2">
+                <input id="Code" type="number" placeholder="" hidden />
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col l8 push-l2">
+                <input id="Address" type="text" placeholder="" maxlength="255" />
+                <label for="Address">OFFICE ADDRESS *</label>
+            </div>
+        </div>
+        <br><br><br><br><br>
+        <div class="buttons row">
+            <a id="prevBtn" onclick="prev()" class="btn col push-xl1">Previous</a>
+            <a id="nxtBtn" onclick="nxt()" class="btn col push-xl2">Next</a>
+            <a id="fstBtn" onclick="fst()" class="btn col push-xl3">First</a>
+            <a id="lstBtn" onclick="lst()" class="btn col push-xl4">Last</a>
+            <a id="addBtn" onclick="submit()" class="btn col push-xl5">Add/Edit data</a>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../../node_modules/materialize-css/dist/js/materialize.min.js"></script>
+<script src="../../Backend/connector/Master/connectOffice.js"></script>
+</html>

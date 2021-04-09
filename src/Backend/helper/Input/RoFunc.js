@@ -42,7 +42,8 @@ async function addEditRO(same, diff) {
             Package: same.Package,
             AdType: same.AdType,
             RConfirm: same.RConfirm,
-            Matter: same.Matter
+            Matter: same.Matter,
+            Office: same.Office
         }
     });
     if (!created) await RoSame.update(same, { where: { RoNo: same.RoNo } });

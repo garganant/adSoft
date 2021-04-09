@@ -74,7 +74,24 @@
                 </div>
             </div>
             <div class="row">
-                <div class="input-field col l9 xl8">
+                <div class="input-field col l5">
+                    <select id="Office" required>
+                        <option value="0" selected>--None--</option>
+                    </select>
+                    <label>OTHER OFFICE</label>
+                </div>
+                <div class="input-field col l3 xl2">
+                    <input id="Package" type="text" placeholder="" maxlength="25" />
+                    <label for="Package">PACKAGE</label>
+                </div>
+                <div class="input-field col l3">
+                    <input id="TParty" type="text" list="tparty" placeholder="Third party name" maxlength="255" />
+                    <label for="TParty">THIRD PARTY</label>
+                    <datalist id="tparty"></datalist>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col l9 xl8" style="margin: 0%;">
                     <ul class="collapsible popout">
                         <li style="margin: 0%;">
                             <div class="collapsible-header">SPECIAL INSTRUCTION 1</div>
@@ -95,15 +112,6 @@
                             </div>
                         </li>
                     </ul>
-                </div>
-                <div class="input-field col l3 xl2">
-                    <input id="Package" type="text" placeholder="" maxlength="25" />
-                    <label for="Package">PACKAGE</label>
-                </div>
-                <div class="input-field col l3">
-                    <input id="TParty" type="text" list="tparty" placeholder="Third party name" maxlength="255" />
-                    <label for="TParty">THIRD PARTY</label>
-                    <datalist id="tparty"></datalist>
                 </div>
             </div>
             <div class="row tableDiv">

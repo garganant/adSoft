@@ -157,7 +157,7 @@ function generateRoTable(doc, arr, sData, SplDis, rupee) {
         sz = sData.AdType == 'D' ? `${p[3]}  x  ${p[4]}` : `${p[3]}   LINES`;
         let space = sData.AdType == 'D' ? p[3] * p[4] : `${p[3]}   LINES`;
         let tAmt = sData.AdType == 'D' ? p[3] * p[4] * p[5] : p[5];
-        generateTableRow(doc, `  ${p[0]}`, ` ${formatDate(p[2])}`, sz, space, (p[5]).toFixed(2), commaSeparated(tAmt) + '.00', sData.AdType);
+        generateTableRow(doc, `  ${p[0]}`, ` ${formatDate(p[2])}`, sz, space, (p[5]).toFixed(2), commaSeparated(tAmt, 0) + '.00', sData.AdType);
         y+= 10;
         generateTableRow(doc, `          ${p[6]}    (${p[7]})`, "", "", "", "", "", sData.AdType);
         y+= 18;

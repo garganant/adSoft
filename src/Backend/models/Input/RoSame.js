@@ -68,6 +68,9 @@ const RoSame = sequelize.define('RoSame', {
     },
     Hue: {   // B = B/W, C = Coloured
         type: Sequelize.STRING(1)
+    },
+    Office: {
+        type: Sequelize.INTEGER
     }
 }, {
     //options

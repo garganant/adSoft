@@ -4,6 +4,7 @@ const Vend = require(path.relative('helper', 'models/Master/Vendor.js'));
 const Subject = require(path.relative('helper', 'models/Master/Subject.js'));
 const Newspaper = require(path.relative('helper', 'models/Master/Newspaper.js'));
 const Edition = require(path.relative('helper', 'models/Master/Edition.js'));
+const Office = require(path.relative('helper', 'models/Master/Office.js'));
 
 async function groupDetails() {
     const data = await PaperGroups.findAll({order: ['GroupName']});
@@ -26,6 +27,13 @@ async function subjectDetails() {
     return obj;
 }
 
+async function officeDetails() {
+    const data = await Office.findAll({ order: ['Address'] });
+    let obj = [];
+    for (let ele of data) obj.push(ele.dataValues);
+    return obj;
+}
+
 async function newspaperNames(grpCode) {
     const data = await Newspaper.findAll({ attributes: ['ShortName'], where: { GroupCode: grpCode }, order: ['ShortName'] });
     let obj = [];
@@ -40,4 +48,4 @@ async function editionList() {
     return obj;
 }
 
-module.exports = { groupDetails, vendDetails, subjectDetails, newspaperNames, editionList };
+module.exports = { groupDetails, vendDetails, subjectDetails, officeDetails, newspaperNames, editionList };

@@ -44,8 +44,15 @@ function menuTemplate() {
                 },
                 {
                     label: 'Subject',
+                    accelerator: 'Alt+S',
                     click() {
                         win.loadURL(path.join(__dirname, path.relative('Backend/Populate', 'Frontend/Master/Subject.html')));
+                    }
+                },
+                {
+                    label: 'Office',
+                    click() {
+                        win.loadURL(path.join(__dirname, path.relative('Backend/Populate', 'Frontend/Master/Office.html')));
                     }
                 },
                 {

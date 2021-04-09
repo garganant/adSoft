@@ -2,14 +2,16 @@ const fs = require("fs");
 const PDFWindow = require('electron-pdf-window');
 const PDFDocument = require("pdfkit");
 
-function createRo(sameD, diffD, compD, paperMap, cityMap, signStamp) {
-    let doc = new PDFDocument({ size: "A4", margin: 20 });
+function createRo(Logo, sameD, diffD, compD, paperMap, cityMap, signStamp) {
+    let doc = new PDFDocument({ size: "A4", margin: 20
+});
 
-    generateHeader(doc, compD);
+    generateHeader(doc, Logo);
     let y = 0;
     generateCustomerInfo(doc, sameD);
     y = generateRoTable(doc, y, diffD, paperMap, cityMap, sameD, compD.IGst);
-    generateFooter(doc, y, compD, sameD, signStamp);
+    y = generateBottom(doc, y, compD, sameD, signStamp);
+    generateFooter(doc, compD, sameD, y);
 
     doc.end();
     doc.pipe(fs.createWriteStream(`${compD.File_path}RO${sameD.RoNo}.pdf`));
@@ -17,27 +19,10 @@ function createRo(sameD, diffD, compD, paperMap, cityMap, signStamp) {
     child.loadURL(`${compD.File_path}RO${sameD.RoNo}.pdf`);
 }
 
-function generateHeader(doc, compD) {
+function generateHeader(doc, Logo) {
     doc
-        .fillColor('#1434A4')
-        .fontSize(12)
-        .font("Helvetica-Bold")
-        .text(compD.Name, { align: 'right' });
-
-    doc
-        .fillColor('black')
-        .fontSize(6.5)
-        .font("Helvetica")
-        .text(compD.Address, { align: 'right' })
-        .moveDown(0.3)
-        .text(`Tel. ${compD.Phone} Fax: ${compD.Fax} Cell: ${compD.Mobile}`, { align: 'right' })
-        .moveDown(0.2)
-        .text(`Email: ${compD.Email} Website: ${compD.Website}`, { align: 'right' })
-        .moveDown(0.2)
-        .font("Helvetica-Bold")
-        .text(`INS / AGENCY CODE: ${compD.Code} | GST: ${compD.Gstin} | PAN: ${compD.Pan} | CIN: ${compD.Cin}`, { align: 'right', underline: true });
-
-    doc.moveDown();
+        .image(Logo, 510, 0, { fit: [100, 100] })
+        .moveDown();
 }
 
 function generateCustomerInfo(doc, sameD) {
@@ -100,14 +85,14 @@ function generateCustomerInfo(doc, sameD) {
 
 function generateRoTable(doc, y, diffD, paperMap, cityMap, sameD, IGst) {
     let x = [20, 128, 231, 405, 438, 485, 538];
-    y = 210;
+    y = 160;
     generateTableRow(doc, y, x, "CAPTION", "PUBLICATION", "EDITIONS / SUB-EDITION / PACKAGE", "RATES", " SIZE", "", "DATES", "DAY", sameD.AdType);
     x = [20, 128, 231, 405, 431, 472, 538];
-    y = 220;
+    y = 170;
     generateTableRow(doc, y, x, "", "", "", "SQCM", "W", "H", " DD/MM/YYYY", "", sameD.AdType);
     var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     let gross = 0;
-    y = 232;
+    y = 182;
     for(let obj of diffD) {
         x = [20, 128, 231, 425 - doc.widthOfString(obj.RatePR), 431, 480, 535];
         let day = days[new Date(obj.DateP).getDay()];
@@ -121,15 +106,16 @@ function generateRoTable(doc, y, diffD, paperMap, cityMap, sameD, IGst) {
         else gross+= parseFloat(obj.RatePR);
     }
     y = Math.max(y+12, 380);
+    generateHr(doc, y - 2, "black");
     generateTableRow(doc, y, x, "Discount | Rates confirmed by:", sameD.RConfirm, "", "", "", "", "", "", sameD.AdType);
     y+= 10;
 
-    generateHr(doc, y - 2, "black");
     x = [20, 173, 320, 383, 435, 509, 526];
     doc
         .lineWidth(12)
         .strokeColor('#D0D0D0');
     fillBackground(doc, y);
+    generateHr(doc, y - 2, "black");
     generateTableRow(doc, y, x, `Special Discount : ${sameD.SplDis} %`, "GROSS VALUE", "ADDL DISCOUNT", "T. DISCOUNT", "NET AMT", "", "GST", "NET PAYABLE", sameD.AdType);
 
     y+= 10;
@@ -163,11 +149,11 @@ function generateTableRow(doc, y, x, caption, paper, edition, rate, w, h, date, 
         .fillColor('black')
         .lineWidth(12);
 
-    if(y == 210) {
+    if(y == 160) {
         fillBackground(doc, y);
         doc.fillColor('white');
     }
-    else if(y == 220) {
+    else if(y == 170) {
         doc.strokeColor('#D0D0D0');
         fillBackground(doc, y);
     }
@@ -183,8 +169,8 @@ function generateTableRow(doc, y, x, caption, paper, edition, rate, w, h, date, 
         .text(date, x[5], y)
         .text(day, x[6], y);
 
-    if (y == 210) doc.text(w, x[4], y);
-    else if(y == 220) {
+    if (y == 160) doc.text(w, x[4], y);
+    else if(y == 170) {
         if (AdType == 'D') {
             doc
                 .text(w, x[4], y)
@@ -199,11 +185,11 @@ function generateTableRow(doc, y, x, caption, paper, edition, rate, w, h, date, 
             doc
                 .text(h, 455, y);
         }
-        else if (typeof w == 'number') doc.text('LINES/W', 445, y);
+        else if (typeof w == 'number') doc.text('LINES/W', 440, y);
     }
 }
 
-function generateFooter(doc, y, compD, sameD, signStamp) {
+function generateBottom(doc, y, compD, sameD, signStamp) {
     let s1 = "Terms and Conditions : ";
     let s2 = `us to process the bill(s) for  payment as per INS rules.  The advertisement should be appeared according to the actual size of the advertisement / material supplied.  Follow our layout in case of translation of the matter for publiction the ad in newspaper's language if instructed.  Do not publish two advertisements of one client / product on same page / issue unless specially instructed.  All disputes are subject to the jursdiction of Delhi Courts only. RO will be valid only if sent through "${compD.Email}".`;
 
@@ -241,7 +227,6 @@ function generateFooter(doc, y, compD, sameD, signStamp) {
         .text('Media Executive')
         .fontSize(6)
         .moveUp(7)
-        .fillColor('grey')
         .text('RO SENT', 370)
         .moveUp()
         .text('CONFIRMED', 470)
@@ -262,8 +247,50 @@ function generateFooter(doc, y, compD, sameD, signStamp) {
             .moveDown(5)
             .text(sameD.Matter, { align: 'justify' });
     }
+    else doc.moveDown(7);
 
+    y+= 25;
     lines(doc, y);
+    return y;
+}
+
+function generateFooter(doc, compD, sameD, y) {
+    doc
+        .moveDown()
+        .text('', 20)
+        .fillColor('#1434A4')
+        .fontSize(12)
+        .font("Helvetica-Bold")
+        .text(compD.Name, { align: 'center' });
+
+    doc
+        .fillColor('black')
+        .fontSize(6.5)
+        .font("Helvetica")
+        .text(compD.Address, { align: 'center' })
+        .moveDown(0.3)
+        .text(`Tel. ${compD.Phone} Fax: ${compD.Fax} Cell: ${compD.Mobile}`, { align: 'center' })
+        .moveDown(0.2)
+        .text(`Email: ${compD.Email} Website: ${compD.Website}`, { align: 'center' })
+        .moveDown(0.2)
+        .font("Helvetica-Bold")
+        .text(`INS / AGENCY CODE: ${compD.Code} | GST: ${compD.Gstin} | PAN: ${compD.Pan} | CIN: ${compD.Cin}`, { align: 'center', underline: true });
+
+    y+= 124;
+
+    doc
+        .lineWidth(12)
+        .lineCap('butt')
+        .moveTo(20, y)
+        .lineTo(580, y)
+        .stroke();
+
+    if (sameD['Office'] != 0) {
+        doc
+            .moveDown(0.7)
+            .fillColor('white')
+            .text(sameD['OfficeAdd'], { align: 'center' });
+    }
 }
 
 function fillBackground(doc, y) {
@@ -294,14 +321,13 @@ function generateVr(doc, y) {
             doc
                 .strokeColor("#aaaaaa")
                 .lineWidth(0.1)
-                .moveTo(x[i], 208)
+                .moveTo(x[i], 158)
                 .lineTo(x[i], y-1)
                 .stroke();
     }
 }
 
 function lines(doc, y) {
-    y+= 25;
     let x1 = [290, 450];
     let x2 = [440, 580];
     for(let i in x1) {

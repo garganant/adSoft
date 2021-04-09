@@ -1,7 +1,7 @@
 var Excel = require('exceljs');
 var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-function createRoExcel(sameD, diffD, compD, paperMap, cityMap, signStamp, pt) {
+function createRoExcel(sameD, diffD, compD, paperMap, cityMap, LogoImg, signStamp, pt) {
     // A new Excel Work Book
     var workbook = new Excel.Workbook();
 
@@ -11,9 +11,14 @@ function createRoExcel(sameD, diffD, compD, paperMap, cityMap, signStamp, pt) {
         extension: 'png',
     });
 
+    const Logo = workbook.addImage({
+        filename: LogoImg,
+        extension: 'png',
+    });
+
     // Create a sheet
     var sheet1 = workbook.addWorksheet('Summary', { pageSetup: { paperSize: 9, fitToPage: true } });
-    summSheet(sheet1, sameD, diffD, compD, paperMap, cityMap, imageId1);
+    summSheet(sheet1, sameD, diffD, compD, paperMap, cityMap, Logo, imageId1);
 
     var sheet2 = workbook.addWorksheet('Mail', { pageSetup: { paperSize: 9, fitToPage: true } });
     mailSheet(sheet2, sameD, diffD, paperMap, cityMap);
@@ -22,7 +27,7 @@ function createRoExcel(sameD, diffD, compD, paperMap, cityMap, signStamp, pt) {
     workbook.xlsx.writeFile(pt);
 }
 
-function summSheet(sheet, sameD, diffD, compD, paperMap, cityMap, imageId1) {
+function summSheet(sheet, sameD, diffD, compD, paperMap, cityMap, Logo, imageId1) {
     // A table header
     sheet.columns = [
         { header: '', key: 'caption', width: 27 },
@@ -35,19 +40,18 @@ function summSheet(sheet, sameD, diffD, compD, paperMap, cityMap, imageId1) {
         { header: '', key: 'date', width: 11 },
         { header: '', key: 'day', width: 11 }
     ]
-    roPart(sheet, sameD, diffD, compD, paperMap, cityMap, imageId1);
+    roPart(sheet, sameD, diffD, compD, paperMap, cityMap, Logo, imageId1);
     summPart(sheet, sameD, diffD, paperMap, cityMap);
 }
 
-function roPart(sheet, sameD, diffD, compD, paperMap, cityMap, imageId1) {
+function roPart(sheet, sameD, diffD, compD, paperMap, cityMap, Logo, imageId1) {
+    sheet.addImage(Logo, {
+        tl: { col: 7.7, row: 1 },
+        ext: { width: 130, height: 150 }
+    });
 
-    sheet.getRow(1).getCell(4).value = compD.Name;
-    sheet.getRow(2).getCell(9).value = compD.Address;
     sheet.getRow(3).getCell(1).value = 'Kind Attention :';
-    sheet.getRow(3).getCell(3).value = `Tel. ${compD.Phone} Fax: ${compD.Fax} Cell: ${compD.Mobile}`;
-    sheet.getRow(4).getCell(9).value = `Email: ${compD.Email} Website: ${compD.Website}`;
     sheet.getRow(5).getCell(1).value = 'The Advertisement Manager';
-    sheet.getRow(5).getCell(2).value = `INS / AGENCY CODE: ${compD.Code} | GST: ${compD.Gstin} | PAN: ${compD.Pan} | CIN: ${compD.Cin}`;
     sheet.getRow(6).getCell(1).value = sameD.GroupName;
     sheet.getRow(7).getCell(1).value = sameD.HoLoc;
     sheet.getRow(10).getCell(1).value = 'Dear Sir,';
@@ -133,35 +137,45 @@ function roPart(sheet, sameD, diffD, compD, paperMap, cityMap, imageId1) {
     sheet.getRow(idx + 13).getCell(1).value = 'Media Executive';
     sheet.getRow(idx + 14).getCell(1).value = sameD.Matter;
 
+    sheet.getRow(idx + 16).getCell(1).value = compD.Name;
+    sheet.getRow(idx + 17).getCell(1).value = compD.Address;
+    sheet.getRow(idx + 18).getCell(1).value = `Tel. ${compD.Phone} Fax: ${compD.Fax} Cell: ${compD.Mobile}`;
+    sheet.getRow(idx + 19).getCell(1).value = `Email: ${compD.Email} Website: ${compD.Website}`;
+    sheet.getRow(idx + 20).getCell(1).value = `INS / AGENCY CODE: ${compD.Code} | GST: ${compD.Gstin} | PAN: ${compD.Pan} | CIN: ${compD.Cin}`;
+
+    if (sameD['Office'] != 0) sheet.getRow(idx + 21).getCell(1).value = sameD['OfficeAdd'];
+
     styling1Ro(sheet, idx);
 }
 
 function styling1Ro(sheet, idx) {
-    let r = [1, 2, 3, 4, 5, 6, 11, 16, idx + 1, idx + 2, idx + 7, idx + 14];
-    let c1 = [4, 9, 3, 9, 2, 4, 1, 5, 5, 5, 1, 1];
-    let c2 = [9, 9, 9, 9, 9, 9, 6, 7, 7, 7, 9, 9];
+    let r = [6, 11, 16, idx + 1, idx + 2, idx + 7];
+    let c1 = [4, 1, 5, 5, 5, 1];
+    let c2 = [9, 6, 7, 7, 7, 9];
     for (let i in r) sheet.mergeCells(r[i], c1[i], r[i], c2[i]);
+    for (let i = 14; i <= 21; i++) sheet.mergeCells(idx + i, 1, idx + i, 9);
 
-    r = [3, 5, 5];
-    let c = [1, 4, 2];
-    for (let i in r) sheet.getRow(r[i]).getCell(c[i]).style = { font: { bold: true, underline: true, size: 8 } };
+    r = [3, idx + 20];
+    for (let i in r) sheet.getRow(r[i]).getCell(1).style = { font: { bold: true, underline: true, size: 8 } };
 
-    r = [2, 3, 4, 5, 7], c = [9, 3, 9, 1, 1];
-    for (let i in r) sheet.getRow(r[i]).getCell(c[i]).style = { font: { size: 8 } };
+    r = [7, idx + 17, idx + 18, idx + 19, idx + 21];
+    for (let i in r) sheet.getRow(r[i]).getCell(1).style = { font: { size: 8 } };
 
-    r = [10, 11, 12, 12, 13, 13, 14], c = [1, 1, 1, 7, 1, 7, 1];
+    r = [10, 11, 12, 12, 13, 13, 14];
+    let c = [1, 1, 1, 7, 1, 7, 1];
     for (let i in r) sheet.getRow(r[i]).getCell(c[i]).style = { font: { size: 9 } };
 
     r = [12, 12, 13, 13, 14], c = [2, 8, 2, 8, 2];
     for (let i in r) sheet.getRow(r[i]).getCell(c[i]).style = { font: { bold: true, size: 10 } };
 
-    sheet.getRow(1).getCell(4).style = { font: { bold: true, size: 11, name: 'Aero' } };
+    sheet.getRow(idx + 16).getCell(1).style = { font: { bold: true, size: 11, name: 'Aero' } };
     sheet.getRow(6).getCell(1).style = { font: { bold: true, size: 12 } };
     sheet.getRow(11).getCell(7).style = { font: { bold: true, size: 14, name: 'Arial Black' } };
 
-    for(let i=1; i<=5; i++) for(let j=2; j<=9; j++) sheet.getRow(i).getCell(j).alignment = { horizontal: 'right' };
+    for(let i=16; i<=21; i++) sheet.getRow(idx + i).getCell(1).alignment = { horizontal: 'center' };
     
     sheet.getRow(16).font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 8 };
+    sheet.getRow(idx + 21).font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 8 };
     for(let i of [16, 17]) {
         sheet.getRow(i).getCell(4).alignment = { horizontal: 'right' };
         for(let j=5; j<=9; j++) sheet.getRow(i).getCell(j).alignment = { horizontal: 'center' };
@@ -181,6 +195,11 @@ function styling1Ro(sheet, idx) {
             fgColor: { argb: 'FFffcccc' }
         };
     }
+    sheet.getRow(idx+21).getCell(1).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        bgColor: { argb: '255000000' }
+    };
 
     for (let i = 18; i <= idx; i++) {
         for (let j = 1; j < 9; j++) {
@@ -209,13 +228,21 @@ function styling1Ro(sheet, idx) {
     sheet.getRow(idx + 8).getCell(1).style = { font: { size: 6 } };
 
     sheet.getRow(idx + 9).getCell(1).style = { font: { size: 7 } };
-    for (let i = idx + 9; i <= idx + 10; i++) for (let j = 3; j <= 7; j++) sheet.getRow(i).getCell(j).style = { font: { size: 6, color: { argb: 'FF909090' } } };
+    for (let i = idx + 9; i <= idx + 10; i++) for (let j = 3; j <= 7; j++) sheet.getRow(i).getCell(j).style = { font: { size: 6 } };
     
     for (let i = 7; i <= 9; i++) {
         sheet.getRow(11).getCell(i).border = {
             top: { style: 'thin' },
             bottom: { style: 'thin' }
         };
+    }
+
+    for(let i of [idx, idx + 3]) {
+        for (let j = 1; j <= 9; j++) {
+            sheet.getRow(i).getCell(j).border = {
+                top: { style: 'thin' }
+            };
+        }
     }
 
     for(let i=3; i<=7; i++) {
@@ -235,16 +262,16 @@ function styling1Ro(sheet, idx) {
 }
 
 function summPart(sheet, sameD, diffD, paperMap, cityMap) {
-    sheet.getRow(47).getCell(5).value = sameD.VendName;
-    sheet.getRow(49).getCell(1).value = `RO - ${sameD.RoNo}`;
-    sheet.getRow(51).getCell(1).value = sameD.VendName;
-    sheet.getRow(52).getCell(1).value = sameD.SubjectDetail;
-    sheet.getRow(53).getCell(1).value = sameD.Position;
+    sheet.getRow(57).getCell(5).value = sameD.TParty != '' ? sameD.TParty : sameD.VendName;
+    sheet.getRow(59).getCell(1).value = `RO - ${sameD.RoNo}`;
+    sheet.getRow(61).getCell(1).value = sameD.VendName;
+    sheet.getRow(62).getCell(1).value = sameD.SubjectDetail;
+    sheet.getRow(63).getCell(1).value = sameD.Position;
 
     let head = ['CAPTION', 'NEWSPAPER', 'EDITIONS / SUB-EDITIONS / PACKAGE', 'RATES', 'SIZE', '', '', 'DATE', 'DAY'];
-    for (let i = 0; i < head.length; i++) sheet.getRow(54).getCell(i + 1).value = head[i];
+    for (let i = 0; i < head.length; i++) sheet.getRow(64).getCell(i + 1).value = head[i];
     
-    let a = fillTable(sheet, 55, sameD, diffD, paperMap, cityMap);
+    let a = fillTable(sheet, 65, sameD, diffD, paperMap, cityMap);
     let idx = a[0];
     sheet.getRow(idx + 1).getCell(1).value = sameD.Matter;
 
@@ -252,36 +279,36 @@ function summPart(sheet, sameD, diffD, paperMap, cityMap) {
 }
 
 function styling1(sheet, hLen, tLen) {
-    sheet.mergeCells(47, 5, 48, 9);
-    sheet.mergeCells(49, 5, 50, 9);
-    sheet.mergeCells(54, 5, 54, 7);
+    sheet.mergeCells(57, 5, 58, 9);
+    sheet.mergeCells(59, 5, 60, 9);
+    sheet.mergeCells(64, 5, 64, 7);
     sheet.mergeCells(tLen + 1, 1, tLen + 1, 9);
 
-    sheet.getRow(47).font = { size: 16, bold: true, color: { argb: 'FFFFFFFF' } };
-    sheet.getRow(49).font = { name: 'Arial Black', size: 18, bold: true };
-    for (let i = 50; i <= 53; i++) sheet.getRow(i).font = { bold: true, underline: true };
-    sheet.getRow(54).font = { bold: true, color: { argb: 'FFFFFFFF' } };
+    sheet.getRow(57).font = { size: 16, bold: true, color: { argb: 'FFFFFFFF' } };
+    sheet.getRow(59).font = { name: 'Arial Black', size: 18, bold: true };
+    for (let i = 60; i <= 63; i++) sheet.getRow(i).font = { bold: true, underline: true };
+    sheet.getRow(64).font = { bold: true, color: { argb: 'FFFFFFFF' } };
 
-    sheet.getRow(47).getCell(5).alignment = { vertical: 'middle', horizontal: 'center' };
-    sheet.getRow(54).getCell(5).alignment = { horizontal: 'center' };
-    for (let i = 55; i < tLen; i++) {
+    sheet.getRow(57).getCell(5).alignment = { vertical: 'middle', horizontal: 'left' };
+    sheet.getRow(64).getCell(5).alignment = { horizontal: 'center' };
+    for (let i = 65; i < tLen; i++) {
         for (let j = 4; j <= 8; j++) sheet.getRow(i).getCell(j).alignment = { horizontal: 'center' };
     }
 
-    sheet.getCell('E47').fill = {
+    sheet.getCell('E57').fill = {
         type: 'pattern',
         pattern: 'solid',
         bgColor: { argb: '255000000' }
     };
     for (let i = 0; i < hLen; i++) {
-        sheet.getRow(54).getCell(i + 1).fill = {
+        sheet.getRow(64).getCell(i + 1).fill = {
             type: 'pattern',
             pattern: 'solid',
             bgColor: { argb: '255000000' }
         };
     }
 
-    for (let i = 49; i <= 50; i++) {
+    for (let i = 59; i <= 60; i++) {
         for(let j = 5; j <= 9; j++)
         sheet.getRow(i).getCell(j).border = {
             top: { style: 'thin' },
@@ -363,6 +390,7 @@ function mailSheet(sheet, sameD, diffD, paperMap, cityMap) {
         sheet.getRow(idx).getCell(9).value = sameD.Position;
         idx += 1;
     }
+    idx+= 1;
 
     sheet.getRow(idx).getCell(1).value = 'Special Instructions :   1.';
     sheet.getRow(idx).getCell(2).value = sameD.Spl1;

@@ -29,6 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
     ipcRenderer.send('getGroupCode');
     ipcRenderer.send('getSubject');
     ipcRenderer.send('edition:get');
+    ipcRenderer.send('office:get');
 });
 
 ipcRenderer.on('newRO:got', (e, RoNo, cData) => {
@@ -45,6 +46,7 @@ ipcRenderer.on('vendDetails:got', (e, vendName) => {
 });
 ipcRenderer.on('groupCode:got', (e, group_code) => fillDropdown('Group', group_code, 'Code', 'GroupName', '') );
 ipcRenderer.on('subjectDetails:got', (e, subject) => fillDropdown('Subject', subject, 'Code', 'SubjectDetail', '') );
+ipcRenderer.on('office:got', (e, address) => fillDropdown('Office', address, 'Code', 'Address', ''));
 ipcRenderer.on('edition:got', (e, data) => editionList = data);
 
 function fillDropdown(fieldId, data, val, txt, id) {
@@ -139,6 +141,7 @@ function fillFields(arg, arg2) {
     document.querySelector('#matter').style.visibility = (arg['AdType'] == 'C') ? "visible" : "hidden";
     selectDropdown(document.querySelector('#Group'), arg.GroupCode);
     selectDropdown(document.querySelector('#Subject'), arg.SubjectCode);
+    selectDropdown(document.querySelector('#Office'), arg.Office);
     selectDropdown(document.querySelector('#Hue'), arg.Hue);
 
     var table = document.getElementById("dataTable");
@@ -172,15 +175,20 @@ async function submit(btn) {
 
     let cName = document.querySelector('#VendName').value.split('~');
     let d = cName.length > 1 ? cName[0].trim() + cName[1].trim() : cName[0];
-    same['VendName'] = cName[0];    // Used only for printing
     same['VendCode'] = vendObj[d];
+    same['VendName'] = cName[0];    // Used only for printing
     same['AdType'] = document.querySelector('#AdType').checked ? 'C' : 'D';
     let e = document.querySelector('#Group');
     same['GroupCode'] = e.options[e.selectedIndex].value;
+    same['GroupName'] = e.options[e.selectedIndex].text;
     e = document.querySelector('#Subject');
     same['SubjectCode'] = e.options[e.selectedIndex].value;
+    same['SubjectDetail'] = e.options[e.selectedIndex].text;
     e = document.querySelector('#Hue');
     same['Hue'] = e.options[e.selectedIndex].value;
+    e = document.querySelector('#Office');
+    same['Office'] = e.options[e.selectedIndex].value;
+    same['OfficeAdd'] = e.options[e.selectedIndex].text;
 
     var table = document.getElementById("dataTable");
     for(let i=1; i<table.rows.length; i++) {
@@ -200,7 +208,7 @@ async function submit(btn) {
 
     let empty = false;
     for([key, val] of Object.entries(same)) {
-        if (key === 'Spl1' || key == 'Package' || key === 'Spl2' || key === 'TParty') continue;
+        if (key === 'Spl1' || key == 'Package' || key === 'Spl2' || key === 'TParty' || key == 'Office') continue;
         else if (key == 'Matter' && same['AdType'] == "D") continue;
         if(val == "") empty = true;
     }
@@ -342,7 +350,7 @@ async function prt() {
     if(res) {
         let empty = false;
         for ([key, val] of Object.entries(same_d)) {
-            if (key === 'Spl1' || key === 'Spl2' || key === 'TParty' || key === 'Package') continue;
+            if (key === 'Spl1' || key === 'Spl2' || key === 'TParty' || key === 'Package' || key == 'Office') continue;
             else if (key == 'Matter' && same_d['AdType'] == "D") continue;
             if (val == "") empty = true;
         }

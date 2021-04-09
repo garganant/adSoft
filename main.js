@@ -580,6 +580,65 @@ ipcMain.on('subject:report', async (event) => {
     else win.webContents.send('subject:report:made', 'Process cancelled!');
 });
 
+// OFFICE //////////////////////////////////////////////////////
+
+ipcMain.on('office:prev', async (e, code) => {
+    const Office = require('./src/Backend/models/Master/Office.js');
+    var data = await Office.findOne({ where: { Code: { [Op.lt]: code } }, order: [['Code', 'DESC']] });
+    if (data != null) win.webContents.send('office:getData', data.dataValues);
+    else win.webContents.send('office:getData', null);
+});
+
+ipcMain.on('office:nxt', async (event, code) => {
+    const Office = require('./src/Backend/models/Master/Office.js');
+    var data = await Office.findOne({ where: { Code: { [Op.gt]: code } } });
+    if (data != null) win.webContents.send('office:getData', data.dataValues);
+    else win.webContents.send('office:getData', null);
+});
+
+ipcMain.on('office:fst', async (event) => {
+    const Office = require('./src/Backend/models/Master/Office.js');
+    var data = await Office.findOne({ order: ['Code'] });
+    if (data != null) win.webContents.send('office:getData', data.dataValues);
+    else win.webContents.send('office:getData', null);
+});
+
+ipcMain.on('office:lst', async (event) => {
+    const Office = require('./src/Backend/models/Master/Office.js');
+    var data = await Office.findOne({ order: [['Code', 'DESC']] });
+    if (data != null) win.webContents.send('office:getData', data.dataValues);
+    else win.webContents.send('office:getData', null);
+});
+
+ipcMain.on('office:data', async (event, code) => {
+    const Office = require('./src/Backend/models/Master/Office.js')
+    var data = await Office.findOne({ where: { Code: code } });
+    if (data != null) win.webContents.send('office:getData', data.dataValues);
+    else win.webContents.send('office:getData', null);
+});
+
+ipcMain.on('office:submit', async (event, arg) => {
+    const Office = require('./src/Backend/models/Master/Office.js');
+    try {
+        const [user, created] = await Office.findOrCreate({
+            where: { Code: arg['Code'] },
+            defaults: {
+                Address: arg['Address']
+            }
+        });
+        if (created) win.webContents.send('office:dataAdded', 'Data added to office master!');
+        else {
+            await Office.update({
+                Address: arg['Address']
+            }, { where: { Code: arg['Code'] } });
+            win.webContents.send('office:dataAdded', 'Data updated!');
+        }
+    } catch (err) {
+        showError(err.stack)
+        win.webContents.send('office:dataAdded', null);
+    }
+});
+
 // COMPANY ///////////////////////////////////////////
 
 ipcMain.on('comp:data', async (event, arg) => {
@@ -658,6 +717,11 @@ ipcMain.on('getSubject', async (event) => {
     win.webContents.send('subjectDetails:got', await subjectDetails());
 });
 
+ipcMain.on('office:get', async (event) => {
+    const { officeDetails } = require('./src/Backend/helper/Functions.js');
+    win.webContents.send('office:got', await officeDetails());
+});
+
 ipcMain.on('getPapers', async (event, grpCode) => {
     const { newspaperNames } = require('./src/Backend/helper/Functions.js');
     win.webContents.send('papers:got', await newspaperNames(grpCode));
@@ -693,7 +757,6 @@ ipcMain.on('addEditRO', async (event, same, diff) => {
 ipcMain.on('ro:prt', async (event, sameD, diffD) => {
     const Comp = require('./src/Backend/models/Master/Comp.js');
     const PaperGroups = require('./src/Backend/models/Master/PaperGroups.js');
-    const Subject = require('./src/Backend/models/Master/Subject.js');
     const Newspaper = require('./src/Backend/models/Master/Newspaper.js');
     const Edition = require('./src/Backend/models/Master/Edition.js');
     const { createRo } = require('./src/Backend/helper/Input/createRo.js');
@@ -702,9 +765,7 @@ ipcMain.on('ro:prt', async (event, sameD, diffD) => {
     try {
         var cData = await Comp.findOne();
         var gData = await PaperGroups.findOne({ where: {Code: sameD.GroupCode} });
-        sameD['GroupName'] = gData.dataValues.GroupName;
         sameD['HoLoc'] = gData.dataValues.HoLoc;
-        sameD['SubjectDetail'] = (await Subject.findOne({ attributes: ['SubjectDetail'], where: { Code: sameD.SubjectCode } })).dataValues.SubjectDetail;
     
         var papers = await Newspaper.findAll({ attributes: ['ShortName', 'PaperName'], where: {GroupCode: sameD.GroupCode} });
         var cities = await Edition.findAll();
@@ -713,9 +774,10 @@ ipcMain.on('ro:prt', async (event, sameD, diffD) => {
         for(let ele of cities) cityMap[ele.dataValues['Code']] = ele.dataValues['CityName'];
 
         let signStamp = path.join(__dirname, 'assets/images/signStamp.png');
-        createRo(sameD, diffD, cData.dataValues, paperMap, cityMap, signStamp);
+        let Logo = path.join(__dirname, 'assets/images/Logo.png');
+        createRo(Logo, sameD, diffD, cData.dataValues, paperMap, cityMap, signStamp);
         let pt = `${cData.dataValues.File_path}RO${sameD.RoNo}.xlsx`;
-        createRoExcel(sameD, diffD, cData.dataValues, paperMap, cityMap, signStamp, pt);
+        createRoExcel(sameD, diffD, cData.dataValues, paperMap, cityMap, Logo, signStamp, pt);
 
         win.webContents.send('ro:prted', pt);
     }
@@ -835,7 +897,7 @@ ipcMain.on('db:backup', async () => {
     else {
         var path = data.dataValues.File_path;
         var db = await sequelize.query('Select database() as db_name');
-        var cmd = 'mysqldump -uroot -hlocalhost -pCALCULATION1164 ' + db[0][0].db_name + ' > ' + path + db[0][0].db_name + '-' + date + '.sql';
+        var cmd = 'mysqldump -uroot -h192.168.1.9 -pCALCULATION1164 ' + db[0][0].db_name + ' > ' + path + db[0][0].db_name + '-' + date + '.sql';
         await exec(cmd);
         win.webContents.send('db:backed', 'Database backup created!');
     }
@@ -854,7 +916,7 @@ ipcMain.on('db:restore', async (event) => {
             if (file[0] != db[0][0].db_name) win.webContents.send('db:restored', 'Incorrect file selected!');
             else {
                 var exec = require('child_process').exec;
-                var cmd = 'mysql -uroot -hlocalhost -pCALCULATION1164 ' + db[0][0].db_name + ' < ' + c.filePaths;
+                var cmd = 'mysql -uroot -h192.168.1.9 -pCALCULATION1164 ' + db[0][0].db_name + ' < ' + c.filePaths;
                 await exec(cmd, async (error) => {
                     if (error) win.webContents.send('db:restored', 'Error occured while restoration!');
                     else {
