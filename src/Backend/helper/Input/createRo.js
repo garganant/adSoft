@@ -21,15 +21,13 @@ function createRo(Logo, sameD, diffD, compD, paperMap, cityMap, signStamp) {
 
 function generateHeader(doc, Logo) {
     doc
-        .image(Logo, 510, 0, { fit: [100, 100] })
+        .image(Logo, 498, 0, { fit: [100, 92] })
         .moveDown();
 }
 
 function generateCustomerInfo(doc, sameD) {
     doc
         .fontSize(8)
-        .font("Helvetica-Bold")
-        .text('Kind Attention:', { underline: true })
         .moveDown()
         .font("Helvetica")
         .text('The Advertisement Manager')
@@ -85,65 +83,60 @@ function generateCustomerInfo(doc, sameD) {
 
 function generateRoTable(doc, y, diffD, paperMap, cityMap, sameD, IGst) {
     let x = [20, 128, 231, 405, 438, 485, 538];
-    y = 160;
-    generateTableRow(doc, y, x, "CAPTION", "PUBLICATION", "EDITIONS / SUB-EDITION / PACKAGE", "RATES", " SIZE", "", "DATES", "DAY", sameD.AdType);
+    y = 160, check = 0;
+    generateTableRow(doc, y, x, "CAPTION", "PUBLICATION", "EDITIONS / SUB-EDITION / PACKAGE", "RATES", " SIZE", "", "DATES", "DAY", sameD.AdType, check);
     x = [20, 128, 231, 405, 431, 472, 538];
     y = 170;
-    generateTableRow(doc, y, x, "", "", "", "SQCM", "W", "H", " DD/MM/YYYY", "", sameD.AdType);
+    generateTableRow(doc, y, x, "", "", "", "SQCM", "W", "H", " DD/MM/YYYY", "", sameD.AdType, check);
     var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     let gross = 0;
-    y = 182;
+    y = 185;
     for(let obj of diffD) {
         x = [20, 128, 231, 425 - doc.widthOfString(obj.RatePR), 431, 480, 535];
         let day = days[new Date(obj.DateP).getDay()];
         let edi_sub_pkg = cityMap[obj.EditionCode];
         if (obj.SubE != '') edi_sub_pkg+= ' / ' + obj.SubE;
         if(sameD.Package != '') edi_sub_pkg+= ' / ' + sameD.Package;
-        generateTableRow(doc, y, x, obj.Caption, paperMap[obj.ShortName], edi_sub_pkg, obj.RatePR, parseInt(obj.Width), obj.Height, formatDate(obj.DateP), day, sameD.AdType);
-        y+= 12;
-        generateHr(doc, y - 3, "#aaaaaa");
+        generateTableRow(doc, y, x, obj.Caption, paperMap[obj.ShortName], edi_sub_pkg, obj.RatePR, parseInt(obj.Width), obj.Height, formatDate(obj.DateP), day, sameD.AdType, check);
+        y+= 15;
+        generateHr(doc, y - 4);
         if(sameD.AdType == 'D') gross+= obj.RatePR * obj.Width * obj.Height;
         else gross+= parseFloat(obj.RatePR);
     }
-    y = Math.max(y+12, 380);
-    generateHr(doc, y - 2, "black");
-    generateTableRow(doc, y, x, "Discount | Rates confirmed by:", sameD.RConfirm, "", "", "", "", "", "", sameD.AdType);
+    y = Math.max(y+12, 384);
+    generateHr(doc, y - 2);
+    generateTableRow(doc, y, x, "Discount | Rates confirmed by:", sameD.RConfirm, "", "", "", "", "", "", sameD.AdType, check);
     y+= 10;
 
-    x = [20, 173, 320, 383, 435, 509, 526];
+    x = [20, 150, 280, 384, 433, 488, 526];
     doc
         .lineWidth(12)
         .strokeColor('#D0D0D0');
     fillBackground(doc, y);
-    generateHr(doc, y - 2, "black");
-    generateTableRow(doc, y, x, `Special Discount : ${sameD.SplDis} %`, "GROSS VALUE", "ADDL DISCOUNT", "T. DISCOUNT", "NET AMT", "", "GST", "NET PAYABLE", sameD.AdType);
+    generateHr(doc, y - 2);
+    generateTableRow(doc, y, x, `Special Discount : ${sameD.SplDis} %`, "GROSS VALUE", "ADDL DISCOUNT", "T. DISCOUNT", "NET AMT", "", "GST", "NET PAYABLE", sameD.AdType, check);
 
     y+= 10;
-    generateHr(doc, y - 2, "black");
+    check = y;
+    generateHr(doc, y - 2);
     let addl = gross * sameD.SplDis * 0.01;
     let trade = (gross - addl) * sameD.TradeDis * 0.01;
     let net = gross - addl - trade;
     let gst = net * IGst * 0.01;
-    x = [20,
-        224 - doc.widthOfString(commaSeparated(gross) + '.00'),
-        380 - doc.widthOfString(commaSeparated(addl) + '.00'),
-        424 - doc.widthOfString(commaSeparated(trade) + '.00'),
-        469 - doc.widthOfString(commaSeparated(net) + '.00'),
-        522 - doc.widthOfString(commaSeparated(gst) + '.00'),
-        572 - doc.widthOfString(commaSeparated(net + gst) + '.00')];
-    generateTableRow(doc, y, x, `Trade Discount / AC  : ${sameD.TradeDis} %`, commaSeparated(gross) + '.00', commaSeparated(addl) + '.00', commaSeparated(trade) + '.00', commaSeparated(net) + '.00', "", commaSeparated(gst) + '.00', commaSeparated(net + gst) + '.00', sameD.AdType);
+    x = [20, 128, 231, 385, 428, 471, 522];
+    generateTableRow(doc, y, x, `Trade Discount / AC  : ${sameD.TradeDis} %`, commaSeparated(gross) + '.00', commaSeparated(addl) + '.00', commaSeparated(trade) + '.00', commaSeparated(net) + '.00', "", commaSeparated(gst) + '.00', commaSeparated(net + gst) + '.00', sameD.AdType, check);
     y+= 10;
-    generateHr(doc, y - 2, "black");
+    generateHr(doc, y - 2);
     generateVr(doc, y);
 
     doc.font("Helvetica-Bold");
     y+= 10;
-    generateTableRow(doc, y, x, `POSITION: ${sameD.Position}`, "", "Material : Attached in email", "", "", "", "", "", sameD.AdType);
+    generateTableRow(doc, y, x, `POSITION: ${sameD.Position}`, "", "Material : Attached in email", "", "", "", "", "", sameD.AdType, check);
 
     return y;
 }
 
-function generateTableRow(doc, y, x, caption, paper, edition, rate, w, h, date, day, AdType) {
+function generateTableRow(doc, y, x, caption, paper, edition, rate, w, h, date, day, AdType, check) {
     doc
         .font("Helvetica-Bold")
         .fillColor('black')
@@ -162,12 +155,23 @@ function generateTableRow(doc, y, x, caption, paper, edition, rate, w, h, date, 
         .fontSize(7.2)
         .text(caption, x[0], y);
 
-    doc  
-        .text(paper, x[1], y)
-        .text(edition, x[2], y)
-        .text(rate, x[3], y)
-        .text(date, x[5], y)
-        .text(day, x[6], y);
+    if(y != check) {
+        doc  
+            .text(paper, x[1], y)
+            .text(edition, x[2], y)
+            .text(rate, x[3], y)
+            .text(date, x[5], y)
+            .text(day, x[6], y);
+    }
+    else {
+        doc
+            .text(paper, x[1], y, { width: 100, align: 'center' })
+            .text(edition, x[2], y, { width: 150, align: 'center' })
+            .text(rate, x[3], y, { width: 44, align: 'center' })
+            .text(date, x[5], y, { width: 48, align: 'center' })
+            .text(day, x[6], y, { width: 57, align: 'center' });
+    }
+
 
     if (y == 160) doc.text(w, x[4], y);
     else if(y == 170) {
@@ -179,7 +183,8 @@ function generateTableRow(doc, y, x, caption, paper, edition, rate, w, h, date, 
         }
     }
     else {
-        doc.text(w, x[4], y);
+        if(y != check) doc.text(w, x[4], y);
+        else doc.text(w, x[4], y, { width: 40, align: 'center' });
         if(AdType == 'D') {
             if (typeof w == 'number') doc.text('x', 444, y);
             doc
@@ -191,7 +196,7 @@ function generateTableRow(doc, y, x, caption, paper, edition, rate, w, h, date, 
 
 function generateBottom(doc, y, compD, sameD, signStamp) {
     let s1 = "Terms and Conditions : ";
-    let s2 = `us to process the bill(s) for  payment as per INS rules.  The advertisement should be appeared according to the actual size of the advertisement / material supplied.  Follow our layout in case of translation of the matter for publiction the ad in newspaper's language if instructed.  Do not publish two advertisements of one client / product on same page / issue unless specially instructed.  All disputes are subject to the jursdiction of Delhi Courts only. RO will be valid only if sent through "${compD.Email}".`;
+    let s2 = `us to process the bill(s) for  payment as per INS rules.  The advertisement should be appeared according to the actual size of the advertisement / material supplied.  Follow our layout in case of translation of the matter for publiction the ad in newspaper's language if instructed.  Do not publish two advertisements of one client / product on same page / issue unless specially instructed.  All disputes are subject to the jurisdiction of Delhi Courts only. RO will be valid only if sent through "${compD.Email}".`;
 
     doc
         .fontSize(8)
@@ -201,7 +206,7 @@ function generateBottom(doc, y, compD, sameD, signStamp) {
         .fillColor('red')
         .text(sameD.Spl1 != null ? sameD.Spl1 : '', 115)
         .fillColor('black')
-        .text('Special Instructions :   2.', 20)
+        .text('2.', 108)
         .moveUp()
         .fillColor('red')
         .text(sameD.Spl2 != null ? sameD.Spl2 : '', 115)
@@ -238,7 +243,7 @@ function generateBottom(doc, y, compD, sameD, signStamp) {
         .text('CONFIRMED', 470);
 
     y += 42;
-    generateHr(doc, y, 'black');
+    generateHr(doc, y);
 
     if(sameD.Matter != "") {
         doc
@@ -306,20 +311,20 @@ function fillBackground(doc, y) {
     }
 }
 
-function generateHr(doc, y, color) {
+function generateHr(doc, y) {
     doc
-        .strokeColor(color)
+        .strokeColor('black')
         .lineWidth(0.1)
-        .moveTo(16, y)
+        .moveTo(18, y)
         .lineTo(576, y)
         .stroke();
 }
 
 function generateVr(doc, y) {
-    let x = [126, 229, 383, 429, 470, 526, 577];
+    let x = [18, 126, 229, 383, 429, 470, 526, 577];
     for (let i in x) {
             doc
-                .strokeColor("#aaaaaa")
+                .strokeColor('black')
                 .lineWidth(0.1)
                 .moveTo(x[i], 158)
                 .lineTo(x[i], y-1)

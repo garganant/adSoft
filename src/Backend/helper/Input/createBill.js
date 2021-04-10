@@ -2,14 +2,6 @@ const fs = require("fs");
 const PDFWindow = require('electron-pdf-window');
 const PDFDocument = require("pdfkit");
 const { ToWords } = require('to-words');
-const toWords = new ToWords({
-    localeCode: 'en-IN',
-    converterOptions: {
-        currency: true,
-        ignoreDecimal: false,
-        ignoreZeroCurrency: false,
-    }
-});
 let limit, y;
 
 function createBill(cData, rupee, btype, bills) {
@@ -31,7 +23,7 @@ function createBill(cData, rupee, btype, bills) {
     }
 
     doc.end();
-    let pt = `${cData.File_path}B${bills[0][3]['BillNo']}.pdf`;
+    let pt = `${cData.File_path}BillNo-${bills[0][3]['BillNo']}.pdf`;
     doc.pipe(fs.createWriteStream(pt));
     let child = new PDFWindow({ title: 'File', autoHideMenuBar: true });
     child.loadURL(pt);
@@ -182,13 +174,27 @@ function generateFooter(doc, cData, Status, sData, adv, gross) {
     let igst = gross * sData.IGst * 0.01;
     let total = gross + igst;
     let net = total - adv;
-    let words = toWords.convert(net, { currency: true });
+    let p1 = Math.floor(net);
+    let p2 = net - p1;
+    var toWords = new ToWords();
+    let w1 = toWords.convert(p1);
+    toWords = new ToWords({
+        localeCode: 'en-IN',
+        converterOptions: {
+            currency: true,
+            ignoreDecimal: false,
+            ignoreZeroCurrency: false,
+        }
+    });
+    let w2 = toWords.convert(p2, { currency: true, ignoreZeroCurrency: true });
+    let words = 'Rupees ' + w1 + ' And ' + w2;
+    // let words = toWords.convert(net, { currency: true });
     net = commaSeparated(net, 2);
     igst = commaSeparated(igst, 2);
     total = commaSeparated(total, 2);
     adv = commaSeparated(adv, 2);
     let s1 = 'Interest @ 24% p.a. will be charged if the payment is not made within 7 days from';
-    let s2 = 'the date of bill. Any objection regarding the bill / ';
+    let s2 = 'the date of bill. Any objection regarding the bill / GST Particulars will not be';
 
     doc
         .fillColor('#9a0000')
@@ -317,25 +323,12 @@ function generateFooter(doc, cData, Status, sData, adv, gross) {
         .text(cData.Tan, 135)
         .moveUp()
         .fillColor('#9a0000')
-        .text('|   UDYAM :', 180)
+        .text(`|   UDYAM-${cData.Udyam}`, 180)
         .fillColor('black')
-        .moveUp()
-        .text(cData.Udyam, 215)
-        .moveDown()
         .font("Helvetica")
         .text(s1, 50)
         .text(s2)
-        .moveUp()
-        .fillColor('#9a0000')
-        .text('GST Particulars ', doc.widthOfString(s1) - 36)
-        .moveUp()
-        .fillColor('black')
-        .text('will not be', doc.widthOfString(s1) + 10)
-        .text('entertained', 50)
-        .moveUp()
-        .fillColor('#9a0000')
-        .text('after seven days of the bill.', 83)
-        .fillColor('black')
+        .text('entertained after seven days of the bill.', 50)
         .moveUp()
         .text('Authorised Signatory', { align : 'right' })
         .moveDown(0.5)
@@ -418,7 +411,7 @@ function fillInv(doc, x, yH, yV, btype) {
 
     for (let i of x) {
         doc
-            .strokeColor("black")
+            .strokeColor('black')
             .lineWidth(0.1)
             .moveTo(i, yH[0])
             .lineTo(i, yH[1])
@@ -427,7 +420,7 @@ function fillInv(doc, x, yH, yV, btype) {
 
     for (let i in yV) {
         doc
-            .strokeColor("black")
+            .strokeColor('black')
             .lineWidth(0.1)
             .moveTo(439, yV[i])
             .lineTo(579, yV[i])
@@ -453,7 +446,7 @@ function generateVr(doc) {
     let x = [48, 275, 338, 395, 446, 512, 580];
     for (let i of x) {
         doc
-            .strokeColor("black")
+            .strokeColor('black')
             .lineWidth(0.1)
             .moveTo(i, 198)
             .lineTo(i, y - 1)
@@ -465,20 +458,20 @@ function lines(doc) {
     let x = [48, 580];
     for(let i of x) {
         doc
-            .strokeColor("black")
+            .strokeColor('black')
             .lineWidth(0.1)
             .moveTo(i, 559)
             .lineTo(i, 699)
             .stroke();
     }
     doc
-        .strokeColor("black")
+        .strokeColor('black')
         .lineWidth(0.1)
         .moveTo(395, 582)
         .lineTo(395, 684)
         .stroke();
     doc
-        .strokeColor("black")
+        .strokeColor('black')
         .lineWidth(0.1)
         .moveTo(512, 549)
         .lineTo(512, 684)

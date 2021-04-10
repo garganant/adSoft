@@ -30,15 +30,15 @@ function createRoExcel(sameD, diffD, compD, paperMap, cityMap, LogoImg, signStam
 function summSheet(sheet, sameD, diffD, compD, paperMap, cityMap, Logo, imageId1) {
     // A table header
     sheet.columns = [
-        { header: '', key: 'caption', width: 27 },
-        { header: '', key: 'paper', width: 20 },
-        { header: '', key: 'edition', width: 28 },
-        { header: '', key: 'rate', width: 10 },
-        { header: '', key: 'width', width: 5 },
-        { header: '', key: 'x', width: 5 },
-        { header: '', key: 'height', width: 5 },
-        { header: '', key: 'date', width: 11 },
-        { header: '', key: 'day', width: 11 }
+        { header: '', key: 'caption', width: 36 },
+        { header: '', key: 'paper', width: 36 },
+        { header: '', key: 'edition', width: 34 },
+        { header: '', key: 'rate', width: 14 },
+        { header: '', key: 'width', width: 8 },
+        { header: '', key: 'x', width: 8 },
+        { header: '', key: 'height', width: 8 },
+        { header: '', key: 'date', width: 14 },
+        { header: '', key: 'day', width: 14 }
     ]
     roPart(sheet, sameD, diffD, compD, paperMap, cityMap, Logo, imageId1);
     summPart(sheet, sameD, diffD, paperMap, cityMap);
@@ -46,11 +46,10 @@ function summSheet(sheet, sameD, diffD, compD, paperMap, cityMap, Logo, imageId1
 
 function roPart(sheet, sameD, diffD, compD, paperMap, cityMap, Logo, imageId1) {
     sheet.addImage(Logo, {
-        tl: { col: 7.7, row: 1 },
+        tl: { col: 7.2, row: 1 },
         ext: { width: 130, height: 150 }
     });
 
-    sheet.getRow(3).getCell(1).value = 'Kind Attention :';
     sheet.getRow(5).getCell(1).value = 'The Advertisement Manager';
     sheet.getRow(6).getCell(1).value = sameD.GroupName;
     sheet.getRow(7).getCell(1).value = sameD.HoLoc;
@@ -114,7 +113,7 @@ function roPart(sheet, sameD, diffD, compD, paperMap, cityMap, Logo, imageId1) {
     sheet.getRow(idx + 6).getCell(1).value = 'Payment will be made as per INS rules (within 60 days from the last date of the month in which the ads has / have published)';
 
     let st1 = "Terms and Conditions : No alternation in ReleaseOrder will be accepted. Send your bill in duplicate along with copy of this Release Order immediately on publication of ";
-    let st2 = "the advertisement to enable us to process the bill(s) for  payment as per INS rules.  The advertisement should be appeared according to the actual size of the advertisement / material supplied.  Follow our layout in case of translation of the matter for publiction the ad in newspaper's language if instructed.  Do not publish two advertisements of one client / product on same page / issue unless specially instructed.  All disputes are subject to the jursdiction of Delhi Courts only.";
+    let st2 = "the advertisement to enable us to process the bill(s) for  payment as per INS rules.  The advertisement should be appeared according to the actual size of the advertisement / material supplied.  Follow our layout in case of translation of the matter for publiction the ad in newspaper's language if instructed.  Do not publish two advertisements of one client / product on same page / issue unless specially instructed.  All disputes are subject to the jurisdiction of Delhi Courts only.";
     sheet.getRow(idx + 7).getCell(1).value = st1 + st2;
 
     let st3 = '"The contract value is exclusive of all applicable Indirect taxes in India viz. Service tax, VAT, GST etc. and the said taxes (if applicable) will be charged and recovered over and above the contract price."';
@@ -155,8 +154,7 @@ function styling1Ro(sheet, idx) {
     for (let i in r) sheet.mergeCells(r[i], c1[i], r[i], c2[i]);
     for (let i = 14; i <= 21; i++) sheet.mergeCells(idx + i, 1, idx + i, 9);
 
-    r = [3, idx + 20];
-    for (let i in r) sheet.getRow(r[i]).getCell(1).style = { font: { bold: true, underline: true, size: 8 } };
+    sheet.getRow(idx + 20).getCell(1).style = { font: { bold: true, underline: true, size: 8 } };
 
     r = [7, idx + 17, idx + 18, idx + 19, idx + 21];
     for (let i in r) sheet.getRow(r[i]).getCell(1).style = { font: { size: 8 } };
@@ -211,11 +209,11 @@ function styling1Ro(sheet, idx) {
     }
     for (let i = 18; i <= idx; i++) sheet.getRow(i).getCell(9).style = { font: { size: 8 } };
 
-    sheet.getRow(idx+1).getCell(1).style = { font: { bold: true, size: 8 } };
-    for (let i = 2; i <= 9; i++) sheet.getRow(idx + 1).getCell(i).style = { font: { bold: true, size: 8, color: { argb: 'FFff0000' } }, alignment: { horizontal: 'right' } };
+    sheet.getRow(idx + 1).getCell(1).style = { font: { bold: true, size: 8 } };
+    for (let i = 2; i <= 9; i++) sheet.getRow(idx + 1).getCell(i).style = { font: { bold: true, size: 8, color: { argb: 'FFff0000' } }, alignment: { horizontal: 'center' } };
     
     sheet.getRow(idx + 2).getCell(1).style = { font: { bold: true, size: 8 } };
-    for (let i = 2; i <= 9; i++) sheet.getRow(idx + 2).getCell(i).style = { font: { bold: true, size: 10 }, alignment: { horizontal: 'right' } };
+    for (let i = 2; i <= 9; i++) sheet.getRow(idx + 2).getCell(i).style = { font: { bold: true, size: 10 }, alignment: { horizontal: 'center' } };
 
     for (let i = 2; i <= 9; i++) sheet.getRow(idx + 3).getCell(i).style = { font: { bold: true, size: 10 } };
 

@@ -776,7 +776,7 @@ ipcMain.on('ro:prt', async (event, sameD, diffD) => {
         let signStamp = path.join(__dirname, 'assets/images/signStamp.png');
         let Logo = path.join(__dirname, 'assets/images/Logo.png');
         createRo(Logo, sameD, diffD, cData.dataValues, paperMap, cityMap, signStamp);
-        let pt = `${cData.dataValues.File_path}RO${sameD.RoNo}.xlsx`;
+        let pt = `${cData.dataValues.File_path}RO-${sameD.RoNo}.xlsx`;
         createRoExcel(sameD, diffD, cData.dataValues, paperMap, cityMap, Logo, signStamp, pt);
 
         win.webContents.send('ro:prted', pt);
