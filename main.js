@@ -2,6 +2,7 @@ const path = require('path');
 require('electron-reload')(process.cwd(), { electron: path.join(process.cwd(), 'node_modules', '.bin', 'electron.cmd') })
 const { app, BrowserWindow, Menu, ipcMain, dialog, screen } = require('electron')
 const { Sequelize } = require('sequelize');
+require('@electron/remote/main').initialize();
 var fs = require('fs');
 const Op = Sequelize.Op;
 var Excel = require('exceljs');
@@ -882,6 +883,91 @@ ipcMain.on('bill:prt', async (event, start, end, btype) => {
     } catch (err) {
         showError(err.stack);
         win.webContents.send('bill:prted');
+    }
+});
+
+// BILL REPORT //////////////////////////////////
+
+ipcMain.on('billReport:prt', async (event, from, to, bType, bStatus) => {
+    const Vend = require('./src/Backend/models/Master/Vendor.js');
+    const Edition = require('./src/Backend/models/Master/Edition.js');
+    const Newspaper = require('./src/Backend/models/Master/Newspaper.js');
+    const PaperGroups = require('./src/Backend/models/Master/PaperGroups.js');
+    const Comp = require('./src/Backend/models/Master/Comp.js');
+    const RoSame = require('./src/Backend/models/Input/RoSame.js');
+    const RoPaper = require('./src/Backend/models/Input/RoPaper.js');
+    const { createBillReport } = require('./src/Backend/helper/Report/BillReport.js');
+    try {
+        let sameD = null, arr = [], gObj = {}, vObj = {}, eObj = {}, nObj = {};
+        if (bStatus == "I") {
+            sameD = await RoSame.findAll({ attributes: ['RoNo', 'GroupCode', 'VendCode', 'RoDate', 'CGst', 'SGst', 'IGst', 'TradeDis', 'SplDis', 'BillNo', 'BillDate']
+                , where: { BillDate: { [Op.between]: [from, to] }, BillNo: { [Op.ne]: null } }, order: ['BillDate', 'BillNo', 'RoNo']
+            });
+        }
+        else if (bStatus == "N") {
+            sameD = await RoSame.findAll({ attributes: ['RoNo', 'GroupCode', 'VendCode', 'RoDate', 'CGst', 'SGst', 'IGst', 'TradeDis', 'SplDis', 'BillNo', 'BillDate']
+                , where: { BillDate: { [Op.between]: [from, to] }, BillNo: { [Op.is]: null } }, order: ['BillDate', 'BillNo', 'RoNo']
+            });
+        }
+        else {
+            sameD = await RoSame.findAll({ attributes: ['RoNo', 'GroupCode', 'VendCode', 'RoDate', 'CGst', 'SGst', 'IGst', 'TradeDis', 'SplDis', 'BillNo', 'BillDate']
+            , where: { BillDate: { [Op.between]: [from, to] }}, order: ['BillDate', 'BillNo', 'RoNo'] });
+        }
+
+        for (let i of sameD) {
+            let diffD = null, vCode = i.dataValues.VendCode, gCode = i.dataValues.GroupCode, vData = null;
+
+            if (!(vCode in vObj)) {
+                vData = await Vend.findOne({ attributes: ['Name', 'Gstin', 'Status'], where: {id: vCode} });
+                if(vData == null) showError(`Data issue with vendor code ${vCode}`);
+                vObj[vCode] = [vData.dataValues.Name, vData.dataValues.Gstin, vData.dataValues.Status];
+            }
+
+            if (!(gCode in gObj)) {
+                gObj[gCode] = (await PaperGroups.findOne({ attributes: ['GroupName'], where: { Code: gCode } })).dataValues.GroupName;
+            }
+
+            if(bType == 'R') {
+                diffD = await RoPaper.findAll({ attributes: ['ShortName', 'EditionCode', 'RatePR', 'RateCR', 'Width', 'Height', 'PBillNo']
+                , where: { RoNo: i.dataValues.RoNo, PBillNo: {[Op.ne]: null} } });
+            }
+            else if (bType == 'N') {
+                diffD = await RoPaper.findAll({
+                    attributes: ['ShortName', 'EditionCode', 'RatePR', 'RateCR', 'Width', 'Height', 'PBillNo']
+                    , where: { RoNo: i.dataValues.RoNo, PBillNo: { [Op.is]: null } }
+                });
+            }
+            else {
+                diffD = await RoPaper.findAll({
+                    attributes: ['ShortName', 'EditionCode', 'RatePR', 'RateCR', 'Width', 'Height', 'PBillNo']
+                    , where: { RoNo: i.dataValues.RoNo }
+                });
+            }
+
+            for(let j of diffD) {
+                let eCode = j.dataValues.EditionCode, sName = j.dataValues.ShortName;
+
+                if (!(eCode in eObj)) {
+                    eObj[eCode] = ( await Edition.findOne({ where: {Code: eCode} }) ).dataValues.CityName;
+                }
+                if (!(sName in nObj)) {
+                    nObj[sName] = (await Newspaper.findOne({ attributes: ['PaperName'],  where: { ShortName: sName } })).dataValues.PaperName;
+                }
+
+                let tmp = [i.dataValues.RoNo, vObj[vCode][0], nObj[sName], eObj[eCode], gObj[gCode], j.dataValues.Width, j.dataValues.Height, i.dataValues.RoDate
+                    , j.dataValues.RateCR, j.dataValues.RatePR, i.dataValues.BillNo, i.dataValues.BillDate, vObj[vCode][1]
+                    , i.dataValues.CGst, i.dataValues.SGst, i.dataValues.IGst, i.dataValues.SplDis, i.dataValues.TradeDis, j.dataValues.PBillNo, vObj[vCode][2]];
+
+                arr.push(tmp);
+            }
+        }
+
+        let pt = (await Comp.findOne({ attributes: ['File_path'] })).dataValues.File_path + 'Print.xlsx';
+        await createBillReport(arr, pt);
+        win.webContents.send('billReport:prted', pt);
+    } catch (err) {
+        showError(err.stack);
+        win.webContents.send('billReport:prted', null);
     }
 });
 

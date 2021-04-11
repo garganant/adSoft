@@ -1,6 +1,6 @@
 const electron = require('electron');
 const { ipcRenderer } = electron;
-const { shell, dialog } = electron.remote;
+const { shell, dialog } = require('@electron/remote');
 const customTitlebar = require('custom-electron-titlebar');
 
 new customTitlebar.Titlebar({
@@ -20,6 +20,18 @@ document.querySelector('#AdType').addEventListener('click', () => {
     }
     else document.querySelector('#matter').style.visibility = "hidden";
     widthHeight();
+});
+
+document.querySelector('#SplDis').addEventListener('change', () => {
+    let spldis = parseFloat(document.querySelector('#SplDis').value);
+    let checked = document.querySelector('#AdType').checked;
+    for(let i=1; i<table.rows.length; i++) {
+        let pr = parseFloat(table.rows[i].cells[6].childNodes[0].value);
+        let w = parseInt(table.rows[i].cells[7].childNodes[0].value);
+        let h = parseInt(table.rows[i].cells[8].childNodes[0].value);
+        let val = checked ? pr : pr*w*h;
+        table.rows[i].cells[10].innerHTML = parseInt(val - val * spldis * 0.01);
+    }
 });
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -202,7 +214,7 @@ async function submit(btn) {
 
         let arr = ['SubE', 'Caption', 'DateP', 'RateCR', 'RatePR', 'Width', 'Height'];
         for (let j = 2; j <= 8; j++) tableD[arr[j - 2]] = row.cells[j].childNodes[0].value;
-        tableD['PBillNo'] = row.cells[11].childNodes[0].value;
+        tableD['PBillNo'] = row.cells[11].childNodes[0].value != '' ? row.cells[11].childNodes[0].value : null;
         diffD.push(tableD);
     }
 
@@ -330,7 +342,10 @@ function widthHeight() {
             let w = curr.cells[7].childNodes[0].value;
             let h = curr.cells[8].childNodes[0].value;
             curr.cells[9].innerHTML = cr * w * h;
-            curr.cells[10].innerHTML = pr * w * h;
+            let spldis = parseFloat(document.querySelector('#SplDis').value);
+            let checked = document.querySelector('#AdType').checked;
+            let val = checked ? pr : pr * w * h;
+            curr.cells[10].innerHTML = parseInt(val - val * spldis * 0.01);
         }
     }
 }

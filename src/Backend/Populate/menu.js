@@ -107,6 +107,12 @@ function menuTemplate() {
                     click() {
                         win.loadURL(path.join(__dirname, path.relative('Backend/Populate', 'Frontend/Report/PrintBill.html')));
                     }
+                },
+                {
+                    label: 'Bill Report',
+                    click() {
+                        win.loadURL(path.join(__dirname, path.relative('Backend/Populate', 'Frontend/Report/billReport.html')));
+                    }
                 }
             ]
         },
@@ -114,7 +120,7 @@ function menuTemplate() {
             label: 'Utilities',
             submenu: [
                 {
-                    label: 'Backup & restore',
+                    label: 'Backup & Restore',
                     click() {
                         win.loadURL(path.join(__dirname, path.relative('Backend/Populate', 'Frontend/Utilities/BacRes/BackupRestore.html')));
                     }
