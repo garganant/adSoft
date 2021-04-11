@@ -49,3 +49,7 @@ h3 {
 .btn:hover {
   background-color: #491910;
 }
+
+span::after {
+    background: black !important;
+}
