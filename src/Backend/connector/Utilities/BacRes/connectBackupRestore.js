@@ -1,6 +1,6 @@
 const electron = require("electron");
 const { ipcRenderer, remote } = electron;
-const { dialog } = electron.remote;
+const { dialog } = require('@electron/remote');
 const customTitlebar = require("custom-electron-titlebar");
 var path = require("path");
 

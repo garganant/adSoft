@@ -15,7 +15,11 @@
       "app": "build"
     },
     "appId": "AdSoft app",
-    "win": { "target": [ "nsis" ] },
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
     "nsis": {
       "uninstallDisplayName": "AdSoft",
       "oneClick": false,
@@ -34,6 +38,7 @@
     "electron-packager": "^15.2.0"
   },
   "dependencies": {
+    "@electron/remote": "^1.1.0",
     "custom-electron-titlebar": "^3.2.6",
     "electron-pdf-window": "^1.0.12",
     "electron-reload": "^1.5.0",
