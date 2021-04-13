@@ -23,7 +23,7 @@ function createBill(cData, rupee, btype, bills) {
     }
 
     doc.end();
-    let pt = `${cData.File_path}BillNo-${bills[0][3]['BillNo']}.pdf`;
+    let pt = `${cData.File_path}Bill_No-${bills[0][3]['BillNo']}.pdf`;
     doc.pipe(fs.createWriteStream(pt));
     let child = new PDFWindow({ title: 'File', autoHideMenuBar: true });
     child.loadURL(pt);
@@ -153,7 +153,7 @@ function generateRoTable(doc, arr, sData, SplDis, rupee) {
         y+= 10;
         generateTableRow(doc, `          ${p[6]}    (${p[7]})`, "", "", "", "", "", sData.AdType);
         y+= 18;
-        amt+= tAmt;
+        amt+= Math.round(tAmt);
     }
     y = 560;
     generateVr(doc);
@@ -171,8 +171,10 @@ function generateRoTable(doc, arr, sData, SplDis, rupee) {
 
 function generateFooter(doc, cData, Status, sData, adv, gross) {
     let g = commaSeparated(gross, 0) + '.00';
-    let igst = gross * sData.IGst * 0.01;
-    let total = gross + igst;
+    let igst = +((gross * sData.IGst * 0.01).toFixed(2));
+    let cgst = +((gross * sData.CGst * 0.01).toFixed(2));
+    let sgst = +((gross * sData.SGst * 0.01).toFixed(2));
+    let total = Status == 'L' ? gross + cgst + sgst : gross + igst;
     let net = total - adv;
     let p1 = Math.floor(net);
     let p2 = net - p1;
@@ -187,10 +189,12 @@ function generateFooter(doc, cData, Status, sData, adv, gross) {
         }
     });
     let w2 = toWords.convert(p2, { currency: true, ignoreZeroCurrency: true });
-    let words = 'Rupees ' + w1 + ' And ' + w2;
-    // let words = toWords.convert(net, { currency: true });
+    let words = 'Rupees ' + w1;
+    words+= p2 ? ' And ' + w2 : ' only';
     net = commaSeparated(net, 2);
     igst = commaSeparated(igst, 2);
+    cgst = commaSeparated(cgst, 2);
+    sgst = commaSeparated(sgst, 2);
     total = commaSeparated(total, 2);
     adv = commaSeparated(adv, 2);
     let s1 = 'Interest @ 24% p.a. will be charged if the payment is not made within 7 days from';
@@ -259,8 +263,6 @@ function generateFooter(doc, cData, Status, sData, adv, gross) {
         .moveUp(10.5);
         
     if(Status == 'L') {
-        let cgst = commaSeparated(gross * sData.CGst * 0.01, 2);
-        let sgst = commaSeparated(gross * sData.SGst * 0.01, 2);
         doc
             .moveDown(0.5)
             .text(cgst, 573 - doc.widthOfString(cgst))

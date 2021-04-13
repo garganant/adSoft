@@ -113,6 +113,12 @@ function menuTemplate() {
                     click() {
                         win.loadURL(path.join(__dirname, path.relative('Backend/Populate', 'Frontend/Report/billReport.html')));
                     }
+                },
+                {
+                    label: 'Schedule',
+                    click() {
+                        win.loadURL(path.join(__dirname, path.relative('Backend/Populate', 'Frontend/Report/Schedule.html')));
+                    }
                 }
             ]
         },

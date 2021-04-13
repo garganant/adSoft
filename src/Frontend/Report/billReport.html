@@ -14,8 +14,13 @@
         <div class="row">
             <label id="compulsory" class="col l6 xl4 push-l8 push-xl10">Fields marked with (*) are compulsory</label>
         </div>
-        <div class="row" style="padding-top: 12%;">
-            <h6 class="col push-xl3"><b>Bill date range *</b></h6>
+        <div class="row input-field" style="padding-top: 8%;">
+            <label class="col push-xl3">Date criteria *</label>
+            <label class="col push-xl3"> <input class="with-gap" name="Criteria" type="radio" value="B" /><span>Bill date</span> </label>
+            <label class="col push-xl3" style="padding-left: 1%;"> <input class="with-gap" name="Criteria" type="radio" value="R" /><span>RO date</span> </label>
+        </div>
+        <div class="row" style="padding-top: 2%;">
+            <h6 class="col push-xl3"><b>Date range *</b></h6>
             <div class="input-field col l4 xl2 push-xl3">
                 <input id="from" type="date" class="validate" />
             </div>
@@ -30,7 +35,7 @@
             <label class="col push-xl3" style="padding-left: 2.5%;"> <input class="with-gap" name="PbType" type="radio" value="N" /><span>Not received</span> </label>
             <label class="col push-xl3" style="padding-left: 3%;"> <input class="with-gap" name="PbType" type="radio" value="A" /><span>All</span> </label>
         </div>
-        <div class="row input-field">
+        <div class="row input-field" id="status" hidden>
             <label class="col push-xl3">Bill status *</label>
             <label class="col push-xl3" style="padding-left: 1.3%;"> <input class="with-gap" name="bStatus" type="radio" value="I" /><span>Issued</span> </label>
             <label class="col push-xl3" style="padding-left: 4%;"> <input class="with-gap" name="bStatus" type="radio" value="N" /><span>Not issued</span> </label>

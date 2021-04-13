@@ -46,8 +46,8 @@ function summSheet(sheet, sameD, diffD, compD, paperMap, cityMap, Logo, imageId1
 
 function roPart(sheet, sameD, diffD, compD, paperMap, cityMap, Logo, imageId1) {
     sheet.addImage(Logo, {
-        tl: { col: 7.2, row: 1 },
-        ext: { width: 130, height: 150 }
+        tl: { col: 7.2, row: 0 },
+        ext: { width: 140, height: 160 }
     });
 
     sheet.getRow(5).getCell(1).value = 'The Advertisement Manager';
@@ -154,31 +154,31 @@ function styling1Ro(sheet, idx) {
     for (let i in r) sheet.mergeCells(r[i], c1[i], r[i], c2[i]);
     for (let i = 14; i <= 21; i++) sheet.mergeCells(idx + i, 1, idx + i, 9);
 
-    sheet.getRow(idx + 20).getCell(1).style = { font: { bold: true, underline: true, size: 8 } };
+    sheet.getRow(idx + 20).getCell(1).style = { font: { bold: true, underline: true, size: 10 } };
 
     r = [7, idx + 17, idx + 18, idx + 19, idx + 21];
-    for (let i in r) sheet.getRow(r[i]).getCell(1).style = { font: { size: 8 } };
+    for (let i in r) sheet.getRow(r[i]).getCell(1).style = { font: { size: 10 } };
 
     r = [10, 11, 12, 12, 13, 13, 14];
     let c = [1, 1, 1, 7, 1, 7, 1];
-    for (let i in r) sheet.getRow(r[i]).getCell(c[i]).style = { font: { size: 9 } };
+    for (let i in r) sheet.getRow(r[i]).getCell(c[i]).style = { font: { size: 11 } };
 
     r = [12, 12, 13, 13, 14], c = [2, 8, 2, 8, 2];
-    for (let i in r) sheet.getRow(r[i]).getCell(c[i]).style = { font: { bold: true, size: 10 } };
+    for (let i in r) sheet.getRow(r[i]).getCell(c[i]).style = { font: { bold: true, size: 12 } };
 
-    sheet.getRow(idx + 16).getCell(1).style = { font: { bold: true, size: 11, name: 'Aero' } };
-    sheet.getRow(6).getCell(1).style = { font: { bold: true, size: 12 } };
-    sheet.getRow(11).getCell(7).style = { font: { bold: true, size: 14, name: 'Arial Black' } };
+    sheet.getRow(idx + 16).getCell(1).style = { font: { bold: true, size: 13, name: 'Aero' } };
+    sheet.getRow(6).getCell(1).style = { font: { bold: true, size: 14 } };
+    sheet.getRow(11).getCell(7).style = { font: { bold: true, size: 16, name: 'Arial Black' } };
 
     for(let i=16; i<=21; i++) sheet.getRow(idx + i).getCell(1).alignment = { horizontal: 'center' };
     
-    sheet.getRow(16).font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 8 };
-    sheet.getRow(idx + 21).font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 8 };
+    sheet.getRow(16).font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 10 };
+    sheet.getRow(idx + 21).font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 10 };
     for(let i of [16, 17]) {
         sheet.getRow(i).getCell(4).alignment = { horizontal: 'right' };
         for(let j=5; j<=9; j++) sheet.getRow(i).getCell(j).alignment = { horizontal: 'center' };
     }
-    sheet.getRow(17).font = { bold: true, size: 10 };
+    sheet.getRow(17).font = { bold: true, size: 12 };
     for (let i = 1; i <= 9; i++) {
         sheet.getRow(16).getCell(i).fill = {
             type: 'pattern',
@@ -201,32 +201,32 @@ function styling1Ro(sheet, idx) {
 
     for (let i = 18; i <= idx; i++) {
         for (let j = 1; j < 9; j++) {
-            sheet.getRow(i).getCell(j).style = { font: { bold: true, size: 9 } };
+            sheet.getRow(i).getCell(j).style = { font: { bold: true, size: 11 } };
             if (j <= 3) sheet.getRow(i).getCell(j).alignment = { horizontal: 'left' };
             else if (j == 4) sheet.getRow(i).getCell(j).alignment = { horizontal: 'right' };
             else sheet.getRow(i).getCell(j).alignment = { horizontal: 'center' };
         }
     }
-    for (let i = 18; i <= idx; i++) sheet.getRow(i).getCell(9).style = { font: { size: 8 } };
+    for (let i = 18; i <= idx; i++) sheet.getRow(i).getCell(9).style = { font: { size: 10 } };
 
-    sheet.getRow(idx + 1).getCell(1).style = { font: { bold: true, size: 8 } };
-    for (let i = 2; i <= 9; i++) sheet.getRow(idx + 1).getCell(i).style = { font: { bold: true, size: 8, color: { argb: 'FFff0000' } }, alignment: { horizontal: 'center' } };
+    sheet.getRow(idx + 1).getCell(1).style = { font: { bold: true, size: 10 } };
+    for (let i = 2; i <= 9; i++) sheet.getRow(idx + 1).getCell(i).style = { font: { bold: true, size: 10, color: { argb: 'FFff0000' } }, alignment: { horizontal: 'center' } };
     
-    sheet.getRow(idx + 2).getCell(1).style = { font: { bold: true, size: 8 } };
-    for (let i = 2; i <= 9; i++) sheet.getRow(idx + 2).getCell(i).style = { font: { bold: true, size: 10 }, alignment: { horizontal: 'center' } };
+    sheet.getRow(idx + 2).getCell(1).style = { font: { bold: true, size: 10 } };
+    for (let i = 2; i <= 9; i++) sheet.getRow(idx + 2).getCell(i).style = { font: { bold: true, size: 12 }, alignment: { horizontal: 'center' } };
 
-    for (let i = 2; i <= 9; i++) sheet.getRow(idx + 3).getCell(i).style = { font: { bold: true, size: 10 } };
+    for (let i = 2; i <= 9; i++) sheet.getRow(idx + 3).getCell(i).style = { font: { bold: true, size: 12 } };
 
-    sheet.getRow(idx + 4).getCell(1).style = { font: { bold: true, size: 9 } };
-    sheet.getRow(idx + 4).getCell(2).style = { font: { bold: true, size: 10, color: { argb: 'FFff0000' } } };
-    sheet.getRow(idx + 5).getCell(2).style = { font: { bold: true, size: 10, color: { argb: 'FFff0000' } } };
-    sheet.getRow(idx + 6).getCell(1).style = { font: { size: 8 } };
-    sheet.getRow(idx + 7).getCell(1).style = { font: { size: 7 }, alignment: { wrapText: true } };
+    sheet.getRow(idx + 4).getCell(1).style = { font: { bold: true, size: 11 } };
+    sheet.getRow(idx + 4).getCell(2).style = { font: { bold: true, size: 12, color: { argb: 'FFff0000' } } };
+    sheet.getRow(idx + 5).getCell(2).style = { font: { bold: true, size: 12, color: { argb: 'FFff0000' } } };
+    sheet.getRow(idx + 6).getCell(1).style = { font: { size: 10 } };
+    sheet.getRow(idx + 7).getCell(1).style = { font: { size: 9 }, alignment: { wrapText: true } };
     sheet.getRow(idx + 7).height = 52;
-    sheet.getRow(idx + 8).getCell(1).style = { font: { size: 6 } };
+    sheet.getRow(idx + 8).getCell(1).style = { font: { size: 8 } };
 
-    sheet.getRow(idx + 9).getCell(1).style = { font: { size: 7 } };
-    for (let i = idx + 9; i <= idx + 10; i++) for (let j = 3; j <= 7; j++) sheet.getRow(i).getCell(j).style = { font: { size: 6 } };
+    sheet.getRow(idx + 9).getCell(1).style = { font: { size: 9 } };
+    for (let i = idx + 9; i <= idx + 10; i++) for (let j = 3; j <= 7; j++) sheet.getRow(i).getCell(j).style = { font: { size: 8 } };
     
     for (let i = 7; i <= 9; i++) {
         sheet.getRow(11).getCell(i).border = {
@@ -254,7 +254,7 @@ function styling1Ro(sheet, idx) {
     }
     for(let i of [9, 10]) sheet.getRow(idx + i).getCell(8).border = { bottom: { style: 'thin' } };
 
-    sheet.getRow(idx + 13).getCell(1).style = { font: { size: 7 } };
+    sheet.getRow(idx + 13).getCell(1).style = { font: { size: 9 } };
     sheet.getRow(idx + 14).getCell(1).alignment = { wrapText: true };
     sheet.getRow(idx + 14).height = 40;
 }
@@ -282,12 +282,12 @@ function styling1(sheet, hLen, tLen) {
     sheet.mergeCells(64, 5, 64, 7);
     sheet.mergeCells(tLen + 1, 1, tLen + 1, 9);
 
-    sheet.getRow(57).font = { size: 16, bold: true, color: { argb: 'FFFFFFFF' } };
-    sheet.getRow(59).font = { name: 'Arial Black', size: 18, bold: true };
+    sheet.getRow(57).font = { size: 17, bold: true, color: { argb: 'FFFFFFFF' } };
+    sheet.getRow(59).font = { name: 'Arial Black', size: 20, bold: true };
     for (let i = 60; i <= 63; i++) sheet.getRow(i).font = { bold: true, underline: true };
     sheet.getRow(64).font = { bold: true, color: { argb: 'FFFFFFFF' } };
 
-    sheet.getRow(57).getCell(5).alignment = { vertical: 'middle', horizontal: 'left' };
+    sheet.getRow(57).getCell(5).alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
     sheet.getRow(64).getCell(5).alignment = { horizontal: 'center' };
     for (let i = 65; i < tLen; i++) {
         for (let j = 4; j <= 8; j++) sheet.getRow(i).getCell(j).alignment = { horizontal: 'center' };
@@ -407,7 +407,7 @@ function styling2(sheet, hLen, tLen) {
         sheet.getRow(i).getCell(1).font = { bold: true };
         sheet.getRow(i).getCell(2).font = { bold: true };
     }
-    sheet.getRow(4).getCell(2).font = { name: 'Arial Black', size: 14 };
+    sheet.getRow(4).getCell(2).font = { name: 'Arial Black', size: 16 };
     sheet.getRow(8).font = { bold: true, color: { argb: 'FFFFFFFF' } };
     sheet.getRow(tLen+2).font = { bold: true, color: { argb: 'FFFFFFFF' } };
 

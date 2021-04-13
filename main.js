@@ -132,8 +132,8 @@ ipcMain.on('vend:submit', async (event, arg) => {
                             id: row[1],
                             Name: row[2].toString().trim(),
                             Identify: row[3] != null ? row[3].toString().trim().substring(0, 15) : '',
-                            Street1: row[4] != null ? row[4].toString().trim().substring(0, 40) : '',
-                            Street2: row[5] != null ? row[5].toString().trim().substring(0, 40) : '',
+                            Street1: row[4] != null ? row[4].toString().trim().substring(0, 80) : '',
+                            Street2: row[5] != null ? row[5].toString().trim().substring(0, 80) : '',
                             City: row[6] != null ? row[6].toString().trim().substring(0, 40) : '',
                             Pincode: row[7] != null ? row[7].toString().trim().substring(0, 6) : '',
                             State: row[8] != null ? row[8].toString().trim().substring(0, 40) : '',
@@ -160,7 +160,7 @@ ipcMain.on('vend:submit', async (event, arg) => {
 
 ipcMain.on('vend:report', async (event) => {
     const Vend = require('./src/Backend/models/Master/Vendor.js');
-    var data = await Vend.findAll();
+    var data = await Vend.findAll({ order: ['Name'] });
     var arr = [];
     for (let i in data) arr.push(data[i].dataValues);
 
@@ -736,12 +736,21 @@ ipcMain.on('edition:get', async (event) => {
 ipcMain.on('roData:get', async (event, arg, btn) => {
     const { roData } = require('./src/Backend/helper/Input/RoFunc.js');
     const RoSame = require('./src/Backend/models/Input/RoSame.js');
-    var data = null;
-    if (btn == 'f') data = await RoSame.findOne({ attributes: ['RoNo'], order: ['RoNo'] });
+    var data;
+    if (btn == 'p') data = await RoSame.findOne({ attributes: ['RoNo'], where: { RoNo: { [Op.lt]: arg } }, order: [['RoNo', 'DESC']] });
+    else if (btn == 'n') data = await RoSame.findOne({ attributes: ['RoNo'], where: { RoNo: { [Op.gt]: arg } }, order: ['RoNo'] });
+    else if (btn == 'f') data = await RoSame.findOne({ attributes: ['RoNo'], order: ['RoNo'] });
     else if(btn == 'l') data = await RoSame.findOne({attributes: ['RoNo'], order: [['RoNo', 'DESC']]});
-    if(data != null) arg = data.dataValues.RoNo;
-    var arr = await roData(arg);
-    win.webContents.send('roData:got', arr[0], arr[1]);
+
+    if(data != null) {
+        var arr = await roData(data.dataValues.RoNo);
+        win.webContents.send('roData:got', arr[0], arr[1]);
+    }
+    else if(btn == 's') {
+        var arr = await roData(arg);
+        win.webContents.send('roData:got', arr[0], arr[1]);
+    }
+    else win.webContents.send('roData:got', {}, {});
 });
 
 ipcMain.on('addEditRO', async (event, same, diff) => {
@@ -777,7 +786,7 @@ ipcMain.on('ro:prt', async (event, sameD, diffD) => {
         let signStamp = path.join(__dirname, 'assets/images/signStamp.png');
         let Logo = path.join(__dirname, 'assets/images/Logo.png');
         createRo(Logo, sameD, diffD, cData.dataValues, paperMap, cityMap, signStamp);
-        let pt = `${cData.dataValues.File_path}RO-${sameD.RoNo}.xlsx`;
+        let pt = `${cData.dataValues.File_path}RO_No-${sameD.RoNo}.xlsx`;
         createRoExcel(sameD, diffD, cData.dataValues, paperMap, cityMap, Logo, signStamp, pt);
 
         win.webContents.send('ro:prted', pt);
@@ -888,7 +897,7 @@ ipcMain.on('bill:prt', async (event, start, end, btype) => {
 
 // BILL REPORT //////////////////////////////////
 
-ipcMain.on('billReport:prt', async (event, from, to, bType, bStatus) => {
+ipcMain.on('billReport:prt', async (event, criteria, from, to, bType, bStatus) => {
     const Vend = require('./src/Backend/models/Master/Vendor.js');
     const Edition = require('./src/Backend/models/Master/Edition.js');
     const Newspaper = require('./src/Backend/models/Master/Newspaper.js');
@@ -899,19 +908,31 @@ ipcMain.on('billReport:prt', async (event, from, to, bType, bStatus) => {
     const { createBillReport } = require('./src/Backend/helper/Report/BillReport.js');
     try {
         let sameD = null, arr = [], gObj = {}, vObj = {}, eObj = {}, nObj = {};
-        if (bStatus == "I") {
-            sameD = await RoSame.findAll({ attributes: ['RoNo', 'GroupCode', 'VendCode', 'RoDate', 'CGst', 'SGst', 'IGst', 'TradeDis', 'SplDis', 'BillNo', 'BillDate']
-                , where: { BillDate: { [Op.between]: [from, to] }, BillNo: { [Op.ne]: null } }, order: ['BillDate', 'BillNo', 'RoNo']
-            });
-        }
-        else if (bStatus == "N") {
-            sameD = await RoSame.findAll({ attributes: ['RoNo', 'GroupCode', 'VendCode', 'RoDate', 'CGst', 'SGst', 'IGst', 'TradeDis', 'SplDis', 'BillNo', 'BillDate']
-                , where: { BillDate: { [Op.between]: [from, to] }, BillNo: { [Op.is]: null } }, order: ['BillDate', 'BillNo', 'RoNo']
+        if(criteria == 'B') {
+            sameD = await RoSame.findAll({
+                attributes: ['RoNo', 'GroupCode', 'VendCode', 'CGst', 'SGst', 'IGst', 'TradeDis', 'SplDis', 'BillNo', 'BillDate']
+                , where: { BillDate: { [Op.between]: [from, to] } }, order: ['BillDate', 'BillNo', 'RoNo']
             });
         }
         else {
-            sameD = await RoSame.findAll({ attributes: ['RoNo', 'GroupCode', 'VendCode', 'RoDate', 'CGst', 'SGst', 'IGst', 'TradeDis', 'SplDis', 'BillNo', 'BillDate']
-            , where: { BillDate: { [Op.between]: [from, to] }}, order: ['BillDate', 'BillNo', 'RoNo'] });
+            if (bStatus == "I") {
+                sameD = await RoSame.findAll({
+                    attributes: ['RoNo', 'GroupCode', 'VendCode', 'CGst', 'SGst', 'IGst', 'TradeDis', 'SplDis', 'BillNo', 'BillDate']
+                    , where: { RoDate: { [Op.between]: [from, to] }, BillNo: { [Op.ne]: null } }, order: ['RoDate', 'RoNo']
+                });
+            }
+            else if (bStatus == "N") {
+                sameD = await RoSame.findAll({
+                    attributes: ['RoNo', 'GroupCode', 'VendCode', 'CGst', 'SGst', 'IGst', 'TradeDis', 'SplDis', 'BillNo', 'BillDate']
+                    , where: { RoDate: { [Op.between]: [from, to] }, BillNo: { [Op.is]: null } }, order: ['RoDate', 'RoNo']
+                });
+            }
+            else {
+                sameD = await RoSame.findAll({
+                    attributes: ['RoNo', 'GroupCode', 'VendCode', 'CGst', 'SGst', 'IGst', 'TradeDis', 'SplDis', 'BillNo', 'BillDate']
+                    , where: { RoDate: { [Op.between]: [from, to] } }, order: ['RoDate', 'RoNo']
+                });
+            }
         }
 
         for (let i of sameD) {
@@ -928,18 +949,19 @@ ipcMain.on('billReport:prt', async (event, from, to, bType, bStatus) => {
             }
 
             if(bType == 'R') {
-                diffD = await RoPaper.findAll({ attributes: ['ShortName', 'EditionCode', 'RatePR', 'RateCR', 'Width', 'Height', 'PBillNo']
+                diffD = await RoPaper.findAll({
+                    attributes: ['ShortName', 'EditionCode', 'RatePR', 'RateCR', 'Width', 'Height', 'DateP', 'PBillNo']
                 , where: { RoNo: i.dataValues.RoNo, PBillNo: {[Op.ne]: null} } });
             }
             else if (bType == 'N') {
                 diffD = await RoPaper.findAll({
-                    attributes: ['ShortName', 'EditionCode', 'RatePR', 'RateCR', 'Width', 'Height', 'PBillNo']
+                    attributes: ['ShortName', 'EditionCode', 'RatePR', 'RateCR', 'Width', 'Height', 'DateP', 'PBillNo']
                     , where: { RoNo: i.dataValues.RoNo, PBillNo: { [Op.is]: null } }
                 });
             }
             else {
                 diffD = await RoPaper.findAll({
-                    attributes: ['ShortName', 'EditionCode', 'RatePR', 'RateCR', 'Width', 'Height', 'PBillNo']
+                    attributes: ['ShortName', 'EditionCode', 'RatePR', 'RateCR', 'Width', 'Height', 'DateP', 'PBillNo']
                     , where: { RoNo: i.dataValues.RoNo }
                 });
             }
@@ -954,7 +976,7 @@ ipcMain.on('billReport:prt', async (event, from, to, bType, bStatus) => {
                     nObj[sName] = (await Newspaper.findOne({ attributes: ['PaperName'],  where: { ShortName: sName } })).dataValues.PaperName;
                 }
 
-                let tmp = [i.dataValues.RoNo, vObj[vCode][0], nObj[sName], eObj[eCode], gObj[gCode], j.dataValues.Width, j.dataValues.Height, i.dataValues.RoDate
+                let tmp = [i.dataValues.RoNo, vObj[vCode][0], nObj[sName], eObj[eCode], gObj[gCode], j.dataValues.Width, j.dataValues.Height, j.dataValues.DateP
                     , j.dataValues.RateCR, j.dataValues.RatePR, i.dataValues.BillNo, i.dataValues.BillDate, vObj[vCode][1]
                     , i.dataValues.CGst, i.dataValues.SGst, i.dataValues.IGst, i.dataValues.SplDis, i.dataValues.TradeDis, j.dataValues.PBillNo, vObj[vCode][2]];
 
@@ -968,6 +990,61 @@ ipcMain.on('billReport:prt', async (event, from, to, bType, bStatus) => {
     } catch (err) {
         showError(err.stack);
         win.webContents.send('billReport:prted', null);
+    }
+});
+
+// SCHEDULE ///////////////////////////////////////////////////////////////////
+
+ipcMain.on('schedule:prt', async (event, from, to) => {
+    const Vend = require('./src/Backend/models/Master/Vendor.js');
+    const Edition = require('./src/Backend/models/Master/Edition.js');
+    const Newspaper = require('./src/Backend/models/Master/Newspaper.js');
+    const PaperGroups = require('./src/Backend/models/Master/PaperGroups.js');
+    const Comp = require('./src/Backend/models/Master/Comp.js');
+    const RoSame = require('./src/Backend/models/Input/RoSame.js');
+    const RoPaper = require('./src/Backend/models/Input/RoPaper.js');
+    const { createSchedule } = require('./src/Backend/helper/Report/Schedule.js');
+    try {
+        let arr = [], rObj = {}, gObj = {}, vObj = {}, eObj = {}, nObj = {};
+        let diffD = await RoPaper.findAll({
+            attributes: ['RoNo', 'ShortName', 'EditionCode', 'Width', 'Height', 'DateP', 'RatePR', 'RateCR']
+            , where: { DateP: { [Op.between]: [from, to] } }, order: ['DateP', 'RoNo', 'ShortName']
+        });
+
+        for(let i of diffD) {
+            let roNo = i.dataValues.RoNo, eCode = i.dataValues.EditionCode, sName = i.dataValues.ShortName;
+            if (!(roNo in rObj)) {
+                let sameD = await RoSame.findOne({ attributes: ['GroupCode', 'VendCode', 'RoDate'], where: {RoNo: roNo} });
+                rObj[roNo] = sameD.dataValues;
+            }
+
+            let vCode = rObj[roNo]['VendCode'], gCode = rObj[roNo]['GroupCode'];
+
+            if (!(vCode in vObj)) {
+                vObj[vCode] = (await Vend.findOne({ attributes: ['Name'], where: { id: vCode } })).dataValues.Name;
+            }
+            if (!(eCode in eObj)) {
+                eObj[eCode] = (await Edition.findOne({ where: { Code: eCode } })).dataValues.CityName;
+            }
+            if (!(sName in nObj)) {
+                nObj[sName] = (await Newspaper.findOne({ attributes: ['PaperName'], where: { ShortName: sName } })).dataValues.PaperName;
+            }
+            if (!(gCode in gObj)) {
+                gObj[gCode] = (await PaperGroups.findOne({ attributes: ['GroupName'], where: { Code: gCode } })).dataValues.GroupName;
+            }
+
+            let tmp = [i.dataValues.DateP, roNo, vObj[vCode], nObj[sName], eObj[eCode], gObj[gCode], i.dataValues.Width
+                        , i.dataValues.Height, i.dataValues.RateCR, i.dataValues.RatePR];
+            
+            arr.push(tmp);
+        }
+
+        let pt = (await Comp.findOne({ attributes: ['File_path'] })).dataValues.File_path + 'Print.xlsx';
+        await createSchedule(arr, pt);
+        win.webContents.send('schedule:prted', pt);
+    } catch (err) {
+        showError(err.stack);
+        win.webContents.send('schedule:prted', null);
     }
 });
 

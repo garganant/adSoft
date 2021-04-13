@@ -14,9 +14,9 @@ function createRo(Logo, sameD, diffD, compD, paperMap, cityMap, signStamp) {
     generateFooter(doc, compD, sameD, y);
 
     doc.end();
-    doc.pipe(fs.createWriteStream(`${compD.File_path}RO${sameD.RoNo}.pdf`));
+    doc.pipe(fs.createWriteStream(`${compD.File_path}RO_No-${sameD.RoNo}.pdf`));
     let child = new PDFWindow({ title: 'File', autoHideMenuBar: true });
-    child.loadURL(`${compD.File_path}RO${sameD.RoNo}.pdf`);
+    child.loadURL(`${compD.File_path}RO_No-${sameD.RoNo}.pdf`);
 }
 
 function generateHeader(doc, Logo) {
@@ -124,7 +124,7 @@ function generateRoTable(doc, y, diffD, paperMap, cityMap, sameD, IGst) {
     let net = gross - addl - trade;
     let gst = net * IGst * 0.01;
     x = [20, 128, 231, 385, 428, 471, 522];
-    generateTableRow(doc, y, x, `Trade Discount / AC  : ${sameD.TradeDis} %`, commaSeparated(gross) + '.00', commaSeparated(addl) + '.00', commaSeparated(trade) + '.00', commaSeparated(net) + '.00', "", commaSeparated(gst) + '.00', commaSeparated(net + gst) + '.00', sameD.AdType, check);
+    generateTableRow(doc, y, x, `Trade Discount / AC  : ${sameD.TradeDis} %`, commaSeparated(gross), commaSeparated(addl), commaSeparated(trade), commaSeparated(net), "", commaSeparated(gst), commaSeparated(net + gst), sameD.AdType, check);
     y+= 10;
     generateHr(doc, y - 2);
     generateVr(doc, y);

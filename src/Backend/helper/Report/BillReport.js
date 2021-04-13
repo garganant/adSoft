@@ -4,7 +4,7 @@ function createBillReport(arr, pt) {
     // A new Excel Work Book
     var workbook = new Excel.Workbook();
 
-    var sheet = workbook.addWorksheet('Summary', { pageSetup: { paperSize: 9, fitToPage: true } });
+    var sheet = workbook.addWorksheet('Sheet1', { pageSetup: { paperSize: 9, fitToPage: true } });
 
     // A table header
     sheet.columns = [
@@ -15,7 +15,7 @@ function createBillReport(arr, pt) {
         { header: '', key: 'group', width: 14 },
         { header: '', key: 'width', width: 5 },
         { header: '', key: 'height', width: 5 },
-        { header: '', key: 'rDate', width: 11 },
+        { header: '', key: 'pDate', width: 11 },
         { header: '', key: 'cr', width: 7 },
         { header: '', key: 'pr', width: 7 },
         { header: 'BILLING TO CLIENT', key: 'billNo', width: 8 },
@@ -40,31 +40,31 @@ function createBillReport(arr, pt) {
         { header: 'GA-NP', key: 'profit', width: 12 }
     ]
 
-    let head = ['RO NO.', 'CLIENT', 'NEWSPAPER', 'EDITIONS', 'GROUP', 'W', 'H', 'D A T E', 'CR', 'PR', 'Bill No'
-        , 'DATE', 'GST NUMBER', 'Gross Amt', 'CGST', 'SGST', 'IGST', 'TOTAL', 'DISCOUNT', 'PAYABLE', 'GROSS', 'COMM'
+    let head = ['RO NO.', 'CLIENT', 'NEWSPAPER', 'EDITIONS', 'GROUP', 'W', 'H', 'PUB DATE', 'CR', 'PR', 'BILL NO'
+        , 'BILL DATE', 'GST NUMBER', 'Gross Amt', 'CGST', 'SGST', 'IGST', 'TOTAL', 'DISCOUNT', 'PAYABLE', 'GROSS', 'COMM'
         , 'NET', 'CGST', 'SGST', 'GST', 'NP', 'PUB BILLS', 'DIFFERENCE', 'NET PROFIT'];
 
     for(let i=1; i <= head.length; i++) sheet.getRow(2).getCell(i).value = head[i-1];
 
     for(let ele of arr) {
-        let gross = ele[6] ? parseInt(ele[5] * ele[6] * ele[8]) : parseInt(ele[8]);
-        let cgst = ele[19] == 'L' ? parseInt(gross * ele[13] * 0.01) : 0;
-        let sgst = ele[19] == 'L' ? parseInt(gross * ele[14] * 0.01) : 0;
-        let igst = ele[19] == 'C' ? parseInt(gross * ele[15] * 0.01) : 0;
-        let total = gross + cgst + sgst + igst;
-        let dis = parseInt(total * ele[16] * 0.01);
-        let pay = total - dis;
+        let gross = ele[6] ? Math.round(ele[5] * ele[6] * ele[8]) : Math.round(ele[8]);
+        let cgst = +(ele[19] == 'L' ? (gross * ele[13] * 0.01).toFixed(2) : 0);
+        let sgst = +(ele[19] == 'L' ? (gross * ele[14] * 0.01).toFixed(2) : 0);
+        let igst = +(ele[19] == 'C' ? (gross * ele[15] * 0.01).toFixed(2) : 0);
+        let total = +((gross + cgst + sgst + igst).toFixed(2));
+        let dis = +((total * ele[16] * 0.01).toFixed(2));
+        let pay = +((total - dis).toFixed(2));
 
-        let pgross = ele[6] ?  parseInt(ele[5] * ele[6] * ele[9]) : parseInt(ele[9]);
-        let pDis = parseInt(pgross * ele[17] * 0.01);
-        let netP = pgross - pDis;
-        let gst = parseInt(netP * 0.05);
-        let np = netP + gst;
+        let pgross = ele[6] ?  Math.round(ele[5] * ele[6] * ele[9]) : Math.round(ele[9]);
+        let pDis = +((pgross * ele[17] * 0.01).toFixed(2));
+        let netP = +((pgross - pDis).toFixed(2));
+        let gst = +((netP * 0.05).toFixed(2));
+        let np = +((netP + gst).toFixed(2));
 
         sheet.addRow({ roNo: ele[0], client: ele[1], paper: ele[2], edition: ele[3], group: ele[4], width: ele[5]
-        , height: ele[6], rDate: ele[7], cr: commaSeparated(ele[8]), pr: commaSeparated(ele[9]), billNo: ele[10], bDate: ele[11], gstNo: ele[12]
-        , cGross: commaSeparated(gross), cCgst: commaSeparated(cgst), cSgst: commaSeparated(sgst), cIgst: commaSeparated(igst), cTotal: commaSeparated(total), cDis: commaSeparated(dis), cPay: commaSeparated(pay)
-        , pGross: commaSeparated(pgross), comm: commaSeparated(pDis), net: commaSeparated(netP), pCgst: 0, pSgst: 0, pGst: commaSeparated(gst), pPay: commaSeparated(np), pBillNo: ele[18], diff: commaSeparated(gross - pgross), profit: commaSeparated(gross - netP) });
+            , height: ele[6], pDate: formatDate(ele[7]), cr: parseFloat(ele[8]), pr: parseFloat(ele[9]), billNo: ele[10], bDate: formatDate(ele[11]), gstNo: ele[12]
+            , cGross: gross, cCgst: cgst, cSgst: sgst, cIgst: igst, cTotal: total, cDis: dis, cPay: pay
+            , pGross: pgross, comm: pDis, net: netP, pCgst: 0, pSgst: 0, pGst: gst, pPay: np, pBillNo: ele[18], diff: gross - pgross, profit: gross - netP });
     }
 
     styling(sheet);
@@ -123,8 +123,10 @@ function styling(sheet) {
     }
 }
 
-function commaSeparated(num) {
-    return num.toLocaleString('en-IN', { maximumFractionDigits: 0 });
+function formatDate(date) {
+    if(date == null) return '';
+    var arr = date.split('-')
+    return arr[2] + "-" + arr[1] + "-" + arr[0];
 }
 
 module.exports = { createBillReport };

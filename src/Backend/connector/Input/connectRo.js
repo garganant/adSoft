@@ -30,7 +30,7 @@ document.querySelector('#SplDis').addEventListener('change', () => {
         let w = parseInt(table.rows[i].cells[7].childNodes[0].value);
         let h = parseInt(table.rows[i].cells[8].childNodes[0].value);
         let val = checked ? pr : pr*w*h;
-        table.rows[i].cells[10].innerHTML = parseInt(val - val * spldis * 0.01);
+        table.rows[i].cells[10].innerHTML = (val - val * spldis * 0.01).toFixed(2);
     }
 });
 
@@ -102,14 +102,13 @@ group.addEventListener('change', () => {
 function prev() {
     btnNo = 0;
     var No = document.querySelector('#RoNo').value;
-    if (No == "" || No == 1) dialog.showMessageBox({ type: "warning", message: 'Reached start of file!' });
-    else ipcRenderer.send('roData:get', parseInt(No)-1, 'p');
+    if (No != "") ipcRenderer.send('roData:get', parseInt(No), 'p');
 }
 
 function nxt() {
     btnNo = 1;
     var No = document.querySelector('#RoNo').value;
-    No = (No == "") ? 1 : parseInt(No) + 1;
+    No = (No == "") ? 0 : parseInt(No);
     ipcRenderer.send('roData:get', No, 'n');
 }
 
@@ -341,11 +340,11 @@ function widthHeight() {
             let pr = curr.cells[6].childNodes[0].value;
             let w = curr.cells[7].childNodes[0].value;
             let h = curr.cells[8].childNodes[0].value;
-            curr.cells[9].innerHTML = cr * w * h;
+            curr.cells[9].innerHTML = (cr * w * h).toFixed(2);
             let spldis = parseFloat(document.querySelector('#SplDis').value);
             let checked = document.querySelector('#AdType').checked;
             let val = checked ? pr : pr * w * h;
-            curr.cells[10].innerHTML = parseInt(val - val * spldis * 0.01);
+            curr.cells[10].innerHTML = (val - val * spldis * 0.01).toFixed(2);
         }
     }
 }

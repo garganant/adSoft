@@ -14,10 +14,10 @@ module.exports = sequelize.define('vend', {
         type: Sequelize.STRING(15)
     },
     Street1: {
-        type: Sequelize.STRING(40)
+        type: Sequelize.STRING(80)
     },
     Street2: {
-        type: Sequelize.STRING(40)
+        type: Sequelize.STRING(80)
     },
     City: {
         type: Sequelize.STRING(40)

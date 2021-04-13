@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+    <link type="text/css" href="../../../node_modules/material-icons/iconfont/material-icons.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="../../../node_modules/materialize-css/dist/css/materialize.min.css"
+        media="screen,projection" />
+    <link rel="stylesheet" href="../../../assets/css/Report/billReport.css">
+    <title>AdSoft</title>
+</head>
+<body>
+    <div class="container">
+        <h3 align="center">SCHEDULE REPORT</h3>
+        <div class="row">
+            <label id="compulsory" class="col l6 xl4 push-l8 push-xl10">Fields marked with (*) are compulsory</label>
+        </div>
+        <div class="row" style="padding-top: 12%;">
+            <h6 class="col push-xl2">Publication date range *</h6>
+            <div class="input-field col l4 xl2 push-xl2">
+                <input id="from" type="date" class="validate" />
+            </div>
+            <h6 class="col push-xl2">to</h6>
+            <div class="input-field col l4 xl2 push-xl2">
+                <input id="to" type="date" class="validate" />
+            </div>
+        </div>
+        <div class="row buttons" style="padding-top: 6%;">
+            <a id="prtBtn" onclick="prt()" class="btn col push-l6">Print</a>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../../node_modules/materialize-css/dist/js/materialize.min.js"></script>
+<script src="../../Backend/connector/Report/connectSchedule.js"></script>
+</html>
