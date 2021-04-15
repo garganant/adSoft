@@ -905,38 +905,45 @@ ipcMain.on('billReport:prt', async (event, criteria, from, to, bType, bStatus) =
     const Comp = require('./src/Backend/models/Master/Comp.js');
     const RoSame = require('./src/Backend/models/Input/RoSame.js');
     const RoPaper = require('./src/Backend/models/Input/RoPaper.js');
+    const Bill = require('./src/Backend/models/Input/Bill.js');
     const { createBillReport } = require('./src/Backend/helper/Report/BillReport.js');
     try {
-        let sameD = null, arr = [], gObj = {}, vObj = {}, eObj = {}, nObj = {};
+        let sameD = null, arr = [], gObj = {}, vObj = {}, eObj = {}, nObj = {}, bObj = {}, billGross = {}, gross = 0, idx = 0;
         if(criteria == 'B') {
             sameD = await RoSame.findAll({
-                attributes: ['RoNo', 'GroupCode', 'VendCode', 'CGst', 'SGst', 'IGst', 'TradeDis', 'SplDis', 'BillNo', 'BillDate']
+                attributes: ['RoNo', 'GroupCode', 'VendCode', 'CGst', 'SGst', 'IGst', 'TradeDis', 'Advance', 'BillNo', 'BillDate', 'TParty']
                 , where: { BillDate: { [Op.between]: [from, to] } }, order: ['BillDate', 'BillNo', 'RoNo']
             });
         }
         else {
             if (bStatus == "I") {
                 sameD = await RoSame.findAll({
-                    attributes: ['RoNo', 'GroupCode', 'VendCode', 'CGst', 'SGst', 'IGst', 'TradeDis', 'SplDis', 'BillNo', 'BillDate']
+                    attributes: ['RoNo', 'GroupCode', 'VendCode', 'CGst', 'SGst', 'IGst', 'TradeDis', 'Advance', 'BillNo', 'BillDate', 'TParty']
                     , where: { RoDate: { [Op.between]: [from, to] }, BillNo: { [Op.ne]: null } }, order: ['RoDate', 'RoNo']
                 });
             }
             else if (bStatus == "N") {
                 sameD = await RoSame.findAll({
-                    attributes: ['RoNo', 'GroupCode', 'VendCode', 'CGst', 'SGst', 'IGst', 'TradeDis', 'SplDis', 'BillNo', 'BillDate']
+                    attributes: ['RoNo', 'GroupCode', 'VendCode', 'CGst', 'SGst', 'IGst', 'TradeDis', 'Advance', 'BillNo', 'BillDate', 'TParty']
                     , where: { RoDate: { [Op.between]: [from, to] }, BillNo: { [Op.is]: null } }, order: ['RoDate', 'RoNo']
                 });
             }
             else {
                 sameD = await RoSame.findAll({
-                    attributes: ['RoNo', 'GroupCode', 'VendCode', 'CGst', 'SGst', 'IGst', 'TradeDis', 'SplDis', 'BillNo', 'BillDate']
+                    attributes: ['RoNo', 'GroupCode', 'VendCode', 'CGst', 'SGst', 'IGst', 'TradeDis', 'Advance', 'BillNo', 'BillDate', 'TParty']
                     , where: { RoDate: { [Op.between]: [from, to] } }, order: ['RoDate', 'RoNo']
                 });
             }
         }
 
         for (let i of sameD) {
-            let diffD = null, vCode = i.dataValues.VendCode, gCode = i.dataValues.GroupCode, vData = null;
+            let currB = i.dataValues.BillNo, diffD = null, vCode = i.dataValues.VendCode, gCode = i.dataValues.GroupCode, vData = null;
+
+            if(i.dataValues.TParty != "") {
+                let d = await Vend.findOne({ attributes: ['id'], where: { Name: i.dataValues.TParty } });
+                if (d != null) vCode = d.dataValues.id;
+                else showError(`Incorrect third party in Ro no ${i.dataValues.RoNo}`);
+            }
 
             if (!(vCode in vObj)) {
                 vData = await Vend.findOne({ attributes: ['Name', 'Gstin', 'Status'], where: {id: vCode} });
@@ -966,7 +973,14 @@ ipcMain.on('billReport:prt', async (event, criteria, from, to, bType, bStatus) =
                 });
             }
 
+            if (!(currB in bObj) && currB != null) {
+                bObj[currB] = (await Bill.findOne({ attributes: ['LSplDis'], where: { BillNo: currB } })).dataValues.LSplDis;
+            }
+
             for(let j of diffD) {
+                let w = j.dataValues.Width, h = j.dataValues.Height, cr = j.dataValues.RateCR;
+                gross+= h ? Math.round(w * h * cr) : Math.round(cr);
+
                 let eCode = j.dataValues.EditionCode, sName = j.dataValues.ShortName;
 
                 if (!(eCode in eObj)) {
@@ -976,16 +990,24 @@ ipcMain.on('billReport:prt', async (event, criteria, from, to, bType, bStatus) =
                     nObj[sName] = (await Newspaper.findOne({ attributes: ['PaperName'],  where: { ShortName: sName } })).dataValues.PaperName;
                 }
 
-                let tmp = [i.dataValues.RoNo, vObj[vCode][0], nObj[sName], eObj[eCode], gObj[gCode], j.dataValues.Width, j.dataValues.Height, j.dataValues.DateP
-                    , j.dataValues.RateCR, j.dataValues.RatePR, i.dataValues.BillNo, i.dataValues.BillDate, vObj[vCode][1]
-                    , i.dataValues.CGst, i.dataValues.SGst, i.dataValues.IGst, i.dataValues.SplDis, i.dataValues.TradeDis, j.dataValues.PBillNo, vObj[vCode][2]];
+                let tmp = [
+                    i.dataValues.RoNo, vObj[vCode][0], nObj[sName], eObj[eCode], gObj[gCode], j.dataValues.Width, j.dataValues.Height, j.dataValues.DateP
+                    , j.dataValues.RateCR, j.dataValues.RatePR, currB, i.dataValues.BillDate, vObj[vCode][1]
+                    , i.dataValues.CGst, i.dataValues.SGst, i.dataValues.IGst, bObj[currB], i.dataValues.TradeDis, j.dataValues.PBillNo, vObj[vCode][2]
+                    , i.dataValues.Advance
+                ];
 
                 arr.push(tmp);
             }
+            if (idx == sameD.length - 1 || sameD[idx + 1].dataValues.BillNo != currB) {
+                billGross[currB] = gross;
+                gross = 0;
+            }
+            idx++;
         }
 
         let pt = (await Comp.findOne({ attributes: ['File_path'] })).dataValues.File_path + 'Print.xlsx';
-        await createBillReport(arr, pt);
+        await createBillReport(arr, billGross, pt);
         win.webContents.send('billReport:prted', pt);
     } catch (err) {
         showError(err.stack);

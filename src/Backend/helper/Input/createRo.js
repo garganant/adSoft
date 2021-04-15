@@ -85,19 +85,19 @@ function generateRoTable(doc, y, diffD, paperMap, cityMap, sameD, IGst) {
     let x = [20, 128, 231, 405, 438, 485, 538];
     y = 160, check = 0;
     generateTableRow(doc, y, x, "CAPTION", "PUBLICATION", "EDITIONS / SUB-EDITION / PACKAGE", "RATES", " SIZE", "", "DATES", "DAY", sameD.AdType, check);
-    x = [20, 128, 231, 405, 431, 472, 538];
+    x = [20, 128, 231, 405, 433, 472, 538];
     y = 170;
     generateTableRow(doc, y, x, "", "", "", "SQCM", "W", "H", " DD/MM/YYYY", "", sameD.AdType, check);
     var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     let gross = 0;
     y = 185;
     for(let obj of diffD) {
-        x = [20, 128, 231, 425 - doc.widthOfString(obj.RatePR), 431, 480, 535];
+        x = [20, 128, 231, 425 - doc.widthOfString(obj.RatePR), 430, 480, 535];
         let day = days[new Date(obj.DateP).getDay()];
         let edi_sub_pkg = cityMap[obj.EditionCode];
         if (obj.SubE != '') edi_sub_pkg+= ' / ' + obj.SubE;
         if(sameD.Package != '') edi_sub_pkg+= ' / ' + sameD.Package;
-        generateTableRow(doc, y, x, obj.Caption, paperMap[obj.ShortName], edi_sub_pkg, obj.RatePR, parseInt(obj.Width), obj.Height, formatDate(obj.DateP), day, sameD.AdType, check);
+        generateTableRow(doc, y, x, obj.Caption, paperMap[obj.ShortName], edi_sub_pkg, obj.RatePR, parseFloat(obj.Width), parseFloat(obj.Height), formatDate(obj.DateP), day, sameD.AdType, check);
         y+= 15;
         generateHr(doc, y - 4);
         if(sameD.AdType == 'D') gross+= obj.RatePR * obj.Width * obj.Height;
@@ -178,17 +178,16 @@ function generateTableRow(doc, y, x, caption, paper, edition, rate, w, h, date, 
         if (AdType == 'D') {
             doc
                 .text(w, x[4], y)
-                .text('x', 444, y)
-                .text(h, 455, y);
+                .text('x', 446, y)
+                .text(h, 457, y);
         }
     }
     else {
         if(y != check) doc.text(w, x[4], y);
         else doc.text(w, x[4], y, { width: 40, align: 'center' });
         if(AdType == 'D') {
-            if (typeof w == 'number') doc.text('x', 444, y);
-            doc
-                .text(h, 455, y);
+            if (typeof w == 'number') doc.text('x', 446, y);
+            doc.text(h, 451, y);
         }
         else if (typeof w == 'number') doc.text('LINES/W', 440, y);
     }

@@ -88,7 +88,7 @@ function generateCustomerInfo(doc, billNo, bDate, vendD, FY, subject, obj, custT
 
     let sub = subject;
     if (custTparty != "") sub += `   | ${custTparty}`;
-    if (btype == 1 && obj.Prospect != "") sub+= ` | ${obj.Prospect}`;
+    if (obj.Prospect != "") sub+= ` | ${obj.Prospect}`;
 
     doc
         .font("Helvetica-Bold")
@@ -147,8 +147,8 @@ function generateRoTable(doc, arr, sData, SplDis, rupee) {
     y = 230 , amt = 0;
     for(let p of arr) {
         sz = sData.AdType == 'D' ? `${p[3]}  x  ${p[4]}` : `${p[3]}   LINES`;
-        let space = sData.AdType == 'D' ? p[3] * p[4] : `${p[3]}   LINES`;
-        let tAmt = sData.AdType == 'D' ? p[3] * p[4] * p[5] : p[5];
+        let space = sData.AdType == 'D' ? Math.round(p[3] * p[4]) : `${p[3]}   LINES`;
+        let tAmt = sData.AdType == 'D' ? Math.round(p[3] * p[4]) * p[5] : p[5];
         generateTableRow(doc, `  ${p[0]}`, ` ${formatDate(p[2])}`, sz, space, (p[5]).toFixed(2), commaSeparated(tAmt, 0) + '.00', sData.AdType);
         y+= 10;
         generateTableRow(doc, `          ${p[6]}    (${p[7]})`, "", "", "", "", "", sData.AdType);
@@ -325,8 +325,11 @@ function generateFooter(doc, cData, Status, sData, adv, gross) {
         .text(cData.Tan, 135)
         .moveUp()
         .fillColor('#9a0000')
-        .text(`|   UDYAM-${cData.Udyam}`, 180)
+        .text('|   UDYAM-', 180)
+        .moveUp()
         .fillColor('black')
+        .text(cData.Udyam, 210)
+        .moveDown()
         .font("Helvetica")
         .text(s1, 50)
         .text(s2)
@@ -392,7 +395,7 @@ function generateTableRow(doc, publication, date, size, space, rate, amount, AdT
             .text(amount, 533, y);
     }
     else {
-        if (AdType == 'D') doc.text(size, 352, y, { width: 30, align: 'center' });
+        if (AdType == 'D') doc.text(size, 339, y, { width: 56, align: 'center' });
         else doc.text(size, 381 - doc.widthOfString(size), y);
         doc
             .text(space, 442 - doc.widthOfString('' + space), y)

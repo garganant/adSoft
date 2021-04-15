@@ -1,6 +1,6 @@
 var Excel = require('exceljs');
 
-function createBillReport(arr, pt) {
+function createBillReport(arr, billGross, pt) {
     // A new Excel Work Book
     var workbook = new Excel.Workbook();
 
@@ -46,13 +46,27 @@ function createBillReport(arr, pt) {
 
     for(let i=1; i <= head.length; i++) sheet.getRow(2).getCell(i).value = head[i-1];
 
+    let idx = 0, tmpDis = 0, tmpAdv = 0, dis = 0;
+
     for(let ele of arr) {
         let gross = ele[6] ? Math.round(ele[5] * ele[6] * ele[8]) : Math.round(ele[8]);
+        if(idx == arr.length-1 || arr[idx+1][10] != ele[10]) {
+            gross-= (ele[16] - tmpDis);
+            dis = ele[20] - tmpAdv;
+            tmpDis = tmpAdv = 0;
+        }
+        else {
+            let less = Math.round((gross * ele[16]) / billGross[ele[10]]), tAdv = +(((gross * ele[20]) / billGross[ele[10]]).toFixed(2));
+            gross-= less;
+            tmpDis+= less;
+            dis = tAdv;
+            tmpAdv+= tAdv;
+        }
+
         let cgst = +(ele[19] == 'L' ? (gross * ele[13] * 0.01).toFixed(2) : 0);
         let sgst = +(ele[19] == 'L' ? (gross * ele[14] * 0.01).toFixed(2) : 0);
         let igst = +(ele[19] == 'C' ? (gross * ele[15] * 0.01).toFixed(2) : 0);
         let total = +((gross + cgst + sgst + igst).toFixed(2));
-        let dis = +((total * ele[16] * 0.01).toFixed(2));
         let pay = +((total - dis).toFixed(2));
 
         let pgross = ele[6] ?  Math.round(ele[5] * ele[6] * ele[9]) : Math.round(ele[9]);
@@ -65,6 +79,8 @@ function createBillReport(arr, pt) {
             , height: ele[6], pDate: formatDate(ele[7]), cr: parseFloat(ele[8]), pr: parseFloat(ele[9]), billNo: ele[10], bDate: formatDate(ele[11]), gstNo: ele[12]
             , cGross: gross, cCgst: cgst, cSgst: sgst, cIgst: igst, cTotal: total, cDis: dis, cPay: pay
             , pGross: pgross, comm: pDis, net: netP, pCgst: 0, pSgst: 0, pGst: gst, pPay: np, pBillNo: ele[18], diff: gross - pgross, profit: gross - netP });
+
+        idx++;
     }
 
     styling(sheet);
