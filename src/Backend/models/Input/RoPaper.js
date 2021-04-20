@@ -3,7 +3,7 @@ const Sequelize = require('sequelize');
 var path = require("path");
 const RoSame = require(path.relative('RoPaper.js', 'Input/RoSame.js'));
 
-const RoPaper = sequelize.define('RoPaper', {
+const RoPaper = sequelize.define('ropaper', {
     //attributes
     id: {
         type: Sequelize.INTEGER,

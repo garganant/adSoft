@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 
-module.exports = sequelize.define('Comp', {
+module.exports = sequelize.define('comp', {
     //attributes
     Code: {
         type: Sequelize.STRING(10),

@@ -337,7 +337,7 @@ function fillTable(sheet, idx, sameD, diffD, paperMap, cityMap) {
         if (sameD.AdType == 'D') {
             sheet.getRow(idx).getCell(6).value = 'x';
             sheet.getRow(idx).getCell(7).value = obj.Height;
-            gross += obj.RatePR * obj.Width * obj.Height;
+            gross += obj.RatePR * Math.round(obj.Width * obj.Height);
         }
         else {
             sheet.getRow(idx).getCell(7).value = 'LINES';
@@ -379,9 +379,9 @@ function mailSheet(sheet, sameD, diffD, paperMap, cityMap) {
         sheet.getRow(idx).getCell(1).value = paperMap[obj.ShortName];
         sheet.getRow(idx).getCell(2).value = cityMap[obj.EditionCode];
         sheet.getRow(idx).getCell(3).value = (parseFloat(obj.RatePR)).toFixed(2);
-        sheet.getRow(idx).getCell(4).value = parseInt(obj.Width);
+        sheet.getRow(idx).getCell(4).value = obj.Width;
         sheet.getRow(idx).getCell(5).value = 'x';
-        sheet.getRow(idx).getCell(6).value = parseInt(obj.Height);
+        sheet.getRow(idx).getCell(6).value = obj.Height;
         sheet.getRow(idx).getCell(7).value = formatDate(obj.DateP);
         let day = days[new Date(obj.DateP).getDay()];
         sheet.getRow(idx).getCell(8).value = day;

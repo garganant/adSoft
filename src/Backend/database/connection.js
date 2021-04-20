@@ -1,13 +1,14 @@
 const Sequelize = require('sequelize');
 
 // Option 1: Passing parameters separately
-var sequelize = new Sequelize('print_db', 'root', 'CALCULATION1164', {
+var sequelize = new Sequelize('bqkahnbl23cn9ojsftbf', 'u2rttguukmd33gfu', 'UMdtKRBdynHNzWQA0Rx8', {
         define: {
             charset: 'utf8',
             collate: 'utf8_general_ci'
         },
-    host: 'localhost',   // localhost 192.168.1.9
-        dialect: 'mysql'
+    host: 'bqkahnbl23cn9ojsftbf-mysql.services.clever-cloud.com',   // localhost 192.168.1.9
+        dialect: 'mysql',
+    port: 20705
     });
 
 sequelize.authenticate()

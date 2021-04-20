@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 
-module.exports = sequelize.define('Restore_info', {
+module.exports = sequelize.define('restore_info', {
     //attributes
     id: {
         type: Sequelize.INTEGER,

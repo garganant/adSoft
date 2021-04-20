@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 
-module.exports = sequelize.define('Newspaper', {
+module.exports = sequelize.define('newspaper', {
     //attributes
     ShortName: {
         type: Sequelize.STRING(5),

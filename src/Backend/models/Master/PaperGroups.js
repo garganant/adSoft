@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 
-module.exports = sequelize.define('PaperGroups', {
+module.exports = sequelize.define('papergroups', {
     //attributes
     Code: {
         type: Sequelize.STRING(6),

@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 
-module.exports = sequelize.define('Office', {
+module.exports = sequelize.define('office', {
     //attributes
     Code: {
         type: Sequelize.INTEGER,

@@ -49,7 +49,7 @@ function createBillReport(arr, billGross, pt) {
     let idx = 0, tmpDis = 0, tmpAdv = 0, dis = 0;
 
     for(let ele of arr) {
-        let gross = ele[6] ? Math.round(ele[5] * ele[6] * ele[8]) : Math.round(ele[8]);
+        let gross = ele[6] ? Math.round(Math.round(ele[5] * ele[6]) * ele[8]) : Math.round(ele[8]);
         if(idx == arr.length-1 || arr[idx+1][10] != ele[10]) {
             gross-= (ele[16] - tmpDis);
             dis = ele[20] - tmpAdv;
@@ -69,7 +69,7 @@ function createBillReport(arr, billGross, pt) {
         let total = +((gross + cgst + sgst + igst).toFixed(2));
         let pay = +((total - dis).toFixed(2));
 
-        let pgross = ele[6] ?  Math.round(ele[5] * ele[6] * ele[9]) : Math.round(ele[9]);
+        let pgross = ele[6] ?  Math.round(Math.round(ele[5] * ele[6]) * ele[9]) : Math.round(ele[9]);
         let pDis = +((pgross * ele[17] * 0.01).toFixed(2));
         let netP = +((pgross - pDis).toFixed(2));
         let gst = +((netP * 0.05).toFixed(2));

@@ -18,6 +18,7 @@ function prt() {
         let e = document.querySelector('#BType');
         let btype = e.options[e.selectedIndex].value;
         if(end == "") end = start;
+        setBtn();
         ipcRenderer.send('bill:prt', start, end, btype);
     }
 }
@@ -25,6 +26,14 @@ function prt() {
 ipcRenderer.on('bill:prted', (event) => {
     window.location.reload();
 });
+
+function setBtn() {
+    var btn = document.getElementById('prtBtn');
+    btn.style.cursor = 'wait';
+    btn.disabled = true;
+    btn.innerHTML = '...processing...';
+    btn.style.background = 'grey';
+}
 
 function reload(e) {
     if (e.ctrlKey && e.keyCode == 82) window.location.reload();

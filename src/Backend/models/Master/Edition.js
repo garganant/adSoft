@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 
-module.exports = sequelize.define('Edition', {
+module.exports = sequelize.define('edition', {
     //attributes
     Code: {
         type: Sequelize.STRING(5),

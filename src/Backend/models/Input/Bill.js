@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 
-module.exports = sequelize.define('Bill', {
+module.exports = sequelize.define('bill', {
     //attributes
     BillNo: {
         type: Sequelize.INTEGER,

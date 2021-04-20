@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 
-const RoSame = sequelize.define('RoSame', {
+const RoSame = sequelize.define('rosame', {
     //attributes
     RoNo: {
         type: Sequelize.INTEGER,

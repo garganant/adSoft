@@ -100,7 +100,7 @@ function generateRoTable(doc, y, diffD, paperMap, cityMap, sameD, IGst) {
         generateTableRow(doc, y, x, obj.Caption, paperMap[obj.ShortName], edi_sub_pkg, obj.RatePR, parseFloat(obj.Width), parseFloat(obj.Height), formatDate(obj.DateP), day, sameD.AdType, check);
         y+= 15;
         generateHr(doc, y - 4);
-        if(sameD.AdType == 'D') gross+= obj.RatePR * obj.Width * obj.Height;
+        if(sameD.AdType == 'D') gross+= obj.RatePR * Math.round(obj.Width * obj.Height);
         else gross+= parseFloat(obj.RatePR);
     }
     y = Math.max(y+12, 384);
