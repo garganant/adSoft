@@ -1082,7 +1082,7 @@ ipcMain.on('db:backup', async () => {
     else {
         var path = data.dataValues.File_path;
         var db = await sequelize.query('Select database() as db_name');
-        var cmd = 'mysqldump -uu2rttguukmd33gfu -hbqkahnbl23cn9ojsftbf-mysql.services.clever-cloud.com -pUMdtKRBdynHNzWQA0Rx8 ' + db[0][0].db_name + ' > ' + path + db[0][0].db_name + '-' + date + '.sql';
+        var cmd = 'mysqldump -uroot -hlocalhost -pCALCULATION1164 ' + db[0][0].db_name + ' > ' + path + db[0][0].db_name + '-' + date + '.sql';
         await exec(cmd);
         win.webContents.send('db:backed', 'Database backup created!');
     }
@@ -1101,7 +1101,7 @@ ipcMain.on('db:restore', async (event) => {
             if (file[0] != db[0][0].db_name) win.webContents.send('db:restored', 'Incorrect file selected!');
             else {
                 var exec = require('child_process').exec;
-                var cmd = 'mysql -uu2rttguukmd33gfu -hbqkahnbl23cn9ojsftbf-mysql.services.clever-cloud.com -pUMdtKRBdynHNzWQA0Rx8 ' + db[0][0].db_name + ' < ' + c.filePaths;
+                var cmd = 'mysql -uroot -hlocalhost -pCALCULATION1164 ' + db[0][0].db_name + ' < ' + c.filePaths;
                 await exec(cmd, async (error) => {
                     if (error) win.webContents.send('db:restored', 'Error occured while restoration!');
                     else {
