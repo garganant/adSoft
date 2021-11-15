@@ -1,7 +1,8 @@
 const Sequelize = require('sequelize');
+require('dotenv').config();
 
 // Option 1: Passing parameters separately
-var sequelize = new Sequelize('print_db', 'root', 'CALCULATION1164', {
+var sequelize = new Sequelize(process.env.DATABASE, process.env.USER, process.env.PASSWORD, {
         define: {
             charset: 'utf8',
             collate: 'utf8_general_ci'
